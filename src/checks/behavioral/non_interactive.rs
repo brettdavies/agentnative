@@ -1,4 +1,3 @@
-use std::path::PathBuf;
 use std::time::Duration;
 
 use crate::check::Check;
@@ -14,7 +13,7 @@ impl Check for NonInteractiveCheck {
     }
 
     fn applicable(&self, project: &Project) -> bool {
-        project.runner.is_some()
+        project.runner.is_some() && !project.binary_paths.is_empty()
     }
 
     fn run(&self, project: &Project) -> anyhow::Result<CheckResult> {
@@ -44,8 +43,11 @@ impl Check for NonInteractiveCheck {
             RunStatus::Timeout => {
                 CheckStatus::Warn("binary may be waiting for interactive input".into())
             }
-            RunStatus::Ok | RunStatus::Crash { .. } => CheckStatus::Pass,
-            _ => CheckStatus::Pass,
+            RunStatus::Ok => CheckStatus::Pass,
+            RunStatus::Crash { signal } => {
+                CheckStatus::Warn(format!("binary crashed on empty args (signal {signal})"))
+            }
+            _ => CheckStatus::Error(format!("unexpected status: {:?}", result.status)),
         };
 
         Ok(CheckResult {

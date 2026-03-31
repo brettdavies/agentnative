@@ -33,7 +33,10 @@ impl Check for HelpCheck {
             }
             RunStatus::Ok => CheckStatus::Fail(format!(
                 "--help exited with code {}",
-                result.exit_code.unwrap_or(-1)
+                result
+                    .exit_code
+                    .map(|c| c.to_string())
+                    .unwrap_or_else(|| "unknown".into())
             )),
             _ => CheckStatus::Fail(format!("--help failed: {:?}", result.status)),
         };

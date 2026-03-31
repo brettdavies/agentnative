@@ -42,40 +42,30 @@ fn run() -> Result<i32, AppError> {
     let cli = Cli::parse();
 
     // Extract check parameters, defaulting None command to `check .`
-    let (path, binary_only, source_only, principle, output, quiet, _include_tests) =
-        match cli.command {
-            Some(Commands::Check {
-                path,
-                binary,
-                source,
-                principle,
-                output,
-                quiet,
-                include_tests,
-            }) => (
-                path,
-                binary,
-                source,
-                principle,
-                output,
-                quiet,
-                include_tests,
-            ),
-            Some(Commands::Completions { shell }) => {
-                let mut cmd = <Cli as clap::CommandFactory>::command();
-                generate(shell, &mut cmd, "agentnative", &mut std::io::stdout());
-                return Ok(0);
-            }
-            None => (
-                PathBuf::from("."),
-                false,
-                false,
-                None,
-                OutputFormat::Text,
-                false,
-                false,
-            ),
-        };
+    let (path, binary_only, source_only, principle, output, quiet) = match cli.command {
+        Some(Commands::Check {
+            path,
+            binary,
+            source,
+            principle,
+            output,
+            quiet,
+            ..
+        }) => (path, binary, source, principle, output, quiet),
+        Some(Commands::Completions { shell }) => {
+            let mut cmd = <Cli as clap::CommandFactory>::command();
+            generate(shell, &mut cmd, "agentnative", &mut std::io::stdout());
+            return Ok(0);
+        }
+        None => (
+            PathBuf::from("."),
+            false,
+            false,
+            None,
+            OutputFormat::Text,
+            false,
+        ),
+    };
 
     let project = Project::discover(&path)?;
 

@@ -97,15 +97,9 @@ impl BinaryRunner {
             .env("NO_COLOR", "1")
             .env("AGENTNATIVE_CHECK", "1");
 
-        let mut child = loop {
-            match cmd.spawn() {
-                Ok(c) => break c,
-                Err(e) if e.raw_os_error() == Some(26) => {
-                    std::thread::sleep(Duration::from_millis(1));
-                    continue;
-                }
-                Err(e) => return Self::classify_spawn_error(e),
-            }
+        let mut child = match Self::spawn_with_retry(&mut cmd) {
+            Ok(c) => c,
+            Err(e) => return Self::classify_spawn_error(e),
         };
 
         // Read only the requested number of bytes from stdout.
@@ -163,17 +157,9 @@ impl BinaryRunner {
             cmd.env(k, v);
         }
 
-        // Retry on ETXTBSY (errno 26) — can happen when the executable was
-        // just written and the kernel hasn't fully released the write reference.
-        let mut child = loop {
-            match cmd.spawn() {
-                Ok(c) => break c,
-                Err(e) if e.raw_os_error() == Some(26) => {
-                    std::thread::sleep(Duration::from_millis(1));
-                    continue;
-                }
-                Err(e) => return Self::classify_spawn_error(e),
-            }
+        let mut child = match Self::spawn_with_retry(&mut cmd) {
+            Ok(c) => c,
+            Err(e) => return Self::classify_spawn_error(e),
         };
 
         // Take stdout/stderr handles so reader threads own them.
@@ -268,6 +254,23 @@ impl BinaryRunner {
         }
 
         Self::classify_exit(exit_status, stdout, stderr)
+    }
+
+    /// Spawn a command, retrying on ETXTBSY (errno 26) up to 50 times.
+    /// ETXTBSY occurs when the executable was just written and the kernel
+    /// hasn't fully released the write reference.
+    fn spawn_with_retry(cmd: &mut Command) -> Result<std::process::Child, std::io::Error> {
+        const MAX_RETRIES: u32 = 50;
+        for attempt in 0..MAX_RETRIES {
+            match cmd.spawn() {
+                Ok(child) => return Ok(child),
+                Err(e) if e.raw_os_error() == Some(26) && attempt < MAX_RETRIES - 1 => {
+                    std::thread::sleep(Duration::from_millis(1));
+                }
+                Err(e) => return Err(e),
+            }
+        }
+        unreachable!()
     }
 
     fn classify_spawn_error(e: std::io::Error) -> RunResult {
