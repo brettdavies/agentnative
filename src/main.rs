@@ -1,4 +1,6 @@
 mod checks;
+mod project;
+mod runner;
 mod source;
 mod types;
 
