@@ -1,6 +1,9 @@
+use std::path::PathBuf;
+use std::time::Duration;
+
 use crate::check::Check;
 use crate::project::Project;
-use crate::runner::RunStatus;
+use crate::runner::{BinaryRunner, RunStatus};
 use crate::types::{CheckGroup, CheckLayer, CheckResult, CheckStatus};
 
 pub struct NonInteractiveCheck;
@@ -15,7 +18,26 @@ impl Check for NonInteractiveCheck {
     }
 
     fn run(&self, project: &Project) -> anyhow::Result<CheckResult> {
-        let runner = project.runner.as_ref().unwrap();
+        // Use a dedicated short-timeout runner (1s) rather than the shared one.
+        // Running a binary with zero args risks infinite recursion if the target
+        // binary is agentnative itself (dogfood) or any CLI whose default action
+        // spawns long-running work. A 1s timeout is enough to detect stdin-blocking.
+        let binary = project.binary_paths[0].clone();
+        let runner = match BinaryRunner::new(binary, Duration::from_secs(1)) {
+            Ok(r) => r,
+            Err(e) => {
+                return Ok(CheckResult {
+                    id: self.id().to_string(),
+                    label: "Non-interactive by default".into(),
+                    group: CheckGroup::P1,
+                    layer: CheckLayer::Behavioral,
+                    status: CheckStatus::Error(format!("cannot create runner: {e}")),
+                });
+            }
+        };
+
+        // Run with no args and stdin null. A well-behaved CLI should either
+        // show help/usage and exit, or error out — not block waiting for input.
         let result = runner.run(&[], &[]);
 
         let status = match result.status {

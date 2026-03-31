@@ -85,10 +85,10 @@ fn run() -> Result<i32, AppError> {
     let has_binary = project.runner.is_some();
     let has_language = project.language.is_some();
 
-    // Guard against recursive execution: when agentnative checks a binary,
-    // the BinaryRunner sets AGENTNATIVE_CHECK=1. If the checked binary happens
-    // to be agentnative itself (dogfood), skip behavioral checks to prevent
-    // an infinite fork loop.
+    // AGENTNATIVE_CHECK is set by BinaryRunner on all child processes.
+    // When a child is agentnative itself (dogfood), we must skip behavioral
+    // checks to prevent infinite recursion: NonInteractiveCheck runs the
+    // binary with no args -> child runs check -> spawns grandchild -> ...
     let is_child = std::env::var("AGENTNATIVE_CHECK").is_ok();
 
     if !source_only && !is_child {
