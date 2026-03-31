@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use std::io::Read as _;
 use std::path::PathBuf;
 use std::process::{Command, Stdio};
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, Condvar, Mutex};
 use std::time::Duration;
 
 use anyhow::{Context, Result, bail};
@@ -96,9 +96,15 @@ impl BinaryRunner {
             .stderr(Stdio::piped())
             .env("NO_COLOR", "1");
 
-        let mut child = match cmd.spawn() {
-            Ok(c) => c,
-            Err(e) => return Self::classify_spawn_error(e),
+        let mut child = loop {
+            match cmd.spawn() {
+                Ok(c) => break c,
+                Err(e) if e.raw_os_error() == Some(26) => {
+                    std::thread::sleep(Duration::from_millis(1));
+                    continue;
+                }
+                Err(e) => return Self::classify_spawn_error(e),
+            }
         };
 
         // Read only the requested number of bytes from stdout.
@@ -155,9 +161,17 @@ impl BinaryRunner {
             cmd.env(k, v);
         }
 
-        let mut child = match cmd.spawn() {
-            Ok(c) => c,
-            Err(e) => return Self::classify_spawn_error(e),
+        // Retry on ETXTBSY (errno 26) — can happen when the executable was
+        // just written and the kernel hasn't fully released the write reference.
+        let mut child = loop {
+            match cmd.spawn() {
+                Ok(c) => break c,
+                Err(e) if e.raw_os_error() == Some(26) => {
+                    std::thread::sleep(Duration::from_millis(1));
+                    continue;
+                }
+                Err(e) => return Self::classify_spawn_error(e),
+            }
         };
 
         // Take stdout/stderr handles so reader threads own them.
@@ -184,40 +198,58 @@ impl BinaryRunner {
             out
         });
 
-        // Timeout watcher — sets the flag and kills via the shared child handle.
-        let timeout = self.timeout;
-        let child_for_timeout = Arc::clone(&child);
+        // Condvar-based timeout: the timeout thread sleeps until either the
+        // child exits (signaled via condvar) or the deadline expires.
+        // The poll loop uses try_wait so it never holds the child mutex for long.
+        let done = Arc::new((Mutex::new(false), Condvar::new()));
+        let done_for_timeout = Arc::clone(&done);
         let timed_out = Arc::new(Mutex::new(false));
         let timed_out_clone = Arc::clone(&timed_out);
+        let timeout = self.timeout;
+        let child_for_timeout = Arc::clone(&child);
 
-        std::thread::spawn(move || {
-            std::thread::sleep(timeout);
-            *timed_out_clone.lock().unwrap() = true;
-            if let Ok(mut c) = child_for_timeout.lock() {
-                let _ = c.kill();
+        let timeout_thread = std::thread::spawn(move || {
+            let (lock, cvar) = &*done_for_timeout;
+            let guard = lock.lock().unwrap();
+            // Check done flag first — if the child already exited before we
+            // started, the condvar notification was already sent and would be lost.
+            if *guard {
+                return;
+            }
+            let (guard, timeout_result) = cvar.wait_timeout(guard, timeout).unwrap();
+            if !*guard && timeout_result.timed_out() {
+                *timed_out_clone.lock().unwrap() = true;
+                if let Ok(mut c) = child_for_timeout.lock() {
+                    let _ = c.kill();
+                }
             }
         });
 
-        // Poll for child exit — brief sleeps so the timeout thread can acquire
-        // the lock and kill the child if the deadline expires.
+        // Poll for child exit with short sleeps — never holds child mutex long,
+        // so the timeout thread can always acquire it to kill.
         let exit_status = loop {
             {
                 let mut c = child.lock().unwrap();
                 match c.try_wait() {
                     Ok(Some(status)) => break Some(status),
-                    Ok(None) => {} // still running
+                    Ok(None) => {}
                     Err(_) => break None,
                 }
-            }
-            // Check if we timed out (the timeout thread already killed it).
+            } // mutex released here
             if *timed_out.lock().unwrap() {
-                // Reap the killed child.
-                let status = child.lock().unwrap().wait().ok();
-                let _ = status; // discard — we know it was killed
+                let _ = child.lock().unwrap().wait();
                 break None;
             }
             std::thread::sleep(Duration::from_millis(10));
         };
+
+        // Signal the timeout thread to wake up and exit immediately.
+        {
+            let (lock, cvar) = &*done;
+            *lock.lock().unwrap() = true;
+            cvar.notify_one();
+        }
+        timeout_thread.join().ok();
 
         let stdout = stdout_thread.join().unwrap_or_default();
         let stderr = stderr_thread.join().unwrap_or_default();

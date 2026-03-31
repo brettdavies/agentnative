@@ -68,13 +68,27 @@ pub(crate) mod tests {
 
         let script_path = dir.join("test.sh");
         let content = format!("#!/bin/sh\n{script}\n");
-        fs::write(&script_path, content).unwrap();
 
+        // Write and set executable in one step to avoid ETXTBSY race between
+        // fs::write close and set_permissions when tests run in parallel.
         #[cfg(unix)]
         {
-            use std::os::unix::fs::PermissionsExt;
-            fs::set_permissions(&script_path, fs::Permissions::from_mode(0o755)).unwrap();
+            use std::os::unix::fs::OpenOptionsExt;
+            std::fs::OpenOptions::new()
+                .write(true)
+                .create(true)
+                .truncate(true)
+                .mode(0o755)
+                .open(&script_path)
+                .and_then(|mut f| {
+                    use std::io::Write;
+                    f.write_all(content.as_bytes())
+                })
+                .unwrap();
         }
+
+        #[cfg(not(unix))]
+        fs::write(&script_path, content).unwrap();
 
         Project {
             path: PathBuf::from("."),
