@@ -33,8 +33,10 @@ pub struct RunResult {
     pub stderr: String,
     pub status: RunStatus,
     /// Whether stdout was truncated due to exceeding the capture limit.
+    #[expect(dead_code, reason = "public API for downstream consumers")]
     pub stdout_truncated: bool,
     /// Whether stderr was truncated due to exceeding the capture limit.
+    #[expect(dead_code, reason = "public API for downstream consumers")]
     pub stderr_truncated: bool,
 }
 
