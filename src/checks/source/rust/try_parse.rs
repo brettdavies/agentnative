@@ -1,14 +1,17 @@
-//! Check: Detect `.parse().unwrap()` and `.parse().expect()` patterns.
+//! Check: Detect `.parse().unwrap()` patterns.
 //!
 //! Principle: P4 (Actionable Errors) — Parsing user input should use
 //! proper error handling, not panicking unwraps. Prefer `?` or `match`.
+//!
+//! Only flags `.parse().unwrap()` — `.parse().expect()` is not flagged because
+//! the developer has already considered the error case and provided a message.
 
 use crate::check::Check;
 use crate::project::{Language, Project};
 use crate::source::find_pattern_matches;
 use crate::types::{CheckGroup, CheckLayer, CheckResult, CheckStatus};
 
-const PATTERNS: &[&str] = &["$RECV.parse().unwrap()", "$RECV.parse().expect($MSG)"];
+const PATTERNS: &[&str] = &["$RECV.parse().unwrap()"];
 
 /// Check trait implementation for parse-unwrap detection.
 pub struct TryParseCheck;
@@ -135,18 +138,15 @@ fn main() {
     }
 
     #[test]
-    fn warn_with_parse_expect() {
+    fn pass_with_parse_expect() {
+        // .parse().expect() is acceptable — the developer already considered the error
         let source = r#"
 fn main() {
     let port: u16 = args[1].parse().expect("bad port");
 }
 "#;
         let result = check_try_parse(source, "src/main.rs");
-        assert!(matches!(result.status, CheckStatus::Warn(_)));
-        if let CheckStatus::Warn(evidence) = &result.status {
-            assert!(evidence.contains("parse()"));
-            assert!(evidence.contains("expect"));
-        }
+        assert_eq!(result.status, CheckStatus::Pass);
     }
 
     #[test]
@@ -160,7 +160,8 @@ fn main() {
 "#;
         let result = check_try_parse(source, "src/main.rs");
         if let CheckStatus::Warn(evidence) = &result.status {
-            assert_eq!(evidence.lines().count(), 3);
+            // Only .parse().unwrap() lines are flagged, not .expect()
+            assert_eq!(evidence.lines().count(), 2);
         } else {
             panic!("Expected Warn");
         }
