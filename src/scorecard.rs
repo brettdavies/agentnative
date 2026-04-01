@@ -41,11 +41,11 @@ impl CheckResultView {
             CheckStatus::Error(e) => ("error".to_string(), Some(e.clone())),
         };
         // Serialize CheckGroup via serde_json for canonical format
-        let group = serde_json::to_value(&r.group)
+        let group = serde_json::to_value(r.group)
             .ok()
             .and_then(|v| v.as_str().map(|s| s.to_string()))
             .unwrap_or_else(|| format!("{:?}", r.group));
-        let layer = serde_json::to_value(&r.layer)
+        let layer = serde_json::to_value(r.layer)
             .ok()
             .and_then(|v| v.as_str().map(|s| s.to_string()))
             .unwrap_or_else(|| format!("{:?}", r.layer));
@@ -129,7 +129,7 @@ pub fn format_text(results: &[CheckResult], quiet: bool) -> String {
             .push(r);
     }
 
-    for (_order, (group, checks)) in &grouped {
+    for (group, checks) in grouped.values() {
         if !quiet {
             let _ = writeln!(out, "\n{}", group_display(group));
         }

@@ -1,5 +1,3 @@
-use std::path::Path;
-
 use ast_grep_core::Pattern;
 use ast_grep_core::tree_sitter::LanguageExt;
 use ast_grep_language::Rust;
@@ -36,44 +34,6 @@ pub fn find_pattern_matches(source: &str, pattern_str: &str) -> Vec<SourceLocati
             }
         })
         .collect()
-}
-
-/// Scan all `.rs` files under a directory for pattern matches.
-pub fn scan_rust_files(dir: &Path, pattern_str: &str) -> anyhow::Result<Vec<SourceLocation>> {
-    let mut results = Vec::new();
-
-    for entry in walkdir(dir)? {
-        let path = entry;
-        if path.extension().is_some_and(|e| e == "rs") {
-            let source = std::fs::read_to_string(&path)?;
-            let mut matches = find_pattern_matches(&source, pattern_str);
-            for m in &mut matches {
-                m.file = path.display().to_string();
-            }
-            results.extend(matches);
-        }
-    }
-
-    Ok(results)
-}
-
-/// Simple recursive directory walk (no external dep needed).
-fn walkdir(dir: &Path) -> anyhow::Result<Vec<std::path::PathBuf>> {
-    let mut files = Vec::new();
-    if dir.is_file() {
-        files.push(dir.to_path_buf());
-        return Ok(files);
-    }
-    for entry in std::fs::read_dir(dir)? {
-        let entry = entry?;
-        let path = entry.path();
-        if path.is_dir() {
-            files.extend(walkdir(&path)?);
-        } else {
-            files.push(path);
-        }
-    }
-    Ok(files)
 }
 
 #[cfg(test)]

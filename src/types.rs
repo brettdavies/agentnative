@@ -14,6 +14,7 @@ pub enum CheckStatus {
 
 /// Groups checks by principle or category.
 #[derive(Debug, Clone, Copy, Serialize, PartialEq, Eq)]
+#[allow(dead_code)]
 pub enum CheckGroup {
     P1,
     P2,
@@ -29,6 +30,7 @@ pub enum CheckGroup {
 /// Which layer the check operates in.
 #[derive(Debug, Clone, Copy, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
+#[allow(dead_code)]
 pub enum CheckLayer {
     Behavioral,
     Source,

@@ -24,6 +24,7 @@ use types::{CheckGroup, CheckResult, CheckStatus};
 
 fn main() {
     // Fix SIGPIPE handling so piping to head/grep works correctly.
+    #[cfg(unix)]
     unsafe {
         libc::signal(libc::SIGPIPE, libc::SIG_DFL);
     }
