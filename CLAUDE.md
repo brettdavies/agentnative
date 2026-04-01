@@ -61,9 +61,9 @@ Key decisions already made:
 
 ## CI and Quality
 
-**Pre-push hook:** `scripts/ci-check.sh` mirrors CI exactly: fmt, clippy with `-Dwarnings`, test, cargo-deny, and a
-Windows compatibility check. Installed as a git pre-push hook via symlink. If the hook is missing after a fresh clone,
-reinstall: `ln -sf ../../scripts/ci-check.sh .git/hooks/pre-push`
+**Pre-push hook:** `scripts/hooks/pre-push` mirrors CI exactly: fmt, clippy with `-Dwarnings`, test, cargo-deny, and a
+Windows compatibility check. Tracked in git and activated via `core.hooksPath`. After cloning, run: `git config
+core.hooksPath scripts/hooks`
 
 **Windows compatibility:** Only `libc` belongs in `[target.'cfg(unix)'.dependencies]`. All SIGPIPE/signal code must be
 inside `#[cfg(unix)]` blocks. The pre-push hook checks this statically.
