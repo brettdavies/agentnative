@@ -13,6 +13,9 @@ use crate::check::Check;
 use crate::project::{Language, Project};
 use crate::types::{CheckGroup, CheckLayer, CheckResult, CheckStatus};
 
+// Rust source check — lives in source/rust because the content patterns
+// (fn format_, impl Display, std::fmt::Write) are Rust-specific.
+
 pub struct OutputModuleCheck;
 
 impl Check for OutputModuleCheck {
@@ -25,27 +28,14 @@ impl Check for OutputModuleCheck {
     }
 
     fn layer(&self) -> CheckLayer {
-        CheckLayer::Project
+        CheckLayer::Source
     }
 
     fn applicable(&self, project: &Project) -> bool {
-        project.path.is_dir() && project.language.is_some()
+        project.language == Some(Language::Rust)
     }
 
     fn run(&self, project: &Project) -> anyhow::Result<CheckResult> {
-        // Content patterns are language-specific; skip unsupported languages
-        if !matches!(project.language, Some(Language::Rust)) {
-            return Ok(CheckResult {
-                id: self.id().to_string(),
-                label: "Centralized output module exists".into(),
-                group: self.group(),
-                layer: self.layer(),
-                status: CheckStatus::Skip(
-                    "output module detection not yet supported for this language".into(),
-                ),
-            });
-        }
-
         let parsed = project.parsed_files();
 
         for (path, parsed_file) in parsed.iter() {
@@ -227,6 +217,6 @@ fn main() {
         let check = OutputModuleCheck;
         assert_eq!(check.id(), "p2-output-module");
         assert_eq!(check.group(), CheckGroup::P2);
-        assert_eq!(check.layer(), CheckLayer::Project);
+        assert_eq!(check.layer(), CheckLayer::Source);
     }
 }

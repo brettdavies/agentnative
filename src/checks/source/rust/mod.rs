@@ -7,6 +7,7 @@ pub mod naked_println;
 pub mod no_color;
 pub mod no_pager;
 pub mod output_clamping;
+pub mod output_module;
 pub mod process_exit;
 pub mod structured_output;
 pub mod timeout_flag;
@@ -34,5 +35,6 @@ pub fn all_rust_checks() -> Vec<Box<dyn Check>> {
         Box::new(no_pager::NoPagerCheck),
         Box::new(timeout_flag::TimeoutFlagCheck),
         Box::new(tty_detection::TtyDetectionCheck),
+        Box::new(output_module::OutputModuleCheck),
     ]
 }
