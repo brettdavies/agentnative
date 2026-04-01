@@ -10,6 +10,14 @@ impl Check for VersionCheck {
         "p3-version"
     }
 
+    fn group(&self) -> CheckGroup {
+        CheckGroup::P3
+    }
+
+    fn layer(&self) -> CheckLayer {
+        CheckLayer::Behavioral
+    }
+
     fn applicable(&self, project: &Project) -> bool {
         project.runner.is_some()
     }

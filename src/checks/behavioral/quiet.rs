@@ -10,6 +10,14 @@ impl Check for QuietCheck {
         "p7-quiet"
     }
 
+    fn group(&self) -> CheckGroup {
+        CheckGroup::P7
+    }
+
+    fn layer(&self) -> CheckLayer {
+        CheckLayer::Behavioral
+    }
+
     fn applicable(&self, project: &Project) -> bool {
         project.runner.is_some()
     }

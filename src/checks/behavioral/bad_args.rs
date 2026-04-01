@@ -10,6 +10,14 @@ impl Check for BadArgsCheck {
         "p4-bad-args"
     }
 
+    fn group(&self) -> CheckGroup {
+        CheckGroup::P4
+    }
+
+    fn layer(&self) -> CheckLayer {
+        CheckLayer::Behavioral
+    }
+
     fn applicable(&self, project: &Project) -> bool {
         project.runner.is_some()
     }

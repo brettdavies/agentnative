@@ -40,6 +40,7 @@ pub(crate) mod tests {
             binary_paths: vec![PathBuf::from(binary)],
             manifest_path: None,
             runner: Some(BinaryRunner::new(PathBuf::from(binary), Duration::from_secs(5)).unwrap()),
+            include_tests: false,
             parsed_files: RefCell::new(HashMap::new()),
         }
     }
@@ -96,6 +97,7 @@ pub(crate) mod tests {
             binary_paths: vec![script_path.clone()],
             manifest_path: None,
             runner: Some(BinaryRunner::new(script_path, Duration::from_secs(5)).unwrap()),
+            include_tests: false,
             parsed_files: RefCell::new(HashMap::new()),
         }
     }

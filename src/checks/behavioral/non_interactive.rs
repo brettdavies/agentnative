@@ -10,6 +10,14 @@ impl Check for NonInteractiveCheck {
         "p1-non-interactive"
     }
 
+    fn group(&self) -> CheckGroup {
+        CheckGroup::P1
+    }
+
+    fn layer(&self) -> CheckLayer {
+        CheckLayer::Behavioral
+    }
+
     fn applicable(&self, project: &Project) -> bool {
         project.runner.is_some()
     }

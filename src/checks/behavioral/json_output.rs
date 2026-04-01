@@ -10,6 +10,14 @@ impl Check for JsonOutputCheck {
         "p2-json-output"
     }
 
+    fn group(&self) -> CheckGroup {
+        CheckGroup::P2
+    }
+
+    fn layer(&self) -> CheckLayer {
+        CheckLayer::Behavioral
+    }
+
     fn applicable(&self, project: &Project) -> bool {
         project.runner.is_some()
     }

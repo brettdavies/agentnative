@@ -18,6 +18,14 @@ impl Check for UnwrapCheck {
         "code-unwrap"
     }
 
+    fn group(&self) -> CheckGroup {
+        CheckGroup::CodeQuality
+    }
+
+    fn layer(&self) -> CheckLayer {
+        CheckLayer::Source
+    }
+
     fn applicable(&self, project: &Project) -> bool {
         project.language == Some(Language::Rust)
     }

@@ -32,7 +32,14 @@ pub struct RunResult {
     pub stdout: String,
     pub stderr: String,
     pub status: RunStatus,
+    /// Whether stdout was truncated due to exceeding the capture limit.
+    pub stdout_truncated: bool,
+    /// Whether stderr was truncated due to exceeding the capture limit.
+    pub stderr_truncated: bool,
 }
+
+/// Maximum bytes to capture from stdout/stderr (1 MB).
+const MAX_OUTPUT_BYTES: usize = 1_048_576;
 
 type CacheKey = (Vec<String>, Vec<(String, String)>);
 
@@ -144,6 +151,8 @@ impl BinaryRunner {
             stdout: stdout_str,
             stderr: stderr_output,
             status: RunStatus::Ok,
+            stdout_truncated: false,
+            stderr_truncated: false,
         }
     }
 
@@ -172,22 +181,10 @@ impl BinaryRunner {
         // Wrap child in Arc<Mutex> for shared access between timeout + main thread.
         let child = Arc::new(Mutex::new(child));
 
-        // Reader threads.
-        let stdout_thread = std::thread::spawn(move || {
-            let mut out = String::new();
-            if let Some(mut h) = stdout_handle {
-                let _ = h.read_to_string(&mut out);
-            }
-            out
-        });
+        // Reader threads — cap at MAX_OUTPUT_BYTES + 1 to detect truncation.
+        let stdout_thread = std::thread::spawn(move || read_capped(stdout_handle));
 
-        let stderr_thread = std::thread::spawn(move || {
-            let mut out = String::new();
-            if let Some(mut h) = stderr_handle {
-                let _ = h.read_to_string(&mut out);
-            }
-            out
-        });
+        let stderr_thread = std::thread::spawn(move || read_capped(stderr_handle));
 
         // Condvar-based timeout: the timeout thread sleeps until either the
         // child exits (signaled via condvar) or the deadline expires.
@@ -242,10 +239,10 @@ impl BinaryRunner {
         }
         timeout_thread.join().ok();
 
-        let stdout = stdout_thread.join().unwrap_or_default();
-        let stderr = stderr_thread.join().unwrap_or_default();
+        let (stdout, stdout_truncated) = stdout_thread.join().unwrap_or_default();
+        let (stderr, stderr_truncated) = stderr_thread.join().unwrap_or_default();
 
-        let was_timeout = *timed_out.lock().unwrap();
+        let was_timeout = *timed_out.lock().expect("mutex poisoned");
 
         if was_timeout {
             return RunResult {
@@ -253,10 +250,18 @@ impl BinaryRunner {
                 stdout,
                 stderr,
                 status: RunStatus::Timeout,
+                stdout_truncated,
+                stderr_truncated,
             };
         }
 
-        Self::classify_exit(exit_status, stdout, stderr)
+        Self::classify_exit(
+            exit_status,
+            stdout,
+            stderr,
+            stdout_truncated,
+            stderr_truncated,
+        )
     }
 
     /// Spawn a command, retrying on ETXTBSY (errno 26) up to 50 times.
@@ -287,6 +292,8 @@ impl BinaryRunner {
             stdout: String::new(),
             stderr: String::new(),
             status,
+            stdout_truncated: false,
+            stderr_truncated: false,
         }
     }
 
@@ -295,6 +302,8 @@ impl BinaryRunner {
         exit_status: Option<std::process::ExitStatus>,
         stdout: String,
         stderr: String,
+        stdout_truncated: bool,
+        stderr_truncated: bool,
     ) -> RunResult {
         match exit_status {
             Some(status) => {
@@ -304,6 +313,8 @@ impl BinaryRunner {
                         stdout,
                         stderr,
                         status: RunStatus::Crash { signal: sig },
+                        stdout_truncated,
+                        stderr_truncated,
                     }
                 } else {
                     RunResult {
@@ -311,6 +322,8 @@ impl BinaryRunner {
                         stdout,
                         stderr,
                         status: RunStatus::Ok,
+                        stdout_truncated,
+                        stderr_truncated,
                     }
                 }
             }
@@ -319,6 +332,8 @@ impl BinaryRunner {
                 stdout,
                 stderr,
                 status: RunStatus::Error("failed to wait on child".into()),
+                stdout_truncated,
+                stderr_truncated,
             },
         }
     }
@@ -328,6 +343,8 @@ impl BinaryRunner {
         exit_status: Option<std::process::ExitStatus>,
         stdout: String,
         stderr: String,
+        stdout_truncated: bool,
+        stderr_truncated: bool,
     ) -> RunResult {
         match exit_status {
             Some(status) => RunResult {
@@ -335,14 +352,40 @@ impl BinaryRunner {
                 stdout,
                 stderr,
                 status: RunStatus::Ok,
+                stdout_truncated,
+                stderr_truncated,
             },
             None => RunResult {
                 exit_code: None,
                 stdout,
                 stderr,
                 status: RunStatus::Error("failed to wait on child".into()),
+                stdout_truncated,
+                stderr_truncated,
             },
         }
+    }
+}
+
+/// Read from an optional handle, capping at MAX_OUTPUT_BYTES.
+///
+/// Returns `(content, truncated)`. Uses `Read::take(N+1)` so we can detect
+/// whether the stream exceeded exactly N bytes without a separate probe.
+fn read_capped(handle: Option<impl std::io::Read>) -> (String, bool) {
+    let Some(h) = handle else {
+        return (String::new(), false);
+    };
+    let mut limited = h.take((MAX_OUTPUT_BYTES + 1) as u64);
+    let mut buf = Vec::new();
+    let _ = limited.read_to_end(&mut buf);
+    let truncated = buf.len() > MAX_OUTPUT_BYTES;
+    if truncated {
+        buf.truncate(MAX_OUTPUT_BYTES);
+        let mut s = String::from_utf8_lossy(&buf).into_owned();
+        s.push_str("\n[output truncated at 1MB]");
+        (s, true)
+    } else {
+        (String::from_utf8_lossy(&buf).into_owned(), false)
     }
 }
 
@@ -421,5 +464,50 @@ mod tests {
             .expect("sleep should exist");
         let result = runner.run(&["10"], &[]);
         assert_eq!(result.status, RunStatus::Timeout);
+    }
+
+    #[test]
+    fn normal_output_not_truncated() {
+        let runner =
+            BinaryRunner::new("/bin/echo".into(), Duration::from_secs(5)).expect("echo exists");
+        let result = runner.run(&["hello"], &[]);
+        assert!(!result.stdout_truncated);
+        assert!(!result.stderr_truncated);
+    }
+
+    #[test]
+    fn read_capped_small_input() {
+        let data = b"hello world";
+        let (output, truncated) = read_capped(Some(&data[..]));
+        assert_eq!(output, "hello world");
+        assert!(!truncated);
+    }
+
+    #[test]
+    fn read_capped_over_limit() {
+        // Create data that exceeds MAX_OUTPUT_BYTES
+        let data = vec![b'x'; MAX_OUTPUT_BYTES + 100];
+        let (output, truncated) = read_capped(Some(&data[..]));
+        assert!(truncated);
+        assert!(output.ends_with("\n[output truncated at 1MB]"));
+        // The content before the notice should be exactly MAX_OUTPUT_BYTES of 'x'
+        let prefix = &output[..MAX_OUTPUT_BYTES];
+        assert!(prefix.chars().all(|c| c == 'x'));
+    }
+
+    #[test]
+    fn read_capped_exactly_limit_not_truncated() {
+        // Exactly MAX_OUTPUT_BYTES should NOT be truncated
+        let data = vec![b'y'; MAX_OUTPUT_BYTES];
+        let (output, truncated) = read_capped(Some(&data[..]));
+        assert!(!truncated);
+        assert_eq!(output.len(), MAX_OUTPUT_BYTES);
+    }
+
+    #[test]
+    fn read_capped_none_handle() {
+        let (output, truncated) = read_capped(None::<&[u8]>);
+        assert!(output.is_empty());
+        assert!(!truncated);
     }
 }
