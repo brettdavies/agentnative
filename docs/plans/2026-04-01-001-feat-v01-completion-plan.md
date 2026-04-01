@@ -1,7 +1,7 @@
 ---
 title: "feat: Complete v0.1 — reliability fixes, remaining checks, test fixtures, README"
 type: feat
-status: active
+status: completed
 date: 2026-04-01
 origin: ~/.gstack/projects/brettdavies-agentnative/brett-main-design-20260327-214808.md
 ---
