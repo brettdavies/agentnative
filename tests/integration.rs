@@ -305,6 +305,6 @@ fn test_bare_invocation_prints_help() {
     // recursive check suite.
     cmd()
         .assert()
-        .code(0)
-        .stdout(predicate::str::contains("Usage"));
+        .code(2)
+        .stderr(predicate::str::contains("Usage"));
 }
