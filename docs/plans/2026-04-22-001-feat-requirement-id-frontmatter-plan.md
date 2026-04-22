@@ -9,6 +9,23 @@ base: dev
 
 # feat: Requirement-ID frontmatter migration + principles governance
 
+> **Amendments recorded during implementation (2026-04-22):**
+>
+> - **`last-revised:` dates DID bump to 2026-04-22** on all seven principles. The original plan said "do NOT update"
+>   because no MUST/SHOULD/MAY tier moved; implementation chose Option B for internal consistency with the MINOR
+>   `VERSION` bump. If the frontmatter contract is big enough for MINOR, it is big enough for each principle's
+>   canonical record to carry today's date. `CONTRIBUTING.md` is amended in the same PR to codify this rule
+>   ("MINOR also applies when the requirement frontmatter shape or ID contract changes").
+> - **Validation runs locally as a pre-push hook, not remote CI.** `scripts/hooks/pre-push` runs
+>   `scripts/validate-principles.mjs` against real principles and `scripts/test-validate-principles.mjs` against three
+>   regression fixtures in `scripts/__fixtures__/`. Activation is a one-time `git config core.hooksPath scripts/hooks`.
+>   The original plan called for a GitHub Actions workflow; this repo's maintainer-driven scale is better served by the
+>   same pre-push pattern used in the Rust repos. Remote CI can be added later without rework.
+> - **Out-of-scope items are tracked.** Publish workflow, badge surface, vault archival, site `sync-spec.sh`, and
+>   the companion `agentnative-cli` PR remain out of scope for this branch (see "Scope Boundaries" below). They are
+>   named here and carried in project memory; a follow-up roadmap in `docs/plans/` will track them once this plan
+>   closes.
+
 ## Overview
 
 Establish this repo as source-of-truth for the 46 requirement IDs (`p1-must-env-var` … `p7-may-auto-verbosity`), migrate

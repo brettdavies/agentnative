@@ -25,3 +25,16 @@ Under the following terms:
   No additional restrictions — You may not apply legal terms or
   technological measures that legally restrict others from doing anything
   the license permits.
+
+--------------------------------------------------------------------------
+
+Scripts (dual-licensed MIT OR Apache-2.0)
+
+Files under `scripts/` — the principle-frontmatter validator, its
+regression fixtures, and the pre-push hook — are NOT spec text and are
+dual-licensed under either the MIT License (see `LICENSE-MIT`) or the
+Apache License, Version 2.0 (see `LICENSE-APACHE`), at your option. Each
+script carries an `SPDX-License-Identifier: MIT OR Apache-2.0` header.
+
+This matches the licensing of the companion `anc` checker tool in
+`brettdavies/agentnative-cli`.

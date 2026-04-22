@@ -9,7 +9,7 @@ Seven principles for CLI tools operated by AI agents.
 ## Principles
 
 | # | Principle | Summary |
-|---|-----------|---------|
+| --- | --- | --- |
 | P1 | Non-Interactive by Default | Never block on TTY input during normal operation |
 | P2 | Structured, Parseable Output | Offer machine-readable formats alongside human text |
 | P3 | Progressive Help Discovery | Layer help from one-liner to full reference |
@@ -45,8 +45,20 @@ Spec text is available under [CC BY 4.0](https://creativecommons.org/licenses/by
 
 The `anc` checker tool is separately licensed under MIT and Apache-2.0.
 
+Scripts under `scripts/` (the principle-frontmatter validator, its regression fixtures, and the pre-push hook) are not
+spec text; they are dual-licensed under either MIT or Apache-2.0 at your option, matching the `anc` checker. Each script
+carries an `SPDX-License-Identifier: MIT OR Apache-2.0` header. See [`LICENSE`](LICENSE) for the carve-out,
+[`LICENSE-MIT`](LICENSE-MIT), and [`LICENSE-APACHE`](LICENSE-APACHE).
+
 ## Related
 
 - [anc.dev](https://anc.dev) — the rendered spec site
 - [agentnative-cli](https://github.com/brettdavies/agentnative-cli) — the CLI linter that checks compliance
 - [agentnative-site](https://github.com/brettdavies/agentnative-site) — the website source
+
+## Decision records
+
+- [P1 — behavioral MUST wording](docs/decisions/p1-behavioral-must.md) — why the MUST describes observable behavior
+  instead of enumerating prompt and TUI APIs, and what the automated-check verification boundary is.
+- [Naming — `agentnative`, `anc`, `anc.dev`](docs/decisions/naming-rationale.md) — the rationale behind the project
+  name, the `anc` binary alias, and the `anc.dev` domain, plus the candidates that were rejected.

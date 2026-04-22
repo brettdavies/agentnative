@@ -19,8 +19,12 @@ frontmatter are the machine-readable contract with downstream repos.
 
 ## Authoritative content
 
-- `principles/p1-*.md` through `p7-*.md` — each principle, with YAML frontmatter (`last-revised: YYYY-MM-DD`) and
-  MUST/SHOULD/MAY requirements in RFC 2119 language.
+- `principles/p1-*.md` through `p7-*.md` — each principle, with YAML frontmatter (`id`, `title`, `last-revised`,
+  `status`, `requirements[]`) and MUST/SHOULD/MAY prose in RFC 2119 language. `requirements[]` is the machine-readable
+  contract: each entry carries a stable `id`, a `level` (must/should/may), an `applicability` (`universal` or `{if:
+  <reason>}`), and a one-sentence `summary`. Downstream consumers (the `anc` CLI, the site) read the frontmatter; the
+  prose is the human-readable expansion. See [`principles/AGENTS.md`](principles/AGENTS.md) for the full per-file shape
+  and pressure-test protocol.
 - `VERSION` — single-line semver-adjacent version. MINOR bumps on MUST changes; PATCH on SHOULD/MAY changes.
 - `CHANGELOG.md` — spec evolution, grouped by principle.
 - `CONTRIBUTING.md` — canonical routing doc across the three-repo ecosystem; graduated AI-disclosure gate; coupled
@@ -30,6 +34,11 @@ frontmatter are the machine-readable contract with downstream repos.
   PRs require human co-sign.
 - `.github/rulesets/protect-main.json`, `protect-dev.json` — branch protection, applied via `gh api` (see
   `RELEASES.md`).
+- `docs/decisions/` — named decision records cited from principle prose and repo docs.
+  [`p1-behavioral-must.md`](docs/decisions/p1-behavioral-must.md) records the reasoning behind P1's behavioral-MUST
+  wording and the verification boundary automated checks can claim.
+  [`naming-rationale.md`](docs/decisions/naming-rationale.md) records why the project is named `agentnative` with alias
+  `anc` and domain `anc.dev`, and the candidate names that were rejected.
 
 ## Voice
 
