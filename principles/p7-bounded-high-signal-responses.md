@@ -1,5 +1,40 @@
 ---
-last-revised: 2026-04-20
+id: p7
+title: Bounded, High-Signal Responses
+last-revised: 2026-04-22
+status: draft
+requirements:
+  - id: p7-must-quiet
+    level: must
+    applicability: universal
+    summary: A `--quiet` flag suppresses non-essential output; only requested data and errors appear.
+  - id: p7-must-list-clamping
+    level: must
+    applicability:
+      if: CLI has list-style commands
+    summary: "List operations clamp to a sensible default maximum; when truncated, indicate it (`\"truncated\": true` in JSON, stderr note in text)."
+  - id: p7-should-verbose
+    level: should
+    applicability: universal
+    summary: A `--verbose` flag (or `-v` / `-vv`) escalates diagnostic detail when agents need to debug failures.
+  - id: p7-should-limit
+    level: should
+    applicability:
+      if: CLI has list-style commands
+    summary: A `--limit` or `--max-results` flag lets callers request exactly the number of items they want.
+  - id: p7-should-timeout
+    level: should
+    applicability: universal
+    summary: A `--timeout` flag bounds execution time so agents are not blocked indefinitely.
+  - id: p7-may-cursor-pagination
+    level: may
+    applicability:
+      if: CLI returns paginated results
+    summary: Cursor-based pagination flags (`--after`, `--before`) for efficient traversal of large result sets.
+  - id: p7-may-auto-verbosity
+    level: may
+    applicability: universal
+    summary: Automatic verbosity reduction in non-TTY contexts (same behavior `--quiet` explicitly requests).
 ---
 
 # P7: Bounded, High-Signal Responses

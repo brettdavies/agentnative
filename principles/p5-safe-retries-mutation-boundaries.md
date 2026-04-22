@@ -1,5 +1,29 @@
 ---
-last-revised: 2026-04-20
+id: p5
+title: Safe Retries and Explicit Mutation Boundaries
+last-revised: 2026-04-22
+status: draft
+requirements:
+  - id: p5-must-force-yes
+    level: must
+    applicability:
+      if: CLI has destructive operations
+    summary: Destructive operations (delete, overwrite, bulk modify) require an explicit `--force` or `--yes` flag.
+  - id: p5-must-read-write-distinction
+    level: must
+    applicability:
+      if: CLI has both read and write operations
+    summary: The distinction between read and write commands is clear from the command name and help text alone.
+  - id: p5-must-dry-run
+    level: must
+    applicability:
+      if: CLI has write operations
+    summary: A `--dry-run` flag is present on every write command; dry-run output respects `--output json`.
+  - id: p5-should-idempotency
+    level: should
+    applicability:
+      if: CLI has write operations
+    summary: Write operations are idempotent where the domain allows it — running the same command twice produces the same result.
 ---
 
 # P5: Safe Retries and Explicit Mutation Boundaries

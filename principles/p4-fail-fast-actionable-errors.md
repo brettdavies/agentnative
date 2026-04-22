@@ -1,5 +1,34 @@
 ---
-last-revised: 2026-04-20
+id: p4
+title: Fail Fast with Actionable Errors
+last-revised: 2026-04-22
+status: draft
+requirements:
+  - id: p4-must-try-parse
+    level: must
+    applicability: universal
+    summary: Parse arguments with `try_parse()` instead of `parse()` so `--output json` can emit JSON parse errors.
+  - id: p4-must-exit-code-mapping
+    level: must
+    applicability: universal
+    summary: Error types map to distinct exit codes (0, 1, 2, 77, 78).
+  - id: p4-must-actionable-errors
+    level: must
+    applicability: universal
+    summary: Every error message contains what failed, why, and what to do next.
+  - id: p4-should-structured-enum
+    level: should
+    applicability: universal
+    summary: Error types use a structured enum (via `thiserror` in Rust) with variant-to-kind mapping for JSON serialization.
+  - id: p4-should-gating-before-network
+    level: should
+    applicability:
+      if: CLI makes network calls
+    summary: Config and auth validation happen before any network call (three-tier dependency gating).
+  - id: p4-should-json-error-output
+    level: should
+    applicability: universal
+    summary: "Error output respects `--output json`: JSON-formatted errors go to stderr when JSON output is selected."
 ---
 
 # P4: Fail Fast with Actionable Errors

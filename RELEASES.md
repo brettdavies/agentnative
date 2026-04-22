@@ -12,12 +12,12 @@ feature branch → PR to dev (squash merge)
 
 ## Branches
 
-| Branch        | Role                              | Lifetime                       | Protection                                |
-| ------------- | --------------------------------- | ------------------------------ | ----------------------------------------- |
-| `main`        | Production. Only release commits. | Forever.                       | `.github/rulesets/protect-main.json`      |
-| `dev`         | Integration. All feature PRs land here. | Forever. Never delete.   | `.github/rulesets/protect-dev.json`       |
+| Branch | Role | Lifetime | Protection |
+| --- | --- | --- | --- |
+| `main` | Production. Only release commits. | Forever. | `.github/rulesets/protect-main.json` |
+| `dev` | Integration. All feature PRs land here. | Forever. Never delete. | `.github/rulesets/protect-dev.json` |
 | `feat/*`, `fix/*`, `chore/*`, `docs/*` | Feature work. | One PR's worth. Auto-deleted on merge. | None — squash into dev freely. |
-| `release/*`   | Head of a dev → main PR.          | One release's worth. Auto-deleted on merge. | None.                     |
+| `release/*` | Head of a dev → main PR. | One release's worth. Auto-deleted on merge. | None. |
 
 `dev` is a **forever branch**. Never delete it locally or remotely, even after a `release/* → main` merge. The next
 release cycle reuses the same `dev`. The repo's `deleteBranchOnMerge: true` setting doesn't touch `dev` as long as `dev`

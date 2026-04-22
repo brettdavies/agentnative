@@ -5,7 +5,7 @@ This document is the canonical routing guide for all contributions across the th
 ## Where to file
 
 | I want to... | File on |
-|---|---|
+| --- | --- |
 | Propose a principle edit (pressure-test) | [agentnative](https://github.com/brettdavies/agentnative/issues/new?template=pressure-test.yml) |
 | Grade a real CLI against the standard | [agentnative](https://github.com/brettdavies/agentnative/issues/new?template=grade-a-cli.yml) |
 | Ask a question about the spec | [agentnative](https://github.com/brettdavies/agentnative/issues/new?template=spec-question.yml) |
@@ -32,7 +32,7 @@ applies to:
 ## Human co-sign policy (graduated gate)
 
 | Contribution type | AI disclosure | Human co-sign |
-|---|---|---|
+| --- | --- | --- |
 | Bug reports | Required | Not required |
 | CLI grading submissions | Required | Not required |
 | Spec questions | Required | Not required |
@@ -51,7 +51,7 @@ changes a principle's MUST/SHOULD/MAY requirements:
 2. In the PR body, include **one** of:
 
 - A link to the companion PR in `brettdavies/agentnative-cli` (e.g.,
-     `https://github.com/brettdavies/agentnative-cli/pull/42`)
+  `https://github.com/brettdavies/agentnative-cli/pull/42`)
 - The text "no check changes needed" with a brief justification
 
 This ensures the spec and checker stay in sync. The spec version bumps when a principle's revision date changes.
@@ -74,7 +74,23 @@ Duplicate issues fragment discussion and slow resolution.
 
 ## Versioning policy
 
-- Each principle carries a `last-revised: YYYY-MM-DD` date in frontmatter
-- The date updates when any MUST/SHOULD/MAY changes tier, is added, or is removed
-- Prose-only edits (clarity, examples, typos) do NOT update the date
-- The spec version (in `VERSION`) bumps: MINOR for MUST changes, PATCH for SHOULD/MAY changes
+- Each principle carries a `last-revised: YYYY-MM-DD` date in frontmatter.
+- The date updates when any MUST/SHOULD/MAY changes tier, is added, or is removed, AND when the requirement frontmatter
+  shape or ID contract changes (adding `requirements[]`, renaming an `id`, changing the `applicability` shape, etc.).
+  Downstream consumers pin against the frontmatter, so a shape change is a consumer-visible change.
+- Prose-only edits (clarity, examples, typos) do NOT update the date.
+- The spec version (in `VERSION`) bumps:
+- **MINOR** — MUST changes, OR changes to the requirement frontmatter shape / ID contract.
+- **PATCH** — SHOULD/MAY changes, prose edits to an existing requirement.
+
+## Contributor setup
+
+The repo ships a pre-push hook that validates principle frontmatter before each push (schema check, ID uniqueness,
+bullet-count parity, plus regression fixtures for the validator itself). Activate it once after clone:
+
+```bash
+git config core.hooksPath scripts/hooks
+```
+
+First run installs `js-yaml@4.1.0` into a gitignored `node_modules/`; subsequent runs are fast. No remote CI replaces
+this — a failing hook is the gate.
