@@ -1,0 +1,12 @@
+name: Guard main from engineering docs
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  pull-requests: read
+
+jobs:
+  guard-docs:
+    uses: brettdavies/.github/.github/workflows/guard-main-docs.yml@main
