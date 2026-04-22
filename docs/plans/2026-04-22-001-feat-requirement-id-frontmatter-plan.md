@@ -1,15 +1,34 @@
 ---
 title: "feat: Requirement-ID frontmatter migration + principles governance"
 type: feat
-status: ready
+status: shipped
 date: 2026-04-22
-branch: feat/requirement-id-frontmatter
+shipped: 2026-04-22
+branch: feat/requirement-contract
 base: dev
+pr: "https://github.com/brettdavies/agentnative/pull/3"
+merge-commit: 2b01eee64d1e63b01ac6ef0771ac38a72bfacfed
 ---
 
 # feat: Requirement-ID frontmatter migration + principles governance
 
-> **Amendments recorded during implementation (2026-04-22):**
+> **Close-out (2026-04-22).** Squash-merged to `dev` as
+> [PR #3](https://github.com/brettdavies/agentnative/pull/3) at commit `2b01eee`. Summary of outcomes vs the plan
+> below:
+>
+> - **Implementation Units 1–7: landed as described.** Handoff commit, frontmatter migration for all 7 principles,
+>   `status: draft` on each, `principles/AGENTS.md`, both decision records, and the citation edits all shipped.
+> - **Unit 8 landed as a local pre-push hook, not a GitHub Actions workflow.** See the "Amendments during
+>   implementation" block below. Same verification surface (schema, ID uniqueness, bullet-count parity, plus regression
+>   fixtures), activated via `git config core.hooksPath scripts/hooks`.
+> - **Unit 9 (companion `agentnative-cli` PR) was deliberately deferred** and is now tracked as item 5 of
+>   [`2026-04-22-002-post-frontmatter-roadmap.md`](2026-04-22-002-post-frontmatter-roadmap.md). The CLI needs a stable
+>   `main` SHA to vendor from; filing the companion PR before `dev → main` cut would pin against a short-lived ref.
+> - **Scope Boundaries: publish workflow, badge, vault archival, site `sync-spec.sh`** remain out of scope here and
+>   are tracked as items 1–4 of the roadmap above.
+> - **Open Questions resolved or migrated** — see the Open Questions section below for per-question resolution notes.
+>
+> **Amendments during implementation (2026-04-22):**
 >
 > - **`last-revised:` dates DID bump to 2026-04-22** on all seven principles. The original plan said "do NOT update"
 >   because no MUST/SHOULD/MAY tier moved; implementation chose Option B for internal consistency with the MINOR
@@ -18,13 +37,23 @@ base: dev
 >   ("MINOR also applies when the requirement frontmatter shape or ID contract changes").
 > - **Validation runs locally as a pre-push hook, not remote CI.** `scripts/hooks/pre-push` runs
 >   `scripts/validate-principles.mjs` against real principles and `scripts/test-validate-principles.mjs` against three
->   regression fixtures in `scripts/__fixtures__/`. Activation is a one-time `git config core.hooksPath scripts/hooks`.
->   The original plan called for a GitHub Actions workflow; this repo's maintainer-driven scale is better served by the
->   same pre-push pattern used in the Rust repos. Remote CI can be added later without rework.
+>   regression fixtures in `scripts/__fixtures__/`, plus a relative-link check (`scripts/check-links.mjs`), the
+>   `md-wrap.py --check` formatter gate, and `markdownlint-cli2` with the local config. Activation is a one-time
+>   `git config core.hooksPath scripts/hooks`. The original plan called for a GitHub Actions workflow; this repo's
+>   maintainer-driven scale is better served by the same pre-push pattern used in the Rust repos. Remote CI can be
+>   added later without rework.
+> - **`scripts/` is dual-licensed `MIT OR Apache-2.0`** (unplanned but substantive): `LICENSE-MIT`, `LICENSE-APACHE`,
+>   SPDX headers on each script, carve-out noted in `LICENSE` and `README.md`. Matches `agentnative-cli`.
+> - **Pre-existing MD060 table-alignment errors in `RELEASES.md` fixed** as a byproduct of landing the new markdownlint
+>   pre-push stage. Upstream template in the `github-repo-setup` skill was corrected in a separate commit on the
+>   `agent-skills` repo.
+> - **Branch renamed** from `feat/requirement-id-frontmatter` to `feat/requirement-contract` before push — scope grew
+>   beyond the ID migration and the new name better reflects the SoT-contract framing.
 > - **Out-of-scope items are tracked.** Publish workflow, badge surface, vault archival, site `sync-spec.sh`, and
 >   the companion `agentnative-cli` PR remain out of scope for this branch (see "Scope Boundaries" below). They are
->   named here and carried in project memory; a follow-up roadmap in `docs/plans/` will track them once this plan
->   closes.
+>   named here and carried in project memory;
+>   [`2026-04-22-002-post-frontmatter-roadmap.md`](2026-04-22-002-post-frontmatter-roadmap.md) tracks them with
+>   revisit triggers.
 
 ## Overview
 
@@ -268,13 +297,23 @@ frontmatter must exist for the CLI to vendor).
 - (a) matches the site-side pattern and the 2026-04-22 SoT decision; recommend (a) unless the CLI author prefers
   tarball-fetch. Decision lands in the companion PR.
 
+   **Resolution (2026-04-22):** Migrated to the companion CLI PR (roadmap item 5 in
+   [`2026-04-22-002-post-frontmatter-roadmap.md`](2026-04-22-002-post-frontmatter-roadmap.md)). Recommendation stands
+   at (a) commit-a-copy; final decision belongs to the CLI-side branch when filed.
+
 1. **Does `status: draft` surface anywhere today?** The site and CLI don't currently read it. Recommendation: land the
    field now so downstream consumers can opt in later (additive, non-breaking). Alternative: omit until a consumer
    exists. User call.
 
+   **Resolution (2026-04-22):** Landed the field on all seven principles. Additive, non-breaking; downstream consumers
+   can opt in at their own cadence.
+
 2. **Should the CI validation workflow run on the `principles/` path only or on every PR?** Running on every PR catches
    accidental deletion of principle files. Running path-scoped (`paths: [principles/**]`) is faster but misses deletion
    events. Recommend every PR given the tiny file count.
+
+   **Resolution (2026-04-22):** Moot. Validation runs locally via `scripts/hooks/pre-push`, not remote CI (see
+   Amendment block above). The hook runs the full pipeline on every push regardless of which paths changed.
 
 ## Sources & References
 
