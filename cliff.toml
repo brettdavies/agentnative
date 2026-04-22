@@ -1,0 +1,71 @@
+# git-cliff configuration for agentnative-spec.
+#
+# The changelog's source of truth is the `## Changelog` section of each
+# squash-merged PR body (committed verbatim by GitHub's squash merge).
+# Release authors run `git-cliff` locally on a release branch, review the
+# output, hand-polish, and commit `CHANGELOG.md` as part of the release PR.
+# CI reads the committed file; it does not generate it.
+#
+# See RELEASES.md § Release gating for the full workflow.
+
+[changelog]
+header = """
+# Changelog
+
+All notable changes to the agent-native CLI standard are documented here, grouped by release.
+
+"""
+
+# One section per release. Each included commit emits a `<!-- from <sha> -->`
+# marker followed by whatever remains of the commit body after the
+# preprocessors below strip everything except the `## Changelog` section.
+# Hand-merge bullets across markers and drop the markers before committing.
+body = """
+{% if version -%}
+## {{ version }} — {{ timestamp | date(format="%Y-%m-%d") }}
+{%- else -%}
+## Unreleased
+{%- endif %}
+
+{% for commit in commits -%}
+{%- set rest = commit.message | trim -%}
+{%- if rest | length > 0 -%}
+<!-- from {{ commit.id | truncate(length=7, end="") }} -->
+{{ rest }}
+
+{% endif -%}
+{%- endfor %}
+"""
+
+trim = true
+footer = ""
+
+[git]
+# We don't group by conventional-commit prefix; the PR body's `### Added /
+# Changed / Fixed / Removed / Security` subsections carry the categories.
+conventional_commits = false
+filter_unconventional = false
+filter_commits = false
+split_commits = false
+protect_breaking_commits = false
+topo_order = false
+sort_commits = "oldest"
+tag_pattern = "v[0-9]+.[0-9]+.[0-9]+"
+
+# Strip every part of each commit message except the `## Changelog` section.
+# Runs in order; each regex rewrites the message (subject + body) in place.
+#
+# 1. Drop everything up to and including the `## Changelog` header line.
+#    Lazy quantifier anchored to start-of-string; if `## Changelog` isn't in
+#    the message, no replacement happens and the body is left as-is.
+# 2. Drop anything from the next top-level `## ` heading onward (Linked check
+#    review, Human reviewer, AI disclosure — nothing that belongs in the
+#    user-facing changelog).
+# 3. Collapse a trailing run of blank lines.
+commit_preprocessors = [
+  { pattern = '(?s)\A.*?## Changelog\s*', replace = "" },
+  { pattern = '(?ms)^## [^#].*\z', replace = "" },
+  { pattern = '(?s)\n{3,}\z', replace = "\n" },
+]
+
+commit_parsers = []

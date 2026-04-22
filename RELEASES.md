@@ -12,12 +12,12 @@ feature branch → PR to dev (squash merge)
 
 ## Branches
 
-| Branch        | Role                              | Lifetime                       | Protection                                |
-| ------------- | --------------------------------- | ------------------------------ | ----------------------------------------- |
-| `main`        | Production. Only release commits. | Forever.                       | `.github/rulesets/protect-main.json`      |
-| `dev`         | Integration. All feature PRs land here. | Forever. Never delete.   | `.github/rulesets/protect-dev.json`       |
-| `feat/*`, `fix/*`, `chore/*`, `docs/*` | Feature work. | One PR's worth. Auto-deleted on merge. | None — squash into dev freely. |
-| `release/*`   | Head of a dev → main PR.          | One release's worth. Auto-deleted on merge. | None.                     |
+| Branch                                 | Role                                    | Lifetime                                    | Protection                           |
+| -------------------------------------- | --------------------------------------- | ------------------------------------------- | ------------------------------------ |
+| `main`                                 | Production. Only release commits.       | Forever.                                    | `.github/rulesets/protect-main.json` |
+| `dev`                                  | Integration. All feature PRs land here. | Forever. Never delete.                      | `.github/rulesets/protect-dev.json`  |
+| `feat/*`, `fix/*`, `chore/*`, `docs/*` | Feature work.                           | One PR's worth. Auto-deleted on merge.      | None — squash into dev freely.       |
+| `release/*`                            | Head of a dev → main PR.                | One release's worth. Auto-deleted on merge. | None.                                |
 
 `dev` is a **forever branch**. Never delete it locally or remotely, even after a `release/* → main` merge. The next
 release cycle reuses the same `dev`. The repo's `deleteBranchOnMerge: true` setting doesn't touch `dev` as long as `dev`
@@ -96,6 +96,37 @@ subsections:
 Changelog generators (e.g., `git-cliff` with `cliff.toml`) read the squash-
 merged commit bodies for these sections and assemble `CHANGELOG.md` entries directly. A PR that lands with an empty or
 missing `## Changelog` section silently drops its user-facing notes from the next release changelog.
+
+## Release gating
+
+A release tag is cut only when `principles/p*-*.md` changes on a merge to `main`. Non-principles merges (workflow fixes,
+README polish, tooling improvements, `principles/AGENTS.md` edits, decision records) land on `main` without producing a
+tag, a GitHub Release, or a downstream `repository_dispatch`.
+
+**Path-based, not VERSION-based.** `.github/workflows/publish.yml` triggers on `paths: principles/p*-*.md`. The trigger
+is a diff property, not an author-discipline check. The narrow glob excludes `principles/AGENTS.md` (maintainer
+authoring conventions, not RFC content) and matches `p1-*.md` through any future `p8+` additions.
+
+**VERSION-consistency check.** When the path filter fires, `publish.yml` reads `VERSION`, computes `v$VERSION`, and
+fails the workflow if that tag already exists. This forces the author to bump `VERSION` when spec content changes — the
+workflow refuses to re-tag an existing version.
+
+**CHANGELOG is generated locally.** The release author runs `git-cliff --config cliff.toml --tag v$VERSION <base>..HEAD`
+on the release branch, hand-polishes the output, and commits the updated `CHANGELOG.md` as part of the release PR.
+`publish.yml` extracts the `## v$VERSION` section from the committed file for the GitHub Release body. CI reads
+CHANGELOG; it does not generate it. See `cliff.toml` for the config.
+
+**Tag scheme is pure semver.** `v0.2.0`, `v0.2.1`, etc. No separate spec-vs-repo tag namespace — if you want a non-spec
+change visible on `main`, just merge it without a tag. The history shows the merge; downstream consumers pin to spec
+content, which hasn't changed.
+
+**First release without a tag.** The first substantive merge to `main` from `dev` (the release-infra release) does not
+touch `principles/`, so the workflow does not fire and no tag is produced. `main` will have content but zero tags until
+the first spec-content release lands.
+
+**Manual re-run.** `publish.yml` also accepts `workflow_dispatch` with a `version` input if a tag needs to be re-created
+without a content change (e.g., the prior run failed partway through). The input must match the `VERSION` file on
+`main`.
 
 ## Branch protection
 
