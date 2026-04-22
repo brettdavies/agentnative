@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: "Checker bugs (false positives/negatives, CLI features)"
+    url: "https://github.com/brettdavies/agentnative-cli/issues/new/choose"
+    about: "For bugs in the `anc` checker or feature requests, file on the tool repo."
+  - name: "Site bugs (rendering, performance, deployment)"
+    url: "https://github.com/brettdavies/agentnative-site/issues/new/choose"
+    about: "For bugs on anc.dev, file on the site repo."
