@@ -1,0 +1,3 @@
+# Ephemeral install target for the pre-push validator's js-yaml dep.
+# See scripts/hooks/pre-push.
+node_modules/

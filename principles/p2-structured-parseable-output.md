@@ -1,5 +1,37 @@
 ---
-last-revised: 2026-04-20
+id: p2
+title: Structured, Parseable Output
+last-revised: 2026-04-22
+status: draft
+requirements:
+  - id: p2-must-output-flag
+    level: must
+    applicability: universal
+    summary: "`--output text|json|jsonl` flag selects output format; `OutputFormat` enum threaded through output paths."
+  - id: p2-must-stdout-stderr-split
+    level: must
+    applicability: universal
+    summary: Data goes to stdout; diagnostics/progress/warnings go to stderr — never interleaved.
+  - id: p2-must-exit-codes
+    level: must
+    applicability: universal
+    summary: Exit codes are structured and documented (0 success, 1 general, 2 usage, 77 auth, 78 config).
+  - id: p2-must-json-errors
+    level: must
+    applicability: universal
+    summary: When `--output json` is active, errors are emitted as JSON (to stderr) with at least `error`, `kind`, and `message` fields.
+  - id: p2-should-consistent-envelope
+    level: should
+    applicability: universal
+    summary: JSON output uses a consistent envelope — a top-level object with predictable keys — across every command.
+  - id: p2-may-more-formats
+    level: may
+    applicability: universal
+    summary: Additional output formats (CSV, TSV, YAML) beyond the core three.
+  - id: p2-may-raw-flag
+    level: may
+    applicability: universal
+    summary: "`--raw` flag for unformatted output suitable for piping to other tools."
 ---
 
 # P2: Structured, Parseable Output
