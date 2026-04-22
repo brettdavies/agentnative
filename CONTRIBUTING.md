@@ -4,15 +4,15 @@ This document is the canonical routing guide for all contributions across the th
 
 ## Where to file
 
-| I want to... | File on |
-| --- | --- |
-| Propose a principle edit (pressure-test) | [agentnative](https://github.com/brettdavies/agentnative/issues/new?template=pressure-test.yml) |
-| Grade a real CLI against the standard | [agentnative](https://github.com/brettdavies/agentnative/issues/new?template=grade-a-cli.yml) |
-| Ask a question about the spec | [agentnative](https://github.com/brettdavies/agentnative/issues/new?template=spec-question.yml) |
-| Report a false positive/negative in `anc` | [agentnative-cli](https://github.com/brettdavies/agentnative-cli/issues/new?template=false-positive.yml) |
-| Request a checker feature | [agentnative-cli](https://github.com/brettdavies/agentnative-cli/issues/new?template=feature-request.yml) |
-| Report a scoring/CLI bug | [agentnative-cli](https://github.com/brettdavies/agentnative-cli/issues/new?template=scoring-bug.yml) |
-| Report a site bug (rendering, performance) | [agentnative-site](https://github.com/brettdavies/agentnative-site/issues/new?template=site-bug.yml) |
+| I want to...                               | File on                                                                                                   |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------------- |
+| Propose a principle edit (pressure-test)   | [agentnative](https://github.com/brettdavies/agentnative/issues/new?template=pressure-test.yml)           |
+| Grade a real CLI against the standard      | [agentnative](https://github.com/brettdavies/agentnative/issues/new?template=grade-a-cli.yml)             |
+| Ask a question about the spec              | [agentnative](https://github.com/brettdavies/agentnative/issues/new?template=spec-question.yml)           |
+| Report a false positive/negative in `anc`  | [agentnative-cli](https://github.com/brettdavies/agentnative-cli/issues/new?template=false-positive.yml)  |
+| Request a checker feature                  | [agentnative-cli](https://github.com/brettdavies/agentnative-cli/issues/new?template=feature-request.yml) |
+| Report a scoring/CLI bug                   | [agentnative-cli](https://github.com/brettdavies/agentnative-cli/issues/new?template=scoring-bug.yml)     |
+| Report a site bug (rendering, performance) | [agentnative-site](https://github.com/brettdavies/agentnative-site/issues/new?template=site-bug.yml)      |
 
 ## AI disclosure policy
 
@@ -31,13 +31,13 @@ applies to:
 
 ## Human co-sign policy (graduated gate)
 
-| Contribution type | AI disclosure | Human co-sign |
-| --- | --- | --- |
-| Bug reports | Required | Not required |
-| CLI grading submissions | Required | Not required |
-| Spec questions | Required | Not required |
-| Principle edits (pressure-tests) | Required | **Required** |
-| Pull requests | Required | **Required** |
+| Contribution type                | AI disclosure | Human co-sign |
+| -------------------------------- | ------------- | ------------- |
+| Bug reports                      | Required      | Not required  |
+| CLI grading submissions          | Required      | Not required  |
+| Spec questions                   | Required      | Not required  |
+| Principle edits (pressure-tests) | Required      | **Required**  |
+| Pull requests                    | Required      | **Required**  |
 
 "Human co-sign" means a human reviewed and approved the submission before it was filed. The pressure-test and PR
 templates include a required field for the GitHub handle of the human reviewer.
@@ -82,6 +82,9 @@ Duplicate issues fragment discussion and slow resolution.
 - The spec version (in `VERSION`) bumps:
 - **MINOR** — MUST changes, OR changes to the requirement frontmatter shape / ID contract.
 - **PATCH** — SHOULD/MAY changes, prose edits to an existing requirement.
+
+See [`RELEASES.md` § Release gating](RELEASES.md#release-gating) for when a VERSION bump produces a tagged release vs.
+when changes land on `main` without a tag.
 
 ## Contributor setup
 

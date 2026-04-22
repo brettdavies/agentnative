@@ -1,0 +1,144 @@
+name: Publish release
+
+# Fires on pushes to main that touch principle content.
+# See RELEASES.md § Release gating for the full policy:
+#   - Path-based (not VERSION-based): trigger is a diff property.
+#   - VERSION-consistency check: workflow refuses to re-tag an existing version.
+#   - CHANGELOG is generated locally on the release branch, not here.
+#
+# Also fires manually via `gh workflow run publish.yml -f version=X.Y.Z` if a
+# tag needs to be re-created without a principle change.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'principles/p*-*.md'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to tag (must match VERSION on main; leave blank to use VERSION file)"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Resolve version
+        id: version
+        run: |
+          set -euo pipefail
+          file_version="$(cat VERSION | tr -d '[:space:]')"
+          input_version="${{ inputs.version }}"
+          if [ -n "$input_version" ] && [ "$input_version" != "$file_version" ]; then
+            echo "::error::workflow_dispatch input '$input_version' does not match VERSION file '$file_version'." >&2
+            echo "::error::Bump VERSION on main first, then re-run with a matching input." >&2
+            exit 1
+          fi
+          version="$file_version"
+          tag="v${version}"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+          echo "Resolved: ${tag}"
+
+      - name: Fail if tag already exists
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          set -euo pipefail
+          if git rev-parse --verify --quiet "refs/tags/${TAG}" >/dev/null; then
+            echo "::error::Tag ${TAG} already exists locally. VERSION must be bumped when principles change." >&2
+            exit 1
+          fi
+          if git ls-remote --tags --exit-code origin "refs/tags/${TAG}" >/dev/null 2>&1; then
+            echo "::error::Tag ${TAG} already exists on origin. VERSION must be bumped when principles change." >&2
+            exit 1
+          fi
+          echo "Tag ${TAG} is available."
+
+      - name: Extract CHANGELOG section for this version
+        id: notes
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+          if [ ! -f CHANGELOG.md ]; then
+            echo "::error::CHANGELOG.md is missing from the repo root." >&2
+            exit 1
+          fi
+          # Pull the section starting with `## v$VERSION` up to (but not including) the next `## ` heading.
+          # Match `## v$VERSION` exactly (disallow trailing digits so v0.2.0 doesn't match v0.2.01).
+          section="$(awk -v ver="${VERSION}" '
+            $0 ~ "^## v" ver "([^0-9]|$)" { capture = 1; next }
+            capture && /^## / { exit }
+            capture { print }
+          ' CHANGELOG.md)"
+          if [ -z "$section" ]; then
+            echo "::error::No '## v${VERSION}' section found in CHANGELOG.md." >&2
+            echo "::error::The release branch must commit a CHANGELOG entry before merging to main." >&2
+            exit 1
+          fi
+          {
+            echo "notes<<__END__"
+            echo "$section"
+            echo "__END__"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create and push tag
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "${TAG}" -m "Release ${TAG}"
+          git push origin "${TAG}"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe # v2.6.1
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: ${{ steps.version.outputs.tag }}
+          body: ${{ steps.notes.outputs.notes }}
+          prerelease: false
+          make_latest: "true"
+
+      - name: Dispatch to downstream consumers
+        env:
+          GH_TOKEN: ${{ secrets.CI_RELEASE_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
+          TAG: ${{ steps.version.outputs.tag }}
+          SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          if [ -z "${GH_TOKEN:-}" ]; then
+            echo "::warning::CI_RELEASE_TOKEN secret is not set; skipping downstream dispatch."
+            exit 0
+          fi
+          timestamp="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          payload="$(jq -n \
+            --arg version "$VERSION" \
+            --arg tag "$TAG" \
+            --arg sha "$SHA" \
+            --arg timestamp "$timestamp" \
+            '{event_type: "spec-release", client_payload: {version: $version, tag: $tag, sha: $sha, timestamp: $timestamp}}')"
+          for repo in brettdavies/agentnative-cli brettdavies/agentnative-site; do
+            echo "Dispatching spec-release to $repo"
+            # Non-fatal: downstream consumers opt in when they wire handlers.
+            if ! echo "$payload" | gh api -X POST "repos/${repo}/dispatches" --input -; then
+              echo "::warning::Dispatch to $repo failed (may not have a handler yet); continuing."
+            fi
+          done
