@@ -54,21 +54,6 @@ jobs:
           echo "tag=${tag}" >> "$GITHUB_OUTPUT"
           echo "Resolved: ${tag}"
 
-      - name: Fail if tag already exists
-        env:
-          TAG: ${{ steps.version.outputs.tag }}
-        run: |
-          set -euo pipefail
-          if git rev-parse --verify --quiet "refs/tags/${TAG}" >/dev/null; then
-            echo "::error::Tag ${TAG} already exists locally. VERSION must be bumped when principles change." >&2
-            exit 1
-          fi
-          if git ls-remote --tags --exit-code origin "refs/tags/${TAG}" >/dev/null 2>&1; then
-            echo "::error::Tag ${TAG} already exists on origin. VERSION must be bumped when principles change." >&2
-            exit 1
-          fi
-          echo "Tag ${TAG} is available."
-
       - name: Extract CHANGELOG section for this version
         id: notes
         env:
@@ -87,17 +72,39 @@ jobs:
             capture { print }
           ' CHANGELOG.md)"
           if [ -z "$section" ]; then
-            echo "::error::No '## v${VERSION}' section found in CHANGELOG.md." >&2
-            echo "::error::The release branch must commit a CHANGELOG entry before merging to main." >&2
-            exit 1
+            # CHANGELOG.md is the release signal: no entry for this VERSION means the
+            # author did not intend to cut a release in this push. Exit cleanly — all
+            # release-cutting steps below gate on `has_entry`. This also absorbs the
+            # bootstrap case where principles land on main via a non-tagging release.
+            echo "::notice::No '## v${VERSION}' section in CHANGELOG.md; skipping release cut for this push."
+            echo "has_entry=false" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
+          echo "has_entry=true" >> "$GITHUB_OUTPUT"
           {
             echo "notes<<__END__"
             echo "$section"
             echo "__END__"
           } >> "$GITHUB_OUTPUT"
 
+      - name: Fail if tag already exists
+        if: steps.notes.outputs.has_entry == 'true'
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          set -euo pipefail
+          if git rev-parse --verify --quiet "refs/tags/${TAG}" >/dev/null; then
+            echo "::error::Tag ${TAG} already exists locally. VERSION must be bumped when principles change." >&2
+            exit 1
+          fi
+          if git ls-remote --tags --exit-code origin "refs/tags/${TAG}" >/dev/null 2>&1; then
+            echo "::error::Tag ${TAG} already exists on origin. VERSION must be bumped when principles change." >&2
+            exit 1
+          fi
+          echo "Tag ${TAG} is available."
+
       - name: Create and push tag
+        if: steps.notes.outputs.has_entry == 'true'
         env:
           TAG: ${{ steps.version.outputs.tag }}
         run: |
@@ -108,6 +115,7 @@ jobs:
           git push origin "${TAG}"
 
       - name: Create GitHub Release
+        if: steps.notes.outputs.has_entry == 'true'
         uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe # v2.6.1
         with:
           tag_name: ${{ steps.version.outputs.tag }}
@@ -117,6 +125,7 @@ jobs:
           make_latest: "true"
 
       - name: Dispatch to downstream consumers
+        if: steps.notes.outputs.has_entry == 'true'
         env:
           GH_TOKEN: ${{ secrets.CI_RELEASE_TOKEN }}
           VERSION: ${{ steps.version.outputs.version }}
