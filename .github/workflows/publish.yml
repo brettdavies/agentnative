@@ -64,11 +64,12 @@ jobs:
             echo "::error::CHANGELOG.md is missing from the repo root." >&2
             exit 1
           fi
-          # Pull the section starting with `## v$VERSION` up to (but not including) the next `## ` heading.
-          # Match `## v$VERSION` exactly (disallow trailing digits so v0.2.0 doesn't match v0.2.01).
+          # Pull the section starting with `## [$VERSION]` up to (but not including) the next `## [` heading.
+          # Matches the Keep-a-Changelog heading shape produced by cliff.toml
+          # and scripts/generate-changelog.sh (e.g. "## [0.2.0] - 2026-04-23").
           section="$(awk -v ver="${VERSION}" '
-            $0 ~ "^## v" ver "([^0-9]|$)" { capture = 1; next }
-            capture && /^## / { exit }
+            $0 ~ "^## \\[" ver "\\]" { capture = 1; next }
+            capture && /^## \[/ { exit }
             capture { print }
           ' CHANGELOG.md)"
           if [ -z "$section" ]; then
@@ -76,7 +77,7 @@ jobs:
             # author did not intend to cut a release in this push. Exit cleanly — all
             # release-cutting steps below gate on `has_entry`. This also absorbs the
             # bootstrap case where principles land on main via a non-tagging release.
-            echo "::notice::No '## v${VERSION}' section in CHANGELOG.md; skipping release cut for this push."
+            echo "::notice::No '## [${VERSION}]' section in CHANGELOG.md; skipping release cut for this push."
             echo "has_entry=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
