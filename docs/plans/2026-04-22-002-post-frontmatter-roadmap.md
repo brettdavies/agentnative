@@ -22,7 +22,7 @@ file is the public-repo record.
 
 ## Items
 
-### 1. Publish workflow — tag + advisory repository_dispatch
+### 1. Publish workflow — tag + advisory repository_dispatch ✅ SHIPPED 2026-04-23
 
 - **What:** On every `VERSION` bump that lands on `main`, cut a git tag and fire `repository_dispatch` to downstream
   repos (`agentnative-cli`, `agentnative-site`) as an advisory signal. The tag is authoritative; the dispatch is a
@@ -34,6 +34,12 @@ file is the public-repo record.
   exist first).
 - **Revisit trigger:** Next `VERSION` bump that downstream consumers actually need to hear about — realistically
   immediately after `0.2.0` lands, so the first post-0.2.0 change has infrastructure to propagate through.
+- **Shipped 2026-04-23:** via PRs #4 (workflow + cliff.toml + RELEASES.md gating), #6 (graceful-skip on missing
+  CHANGELOG), #9 (PR-body-driven CHANGELOG generation ported from anc), #7 (dual-condition trigger on
+  `principles/p*-*.md` or `VERSION` + release-branch pre-push semver check). First tag `v0.2.0` cut on Release B merge
+  commit `83bf0fd`; GitHub Release + dispatch to `agentnative-cli` and `agentnative-site` fired successfully. See plan
+  [`2026-04-22-003-release-infra-and-v0.2.0-cut-plan.md`](2026-04-22-003-release-infra-and-v0.2.0-cut-plan.md) for the
+  two-release execution record.
 
 ### 2. Badge surface
 
@@ -48,7 +54,7 @@ file is the public-repo record.
 - **Revisit trigger:** Explicitly on hold per 2026-04-22 user direction. Revisit when the leaderboard has a credible
   number of tools AND at least one CLI author asks for a badge they can embed.
 
-### 3. Obsidian vault archival
+### 3. Obsidian vault archival — UNBLOCKED (v0.2.0 shipped)
 
 - **What:** Archive `~/obsidian-vault/Projects/brettdavies-agentnative/principles/` and `../research/`. The vault's
   `principles/AGENTS.md` still claims the folder is "upstream source of truth" — stale as of this repo's creation.
@@ -56,10 +62,10 @@ file is the public-repo record.
 - **Why:** Two SoTs is zero SoTs. Pressure-testers reading the vault today would miss the live frontmatter contract
   entirely.
 - **Owner repo:** The vault (private). Not a git repo with PRs; a manual edit session.
-- **Dependencies:** `2026-04-22-001` merged to `main` (vault redirect note should point to a stable public URL, not a
-  feature branch).
-- **Revisit trigger:** Immediately after `2026-04-22-001` merges to `main`, or the next time the vault is touched for
-  any reason — whichever comes first. Cheap and quick; no reason to defer long.
+- **Dependencies:** ✅ `2026-04-22-001` merged to `main` via v0.2.0 (commit `83bf0fd`, tag `v0.2.0`). Redirect note can
+  now point to a stable public URL.
+- **Revisit trigger:** Ready to pick up — next time the vault is touched for any reason, or immediately if Brett wants
+  the redirect posted before downstream consumers start linking.
 
 ### 4. Site-side `scripts/sync-spec.sh`
 
@@ -74,7 +80,7 @@ file is the public-repo record.
 - **Revisit trigger:** Next site deploy that needs to reflect the `0.2.0` frontmatter contract (or earlier if site work
   is scheduled first). Coordinate with item 1 so the first synced version is a real release, not a pre-release SHA.
 
-### 5. Companion `agentnative-cli` PR
+### 5. Companion `agentnative-cli` PR — UNBLOCKED (v0.2.0 shipped)
 
 - **What:** Rewrite `src/principles/registry.rs` to vendor this repo's `principles/*.md` (commit-a-copy via
   `scripts/sync-spec.sh`-equivalent), parse the frontmatter at build time, and build the `REQUIREMENTS` slice from the
@@ -84,9 +90,9 @@ file is the public-repo record.
 - **Owner repo:** `brettdavies/agentnative-cli`. Follows the coupled-release protocol in
   [`CONTRIBUTING.md`](../../CONTRIBUTING.md) — this roadmap entry is the spec-side tracking of the expected companion
   PR.
-- **Dependencies:** `2026-04-22-001` merged to `main` (CLI vendors a SHA; that SHA must be on `main`). Open Question (a)
-  in 001 flagged the vendoring pattern choice (commit-a-copy vs build-time fetch) as a CLI-side design decision;
-  commit-a-copy is recommended.
+- **Dependencies:** ✅ `2026-04-22-001` merged to `main` via v0.2.0 (commit `83bf0fd`, tag `v0.2.0`). CLI can now vendor
+  against that stable SHA. Open Question (a) in 001 flagged the vendoring pattern choice (commit-a-copy vs build-time
+  fetch) as a CLI-side design decision; commit-a-copy is recommended.
 - **Revisit trigger:** Next CLI release cycle. Alternatively, ship this before the next CLI release if the CLI is
   blocked on a contract change (e.g., a new requirement ID added to the spec after 0.2.0).
 
