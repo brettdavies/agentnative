@@ -1,16 +1,64 @@
 ---
 title: "feat: release infrastructure + v0.2.0 cut to main"
 type: feat
-status: ready
+status: shipped
 date: 2026-04-22
+shipped: 2026-04-23
 branch: feat/release-infra
 base: dev
 parents:
   - docs/plans/2026-04-22-001-feat-requirement-id-frontmatter-plan.md
   - docs/plans/2026-04-22-002-post-frontmatter-roadmap.md
+prs:
+  - "https://github.com/brettdavies/agentnative/pull/4"
+  - "https://github.com/brettdavies/agentnative/pull/5"
+  - "https://github.com/brettdavies/agentnative/pull/6"
+  - "https://github.com/brettdavies/agentnative/pull/7"
+  - "https://github.com/brettdavies/agentnative/pull/8"
+  - "https://github.com/brettdavies/agentnative/pull/9"
+  - "https://github.com/brettdavies/agentnative/pull/10"
+  - "https://github.com/brettdavies/agentnative/pull/11"
+tags:
+  - v0.1.1
+  - v0.2.0
 ---
 
 # feat: release infrastructure + v0.2.0 cut to main
+
+> **Close-out (2026-04-23).** Shipped across two tagged releases + tooling hardening. Summary vs. the original plan:
+>
+> - **Release A — infrastructure baseline** landed as [PR #5](https://github.com/brettdavies/agentnative/pull/5)
+>   merge commit `3c87857` (bundled PR #1 governance + PR #2 infra + [PR #4](https://github.com/brettdavies/agentnative/pull/4)
+>   publish workflow + cliff.toml + RELEASES.md gating). The plan called this "non-tagging", but `publish.yml`
+>   legitimately tagged **`v0.1.1`** because main after Release A had `VERSION=0.1.1` and `CHANGELOG.md` had a matching
+>   `## v0.1.1` hand-written section — the workflow did exactly what the rule set tells it to do. Accepted as-is;
+>   downstream dispatches fired (harmlessly, no handlers yet).
+> - **Release B — v0.2.0 spec content** landed as [PR #8](https://github.com/brettdavies/agentnative/pull/8) merge
+>   commit `83bf0fd`. Tag `v0.2.0`, GitHub Release, dispatches to `agentnative-cli` and `agentnative-site` all fired
+>   successfully.
+> - **Mid-execution upstream fixes** that the plan didn't anticipate but closed real gaps:
+>   - [PR #6](https://github.com/brettdavies/agentnative/pull/6): `publish.yml` no-ops gracefully when `CHANGELOG.md`
+>     lacks a matching `## v$VERSION` section, instead of failing.
+>   - [PR #9](https://github.com/brettdavies/agentnative/pull/9): `cliff.toml` and `scripts/generate-changelog.sh`
+>     ported from `agentnative-cli` — PR-body-driven changelog generation via the GitHub API, replacing the fragile
+>     commit-body preprocessor approach (commit-body headers were getting silently stripped during cherry-picks;
+>     root cause still undiagnosed but now irrelevant).
+>   - [PR #7](https://github.com/brettdavies/agentnative/pull/7) + [PR #11](https://github.com/brettdavies/agentnative/pull/11):
+>     dual-condition publish trigger (`principles/p*-*.md` **or** `VERSION`) plus release-branch pre-push semver check
+>     (`scripts/check-release-version.sh` — strict-monotonic bump, tag-not-already-used, VERSION-must-bump when
+>     principles changed). Shipped as a follow-up release that lands tag-free by design.
+>   - [PR #10](https://github.com/brettdavies/agentnative/pull/10): dev sync of the `publish.yml` awk format alignment
+>     and `CHANGELOG.md` exclusion from md-wrap/markdownlint checks that landed on main via PR #8's release branch.
+> - **CHANGELOG.md format changed** from legacy `## vX.Y.Z — DATE` to Keep-a-Changelog `## [X.Y.Z] - DATE`, driven by
+>   the new `cliff.toml`. The v0.1.1 entry was retroactively restructured (plan's Open Question 1 resolved the
+>   opposite way from the original recommendation — converting to new format was necessary for cliff's `--prepend` to
+>   work cleanly going forward).
+> - **Roadmap 002 updates:** item 1 (publish workflow) marked SHIPPED; items 3 (vault archival) and 5 (companion CLI
+>   PR) marked UNBLOCKED by the stable `v0.2.0` SHA.
+> - **Learning captured:**
+>   [`docs/solutions/best-practices/pr-body-driven-changelog-generation-20260423.md`](../solutions/best-practices/pr-body-driven-changelog-generation-20260423.md).
+> - **Upstream follow-up filed:** portable `generate-changelog.sh` template under the `github-repo-setup` skill —
+>   tracked at `~/dev/agent-skills/.context/compound-engineering/todos/014-pending-p2-portable-generate-changelog-template.md`.
 
 ## Overview
 
