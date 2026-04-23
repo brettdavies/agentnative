@@ -37,7 +37,9 @@ gh pr create --base dev --title "feat(scope): what changed"
 
 - **Commit style**: [Conventional Commits](https://www.conventionalcommits.org/).
 - **PR body**: follow `.github/pull_request_template.md`. The `## Changelog` section is the source of truth for
-  user-facing release notes — changelog generators (e.g., `git-cliff`) extract these bullets verbatim.
+  user-facing release notes — `scripts/generate-changelog.sh` fetches each PR body from the GitHub API at release time
+  and expands the `### Added / Changed / Fixed / Removed / Security` bullets verbatim. PR bodies remain editable
+  post-merge, so typos can be fixed by editing the PR on GitHub and re-running the script.
 
 ## Releasing dev to main
 
@@ -93,9 +95,10 @@ subsections:
 - `### Removed` — removed features or APIs
 - `### Security` — security-relevant changes
 
-Changelog generators (e.g., `git-cliff` with `cliff.toml`) read the squash-
-merged commit bodies for these sections and assemble `CHANGELOG.md` entries directly. A PR that lands with an empty or
-missing `## Changelog` section silently drops its user-facing notes from the next release changelog.
+`scripts/generate-changelog.sh` (which wraps `git-cliff` per `cliff.toml`, then fetches PR bodies via the GitHub API to
+expand entries) pulls these subsections verbatim into `CHANGELOG.md` at release time. A PR that lands with an empty or
+missing `## Changelog` section silently drops its user-facing notes from the next release changelog — fix it by editing
+the PR body on GitHub and re-running the script.
 
 ## Release gating
 
