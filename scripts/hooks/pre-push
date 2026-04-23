@@ -21,6 +21,12 @@
 #                             uniqueness, and bullet-count parity.
 #   5. test-validate-principles — fixture regression tests for the
 #                             validator itself.
+#   6. check-release-version — semver check scoped to `release/*`
+#                             branches. No-ops on non-release branches.
+#                             Enforces X.Y.Z format, strict-monotonic
+#                             bump vs origin/main, tag-not-already-used,
+#                             and VERSION-must-bump when principles
+#                             changed. See scripts/check-release-version.sh.
 #
 # js-yaml is installed on demand into the repo's node_modules/ (gitignored).
 # If it is already present, install is skipped — subsequent pushes are fast.
@@ -59,5 +65,8 @@ node scripts/validate-principles.mjs
 
 echo "==> Running validator regression fixtures"
 node scripts/test-validate-principles.mjs
+
+echo "==> Checking release-branch semver (no-op on non-release branches)"
+scripts/check-release-version.sh
 
 echo "==> All pre-push checks passed"

@@ -1,19 +1,23 @@
 name: Publish release
 
-# Fires on pushes to main that touch principle content.
+# Fires on pushes to main that touch principle content OR the VERSION file.
 # See RELEASES.md § Release gating for the full policy:
-#   - Path-based (not VERSION-based): trigger is a diff property.
-#   - VERSION-consistency check: workflow refuses to re-tag an existing version.
-#   - CHANGELOG is generated locally on the release branch, not here.
+#   - Diff-based trigger: principles/p*-*.md OR VERSION (OR-logic — either is
+#     sufficient). Lets governance/tooling pushes that bump VERSION cut a tag
+#     without a principle edit.
+#   - CHANGELOG is the release signal: a matching `## v$VERSION` section must
+#     exist in CHANGELOG.md for tag-cutting steps to run.
+#   - Tag-exists guard: refuses to re-tag an existing version.
 #
 # Also fires manually via `gh workflow run publish.yml -f version=X.Y.Z` if a
-# tag needs to be re-created without a principle change.
+# tag needs to be re-created without a content change.
 
 on:
   push:
     branches: [main]
     paths:
       - 'principles/p*-*.md'
+      - 'VERSION'
   workflow_dispatch:
     inputs:
       version:
