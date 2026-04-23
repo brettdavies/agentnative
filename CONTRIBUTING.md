@@ -74,10 +74,26 @@ Duplicate issues fragment discussion and slow resolution.
 
 ## Versioning policy
 
-- Each principle carries a `last-revised: YYYY-MM-DD` date in frontmatter
-- The date updates when any MUST/SHOULD/MAY changes tier, is added, or is removed
-- Prose-only edits (clarity, examples, typos) do NOT update the date
-- The spec version (in `VERSION`) bumps: MINOR for MUST changes, PATCH for SHOULD/MAY changes
+- Each principle carries a `last-revised: YYYY-MM-DD` date in frontmatter.
+- The date updates when any MUST/SHOULD/MAY changes tier, is added, or is removed, AND when the requirement frontmatter
+  shape or ID contract changes (adding `requirements[]`, renaming an `id`, changing the `applicability` shape, etc.).
+  Downstream consumers pin against the frontmatter, so a shape change is a consumer-visible change.
+- Prose-only edits (clarity, examples, typos) do NOT update the date.
+- The spec version (in `VERSION`) bumps:
+- **MINOR** — MUST changes, OR changes to the requirement frontmatter shape / ID contract.
+- **PATCH** — SHOULD/MAY changes, prose edits to an existing requirement.
 
 See [`RELEASES.md` § Release gating](RELEASES.md#release-gating) for when a VERSION bump produces a tagged release vs.
 when changes land on `main` without a tag.
+
+## Contributor setup
+
+The repo ships a pre-push hook that validates principle frontmatter before each push (schema check, ID uniqueness,
+bullet-count parity, plus regression fixtures for the validator itself). Activate it once after clone:
+
+```bash
+git config core.hooksPath scripts/hooks
+```
+
+First run installs `js-yaml@4.1.0` into a gitignored `node_modules/`; subsequent runs are fast. No remote CI replaces
+this — a failing hook is the gate.

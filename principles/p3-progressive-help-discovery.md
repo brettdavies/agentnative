@@ -1,5 +1,30 @@
 ---
-last-revised: 2026-04-20
+id: p3
+title: Progressive Help Discovery
+last-revised: 2026-04-22
+status: draft
+requirements:
+  - id: p3-must-subcommand-examples
+    level: must
+    applicability:
+      if: CLI uses subcommands
+    summary: Every subcommand ships at least one concrete invocation example (`after_help` in clap).
+  - id: p3-must-top-level-examples
+    level: must
+    applicability: universal
+    summary: The top-level command ships 2–3 examples covering the primary use cases.
+  - id: p3-should-paired-examples
+    level: should
+    applicability: universal
+    summary: Examples show human and agent invocations side by side (text then `--output json` equivalent).
+  - id: p3-should-about-long-about
+    level: should
+    applicability: universal
+    summary: Short `about` for command-list summaries; `long_about` reserved for detailed descriptions visible with `--help`.
+  - id: p3-may-examples-subcommand
+    level: may
+    applicability: universal
+    summary: Dedicated `examples` subcommand or `--examples` flag for curated usage patterns.
 ---
 
 # P3: Progressive Help Discovery

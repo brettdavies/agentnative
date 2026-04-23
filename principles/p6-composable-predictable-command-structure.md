@@ -1,5 +1,59 @@
 ---
-last-revised: 2026-04-20
+id: p6
+title: Composable and Predictable Command Structure
+last-revised: 2026-04-22
+status: draft
+requirements:
+  - id: p6-must-sigpipe
+    level: must
+    applicability: universal
+    summary: SIGPIPE fix is the first executable statement in `main()` — piping output to `head`/`tail` must not panic.
+  - id: p6-must-no-color
+    level: must
+    applicability: universal
+    summary: TTY detection plus support for `NO_COLOR` and `TERM=dumb` — color codes suppressed when stdout/stderr is not a terminal.
+  - id: p6-must-completions
+    level: must
+    applicability: universal
+    summary: Shell completions available via a `completions` subcommand (Tier 1 meta-command — needs no config/auth/network).
+  - id: p6-must-timeout-network
+    level: must
+    applicability:
+      if: CLI makes network calls
+    summary: Network CLIs ship a `--timeout` flag with a sensible default (e.g., 30 seconds).
+  - id: p6-must-no-pager
+    level: must
+    applicability:
+      if: CLI invokes a pager for output
+    summary: If the CLI uses a pager (`less`, `more`, `$PAGER`), it supports `--no-pager` or respects `PAGER=""`.
+  - id: p6-must-global-flags
+    level: must
+    applicability:
+      if: CLI uses subcommands
+    summary: Agentic flags (`--output`, `--quiet`, `--no-interactive`, `--timeout`) are `global = true` so they propagate to every subcommand.
+  - id: p6-should-stdin-input
+    level: should
+    applicability:
+      if: CLI has commands that accept input data
+    summary: Commands that accept input read from stdin when no file argument is provided.
+  - id: p6-should-consistent-naming
+    level: should
+    applicability:
+      if: CLI uses subcommands
+    summary: Subcommand naming follows a consistent `noun verb` or `verb noun` convention throughout the tool.
+  - id: p6-should-tier-gating
+    level: should
+    applicability: universal
+    summary: "Three-tier dependency gating: Tier 1 (meta) needs nothing, Tier 2 (local) needs config, Tier 3 (network) needs config + auth."
+  - id: p6-should-subcommand-operations
+    level: should
+    applicability:
+      if: CLI performs multiple distinct operations
+    summary: Operations are modeled as subcommands, not flags (`tool search "q"`, not `tool --search "q"`).
+  - id: p6-may-color-flag
+    level: may
+    applicability: universal
+    summary: "`--color auto|always|never` flag for explicit color control beyond TTY auto-detection."
 ---
 
 # P6: Composable and Predictable Command Structure

@@ -37,7 +37,9 @@ gh pr create --base dev --title "feat(scope): what changed"
 
 - **Commit style**: [Conventional Commits](https://www.conventionalcommits.org/).
 - **PR body**: follow `.github/pull_request_template.md`. The `## Changelog` section is the source of truth for
-  user-facing release notes — changelog generators (e.g., `git-cliff`) extract these bullets verbatim.
+  user-facing release notes — `scripts/generate-changelog.sh` fetches each PR body from the GitHub API at release time
+  and expands the `### Added / Changed / Fixed / Removed / Security` bullets verbatim. PR bodies remain editable
+  post-merge, so typos can be fixed by editing the PR on GitHub and re-running the script.
 
 ## Releasing dev to main
 
@@ -93,9 +95,10 @@ subsections:
 - `### Removed` — removed features or APIs
 - `### Security` — security-relevant changes
 
-Changelog generators (e.g., `git-cliff` with `cliff.toml`) read the squash-
-merged commit bodies for these sections and assemble `CHANGELOG.md` entries directly. A PR that lands with an empty or
-missing `## Changelog` section silently drops its user-facing notes from the next release changelog.
+`scripts/generate-changelog.sh` (which wraps `git-cliff` per `cliff.toml`, then fetches PR bodies via the GitHub API to
+expand entries) pulls these subsections verbatim into `CHANGELOG.md` at release time. A PR that lands with an empty or
+missing `## Changelog` section silently drops its user-facing notes from the next release changelog — fix it by editing
+the PR body on GitHub and re-running the script.
 
 ## Release gating
 
@@ -111,10 +114,17 @@ authoring conventions, not RFC content) and matches `p1-*.md` through any future
 fails the workflow if that tag already exists. This forces the author to bump `VERSION` when spec content changes — the
 workflow refuses to re-tag an existing version.
 
-**CHANGELOG is generated locally.** The release author runs `git-cliff --config cliff.toml --tag v$VERSION <base>..HEAD`
-on the release branch, hand-polishes the output, and commits the updated `CHANGELOG.md` as part of the release PR.
-`publish.yml` extracts the `## v$VERSION` section from the committed file for the GitHub Release body. CI reads
-CHANGELOG; it does not generate it. See `cliff.toml` for the config.
+**CHANGELOG is generated locally, PR-body-driven.** The release author runs `scripts/generate-changelog.sh` on the
+release branch. Stage 1 runs `git-cliff --tag v$VERSION --unreleased --prepend CHANGELOG.md` to produce a skeleton
+section keyed off commit subjects, with `(#N)` references auto-linked via `cliff.toml`'s `[remote.github]` block. Stage
+2 is a Python post-processor that, for every PR number in the skeleton, fetches the PR body via `gh api
+repos/.../pulls/N`, extracts its `## Changelog` → `### Added / Changed / Fixed / Removed / Security` subsections, and
+rewrites the skeleton bullets with the richer PR-body content plus `by @user in [#N]` attribution and a `**Full
+Changelog**: v<prev>...v<this>` compare link.
+
+**PR body is the source of truth.** If a bullet is wrong — typo, missed detail, wrong category — edit the PR body on
+GitHub (PR bodies remain editable after merge) and re-run `scripts/generate-changelog.sh`. It re-fetches from the API
+every run. Never hand-write `CHANGELOG.md`; `CI reads CHANGELOG, the script writes it, the PR body governs it.`
 
 **Tag scheme is pure semver.** `v0.2.0`, `v0.2.1`, etc. No separate spec-vs-repo tag namespace — if you want a non-spec
 change visible on `main`, just merge it without a tag. The history shows the merge; downstream consumers pin to spec

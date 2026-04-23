@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: MIT OR Apache-2.0
+#
+# Pre-push hook — enforces markdown hygiene and principle-frontmatter
+# validity before publishing.
+#
+# Activation (run once after clone):
+#   git config core.hooksPath scripts/hooks
+#
+# Pipeline:
+#   1. md-wrap --check      — same wrapper the Claude Code PostToolUse
+#                             hook runs, in check-only mode. Fails if
+#                             any committed `.md` file would reflow.
+#   2. markdownlint-cli2    — auto-discovers `.markdownlint-cli2.yaml`
+#                             in the repo root (same config the editor
+#                             hook uses). Fails on any lint violation.
+#   3. check-links.mjs      — validates every relative `[text](path)`
+#                             link in committed markdown resolves on
+#                             disk.
+#   4. validate-principles  — principle-frontmatter schema, ID
+#                             uniqueness, and bullet-count parity.
+#   5. test-validate-principles — fixture regression tests for the
+#                             validator itself.
+#
+# js-yaml is installed on demand into the repo's node_modules/ (gitignored).
+# If it is already present, install is skipped — subsequent pushes are fast.
+
+set -euo pipefail
+
+cd "$(git rev-parse --show-toplevel)"
+
+# Collect markdown files once. Excludes node_modules and .git by path,
+# and the intentionally-malformed validator fixtures which are test
+# data, not authored prose.
+mapfile -t MD_FILES < <(
+  find . -type f -name '*.md' \
+    -not -path './node_modules/*' \
+    -not -path './.git/*' \
+    -not -path './scripts/__fixtures__/*' \
+    -not -name 'CHANGELOG.md' \
+    | sort
+)
+
+if [ ! -d node_modules/js-yaml ]; then
+  echo "==> Installing js-yaml@4.1.0 (one-time, cached in node_modules/)"
+  npm install --no-save --silent js-yaml@4.1.0
+fi
+
+echo "==> Checking markdown wrap (would any file reflow at 120 cols?)"
+python3 "$HOME/.claude/md-wrap.py" --check -w 120 "${MD_FILES[@]}"
+
+echo "==> Linting markdown (local .markdownlint-cli2.yaml)"
+markdownlint-cli2 "${MD_FILES[@]}"
+
+echo "==> Checking relative-link targets"
+node scripts/check-links.mjs
+
+echo "==> Validating principles frontmatter"
+node scripts/validate-principles.mjs
+
+echo "==> Running validator regression fixtures"
+node scripts/test-validate-principles.mjs
+
+echo "==> All pre-push checks passed"
