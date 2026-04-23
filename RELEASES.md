@@ -102,17 +102,20 @@ the PR body on GitHub and re-running the script.
 
 ## Release gating
 
-A release tag is cut only when `principles/p*-*.md` changes on a merge to `main`. Non-principles merges (workflow fixes,
-README polish, tooling improvements, `principles/AGENTS.md` edits, decision records) land on `main` without producing a
-tag, a GitHub Release, or a downstream `repository_dispatch`.
+A release tag is cut only when a merge to `main` changes `principles/p*-*.md` **or** `VERSION`. Merges that touch
+neither (workflow fixes, README polish, `principles/AGENTS.md` edits, decision records, tooling) land on `main` without
+producing a tag, a GitHub Release, or a downstream `repository_dispatch`.
 
-**Path-based, not VERSION-based.** `.github/workflows/publish.yml` triggers on `paths: principles/p*-*.md`. The trigger
-is a diff property, not an author-discipline check. The narrow glob excludes `principles/AGENTS.md` (maintainer
-authoring conventions, not RFC content) and matches `p1-*.md` through any future `p8+` additions.
+**Dual-condition trigger (OR).** `.github/workflows/publish.yml` triggers on `paths: [principles/p*-*.md, VERSION]`.
+Either is sufficient. The narrow principles glob excludes `principles/AGENTS.md` (maintainer authoring conventions, not
+RFC content) and matches `p1-*.md` through any future `p8+` additions. Adding `VERSION` to the filter lets
+governance/tooling pushes that bump VERSION cut a release without needing a principle edit.
 
-**VERSION-consistency check.** When the path filter fires, `publish.yml` reads `VERSION`, computes `v$VERSION`, and
-fails the workflow if that tag already exists. This forces the author to bump `VERSION` when spec content changes — the
-workflow refuses to re-tag an existing version.
+**CHANGELOG.md is the release signal.** When the trigger fires, `publish.yml` reads `VERSION` and looks for a matching
+`## v$VERSION — YYYY-MM-DD` section in `CHANGELOG.md`. If that section is missing, the workflow logs `::notice::No '##
+v$VERSION' section … skipping release cut` and exits cleanly — no tag, no Release, no dispatch. A principle push without
+a CHANGELOG bump is treated as a no-op, not an error. The release author opts in by committing the CHANGELOG entry on
+the release branch.
 
 **CHANGELOG is generated locally, PR-body-driven.** The release author runs `scripts/generate-changelog.sh` on the
 release branch. Stage 1 runs `git-cliff --tag v$VERSION --unreleased --prepend CHANGELOG.md` to produce a skeleton
@@ -126,13 +129,23 @@ Changelog**: v<prev>...v<this>` compare link.
 GitHub (PR bodies remain editable after merge) and re-run `scripts/generate-changelog.sh`. It re-fetches from the API
 every run. Never hand-write `CHANGELOG.md`; `CI reads CHANGELOG, the script writes it, the PR body governs it.`
 
+**Tag-exists guard.** Once a CHANGELOG entry is present, `publish.yml` refuses to run if `v$VERSION` already exists on
+origin. VERSION must be bumped to cut a new release — the workflow will never re-tag a published version.
+
+**Pre-push semver check on `release/*` branches.** `scripts/check-release-version.sh` runs as a stage of the pre-push
+hook and no-ops on any non-release branch. On a `release/*` push it enforces:
+
+- `VERSION` is `X.Y.Z` (three non-negative integers).
+- If `principles/p*-*.md` changed relative to `origin/main`, `VERSION` must differ from `origin/main`'s `VERSION`.
+- If `VERSION` changed, the new value is **strictly greater than** `origin/main`'s `VERSION` (no downgrades, no re-
+  uses). Numeric major.minor.patch comparison.
+- Tag `v$VERSION` must not already exist on origin.
+
+The author bumps `VERSION` manually; the hook only verifies the bump is coherent. No auto-increment.
+
 **Tag scheme is pure semver.** `v0.2.0`, `v0.2.1`, etc. No separate spec-vs-repo tag namespace — if you want a non-spec
 change visible on `main`, just merge it without a tag. The history shows the merge; downstream consumers pin to spec
-content, which hasn't changed.
-
-**First release without a tag.** The first substantive merge to `main` from `dev` (the release-infra release) does not
-touch `principles/`, so the workflow does not fire and no tag is produced. `main` will have content but zero tags until
-the first spec-content release lands.
+content.
 
 **Manual re-run.** `publish.yml` also accepts `workflow_dispatch` with a `version` input if a tag needs to be re-created
 without a content change (e.g., the prior run failed partway through). The input must match the `VERSION` file on
