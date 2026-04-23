@@ -43,6 +43,7 @@ mapfile -t MD_FILES < <(
     -not -path './node_modules/*' \
     -not -path './.git/*' \
     -not -path './scripts/__fixtures__/*' \
+    -not -name 'CHANGELOG.md' \
     | sort
 )
 
