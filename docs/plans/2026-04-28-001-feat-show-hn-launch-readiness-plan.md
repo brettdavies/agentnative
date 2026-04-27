@@ -137,7 +137,7 @@ restating them.**
 
 ---
 
-- [ ] U1. **G1 — CHANGELOG.md v0.2.0 entry visible to launch-day visitors**
+- [x] U1. **G1 — CHANGELOG.md v0.2.0 entry visible to launch-day visitors**
 
 **Goal:** A visitor landing on `github.com/brettdavies/agentnative/blob/main/CHANGELOG.md` (or via README link) sees the
 v0.2.0 entry on launch day.
@@ -486,41 +486,113 @@ inconsistencies caught, before the HN thread runs.
 
 ## Pre-launch Release PR Checklist
 
-Per the parent tracker's standing pattern: night-before release PR cut from `dev` → `release/launch` → `main`. This
-section enumerates which dev-side commits go in.
+Per the parent tracker's standing pattern: night-before release PR cut from `release/<slug>` (branched from
+`origin/main`) → `main`. This section enumerates the **post-G2/G3-merge** delta and the build/verify recipe.
 
-**Eligible commits already on `dev` and not on `main` (as of plan filing date):**
+**CHANGELOG generation is manual, not workflow-triggered.** Per
+[`RELEASES.md` § "CHANGELOG is generated locally, PR-body-driven"](../../RELEASES.md): the release author runs
+`scripts/generate-changelog.sh` on the release branch before opening the PR. The script wraps `git-cliff` (skeleton from
+commit history per `cliff.toml`) and a Python post-processor that fetches PR bodies via the GitHub API to expand each
+entry's `## Changelog` section into categorized subsections. `publish.yml` only **reads** `CHANGELOG.md` to verify a `##
+[v0.3.0]` (or matching) section exists; if missing, it gracefully no-ops the tag-cut step. **Implication:** the
+release-PR build step MUST include running the changelog generator, or the workflow won't tag.
 
-| Commit  | Subject                                             | Include in `release/launch`? |
-| ------- | --------------------------------------------------- | ---------------------------- |
-| 76d253d | docs: rewrap to 120 cols (pre-push hook compliance) | No — docs-only on dev        |
-| 07d89a4 | docs: correct GitHub repo name (naming-align U1)    | No — docs-only on dev        |
-| 05e5c62 | docs(plans): file badge + vault-archival plans      | No — docs-only on dev        |
-| fa7ace2 | docs(plans): mark plan 003 shipped                  | No — docs-only on dev        |
-| 3d6dd11 | docs(plans): mark roadmap items unblocked           | No — docs-only on dev        |
-| 4fab614 | fix(release): sync publish.yml awk + CHANGELOG      | **Yes** — release infra fix  |
+**Net main-eligible content delta** (`git diff origin/main..dev` filtered to allow-listed paths, post-PR-#12 squash):
+
+| Path                                          | What's new on `dev`                                                      | Source                  |
+| --------------------------------------------- | ------------------------------------------------------------------------ | ----------------------- |
+| `VERSION`                                     | `0.2.0 → 0.3.0` (MINOR)                                                  | PR #12 squash `0a7769e` |
+| `principles/p1-…-p7-*.md`                     | `status: draft → active` (frontmatter only; `last-revised` unchanged)    | PR #12                  |
+| `principles/AGENTS.md`                        | Status enum widened to include `active`; lifecycle protocol updated      | PR #12                  |
+| `scripts/validate-principles.mjs`             | `VALID_STATUSES` extended; error message lists 4 valid values            | PR #12                  |
+| `README.md`                                   | New `## Status` section + HN-scroller hook above principles table        | PR #12                  |
+| `.github/pull_request_template.md`            | `## Changelog` moved to position #2 for parity with sibling repos        | PR #12                  |
+| `docs/decisions/naming-rationale.md`          | Naming convention codified (spec uses bare GitHub name; CLI/site suffix) | spec commit `07d89a4`   |
+| `AGENTS.md`, `CONTRIBUTING.md`, `RELEASES.md` | Minor governance edits                                                   | various dev commits     |
+| `.github/workflows/publish.yml` portion       | awk + CHANGELOG-exclusions sync-back                                     | PR #10 squash `4fab614` |
 
 > **Rule:** `docs/plans/**`, `docs/brainstorms/**`, `docs/solutions/**`, `docs/reviews/**` are blocked from `main`
 > by `guard-main-docs.yml`. Only release-infra fixes, principle edits, governance docs (README, CONTRIBUTING,
-> AGENTS, RELEASES, CHANGELOG, VERSION), and CI workflows go to `main`.
+> AGENTS, RELEASES, CHANGELOG, VERSION), `docs/decisions/`, and CI workflows go to `main`.
 
-**Commits this plan creates that go to `release/launch`:**
+### Build recipe (recommended: path-filtered diff, robust to mixed-path commits)
 
-- U2 (`feat`/`docs`?): seven principle status flips + AGENTS.md status enumeration + README "active stance" paragraph +
-  (probably) VERSION bump. **Yes — ships to main.**
-- U3 (`docs`): README hook. **Yes — ships to main.**
-- U4 (`docs(plans)`): plan checkbox sweep. **No — docs-only on dev.**
-- U5: handled by the naming-alignment plan; spec-side CLI/site/solutions-docs work coordinates separately.
-- U6 (`fix`/`docs`): only if a link was broken and got fixed. Decide at commit time.
-- U7 (`docs`): pressure-test notes per principle file. **Yes if any non-trivial finding shipped; otherwise no commit at
-  all** — a clean red-team pass needs no artifact in the launch release.
+Cherry-picking individual commits is brittle when commits like `07d89a4` touch BOTH allowed and blocked paths
+(naming-rationale + plan files in the same commit). The path-filtered-diff approach side-steps cherry-pick surgery:
 
-**Pre-cut sanity:**
+```bash
+git fetch origin
+git checkout -b release/v0.3.0-launch origin/main
 
-- Tag `v0.2.0` is current; tag `v0.2.1` or `v0.3.0` will be cut by the release PR if U2 changes VERSION.
-- `guard-release-branch.yml` rejects PRs to `main` whose head isn't `release/*` — confirms the night-before workflow is
-  the only entry path.
-- `validate-principles.yml` runs on the release PR — verify it passes BEFORE pushing the release branch.
+# Build a path-filtered patch covering only main-eligible paths:
+git diff origin/main..dev -- \
+  VERSION \
+  AGENTS.md CONTRIBUTING.md README.md RELEASES.md \
+  '.github/pull_request_template.md' \
+  '.github/workflows/' \
+  '.github/rulesets/' \
+  'docs/decisions/' \
+  'principles/' \
+  'scripts/' \
+  > /tmp/release-v0.3.0.patch
+
+git apply /tmp/release-v0.3.0.patch
+git add -A
+git commit -m "release: v0.3.0 — principles ship as active + governance polish"
+
+# Generate CHANGELOG locally — the release-signal step. Fetches PR bodies
+# from GitHub API; expands ### Added/Changed/Fixed/Removed/Security verbatim:
+bun scripts/generate-changelog.sh --tag v0.3.0
+git add CHANGELOG.md
+git commit -m "release: regenerate CHANGELOG for v0.3.0"
+
+# Sanity: confirm zero blocked paths leaked into the release branch:
+git diff origin/main --stat | grep -E "docs/(plans|brainstorms|solutions|reviews)/" \
+  && echo "ABORT: blocked path in release branch" \
+  || echo "OK: no blocked paths"
+
+# Validate locally before push (pre-push hook will also run these):
+bun scripts/validate-principles.mjs
+bun scripts/test-validate-principles.mjs
+bun scripts/check-links.mjs
+
+# Push (pre-push runs full hook battery: markdown wrap, lint, link check,
+# validator + 3 regression fixtures, release-branch semver check):
+git push -u origin release/v0.3.0-launch
+
+# Open PR (fill body per .github/pull_request_template.md; Changelog section
+# describes the v0.3.0 release):
+gh pr create --base main --head release/v0.3.0-launch \
+  --title "release: v0.3.0 — principles ship as active + HN-scroller hook + governance polish"
+```
+
+### Validation gates the release PR must pass
+
+- **Pre-push hook (local)** — markdown wrap, markdownlint, link check, principle validator + 3 regression fixtures,
+  `scripts/check-release-version.sh` (strict-monotonic `v0.3.0 > v0.2.0`, tag-not-already-used, VERSION-must-bump when
+  principles changed).
+- **`validate-principles.yml` (CI)** — runs on every PR; principle frontmatter + ID-uniqueness + bullet-count parity.
+- **`guard-release-branch.yml` (CI on PR to `main`)** — rejects any PR head that isn't `release/*`.
+- **`guard-main-docs.yml` (CI on PR to `main`)** — rejects any path under `docs/{plans,brainstorms,solutions,reviews}/`.
+- **`guard-main-provenance.yml` (CI on PR to `main`)** — verify origin if it has provenance checks.
+- **Verify CI green before merge:** `gh pr checks <pr> --watch`.
+
+### On merge to main → publish workflow
+
+`publish.yml` fires on push to `main` touching `principles/p*-*.md` OR `VERSION`. Reads `VERSION` (`0.3.0`), looks for
+`## [0.3.0]` in `CHANGELOG.md`, finds it (because the release PR generated it), then:
+
+1. Creates tag `v0.3.0` on the merge commit.
+2. Creates GitHub Release for `v0.3.0` with the CHANGELOG section as body.
+3. Fires `repository_dispatch` to `agentnative-cli` and `agentnative-site` (handlers wired during v0.2.0 close-out).
+
+### Pre-cut sanity
+
+- Tag `v0.2.0` is current; v0.3.0 will be cut by this release PR.
+- Pre-push hook's release-branch semver check enforces strict-monotonic version bump.
+- If G11 (red-team pass, scheduled Wednesday) finds a tier-changing critique, decide pre-cut whether to absorb into
+  v0.3.0 (single release PR carrying both the active-stance change and the tier change) or ship as a follow-up v0.3.1.
+  Default: absorb into v0.3.0 if the change is small, defer to v0.3.1 if it's substantive.
 
 ---
 
