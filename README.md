@@ -2,6 +2,10 @@
 
 Seven principles for CLI tools operated by AI agents.
 
+AI agents operate CLIs differently than humans do — they can't answer interactive prompts, can't parse vague output, and
+can't recover from errors that don't say what to do next. The principles below define what *agent-native* means in RFC
+2119 language, with machine-readable `requirements[]` so a checker (and graders) can pin against the standard.
+
 **Read the spec:** [anc.dev](https://anc.dev)
 
 **Check your CLI:** [agentnative-cli](https://github.com/brettdavies/agentnative-cli)
