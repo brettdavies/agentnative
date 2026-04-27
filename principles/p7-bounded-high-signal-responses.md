@@ -2,7 +2,7 @@
 id: p7
 title: Bounded, High-Signal Responses
 last-revised: 2026-04-22
-status: draft
+status: active
 requirements:
   - id: p7-must-quiet
     level: must

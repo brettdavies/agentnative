@@ -2,7 +2,7 @@
 id: p1
 title: Non-Interactive by Default
 last-revised: 2026-04-22
-status: draft
+status: active
 requirements:
   - id: p1-must-env-var
     level: must
