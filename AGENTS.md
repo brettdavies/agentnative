@@ -50,8 +50,8 @@ The spec speaks as a **standard**, not a person. Think RFC, not blog post.
 - Good: "MUST support `--output json` for machine-readable output."
 - Bad: "It's really important to have JSON output for your CLI."
 
-Use RFC 2119 language (MUST, SHOULD, MAY) for requirements. Concrete examples, not abstractions. Show the failure
-mode, then show the fix.
+Use RFC 2119 language (MUST, SHOULD, MAY) for requirements. Concrete examples, not abstractions. Show the failure mode,
+then show the fix.
 
 ## Editing principles
 

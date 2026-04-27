@@ -43,10 +43,9 @@ gh pr create --base dev --title "feat(scope): what changed"
 
 ## Releasing dev to main
 
-Engineering docs (`docs/plans/`, `docs/solutions/`, `docs/brainstorms/`,
-`docs/reviews/`) live on `dev` only. `guard-main-docs.yml` blocks them from reaching `main`, and
-`guard-release-branch.yml` rejects any PR to main whose head isn't `release/*`. Use the release-branch cherry-pick
-pattern:
+Engineering docs (`docs/plans/`, `docs/solutions/`, `docs/brainstorms/`, `docs/reviews/`) live on `dev` only.
+`guard-main-docs.yml` blocks them from reaching `main`, and `guard-release-branch.yml` rejects any PR to main whose head
+isn't `release/*`. Use the release-branch cherry-pick pattern:
 
 **Branch naming**: `release/<date>-<slug>` or `release/v<version>-<slug>` or just `release/<slug>`. Keep the slug short
 and descriptive.
@@ -172,9 +171,8 @@ gh api -X POST repos/<owner>/<repo>/rulesets --input .github/rulesets/protect-de
 gh api -X PUT repos/<owner>/<repo>/rulesets/<id> --input .github/rulesets/protect-main.json
 ```
 
-Committing the JSON alongside code means ruleset changes land via the same
-review process as workflow changes — a `chore(ci): tighten protect-main` release goes through dev → release/* → main
-like anything else.
+Committing the JSON alongside code means ruleset changes land via the same review process as workflow changes — a
+`chore(ci): tighten protect-main` release goes through dev → release/* → main like anything else.
 
 ### Status-check context pitfall
 
@@ -184,8 +182,8 @@ check:
 - **Inline job** (with `name:` field): published as just `<job-name>` (no workflow-name prefix).
 - **Reusable-workflow caller** (`uses: .../foo.yml@ref`): published as `<caller-job-id> / <reusable-job-id-or-name>`.
 
-Mixing these produces a stuck-but-green PR: all actual checks report green,
-but the ruleset waits forever on a context that will never appear. Confirm the real contexts after a first CI run with:
+Mixing these produces a stuck-but-green PR: all actual checks report green, but the ruleset waits forever on a context
+that will never appear. Confirm the real contexts after a first CI run with:
 
 ```bash
 gh api repos/<owner>/<repo>/commits/<sha>/check-runs --jq '.check_runs[].name'

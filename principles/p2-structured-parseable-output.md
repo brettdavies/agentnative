@@ -98,5 +98,5 @@ catastrophically later.
 - `process::exit()` in library code, bypassing structured error propagation.
 - Human-formatted tables as the only output mode with no JSON alternative.
 
-Measured by check IDs `p2-output-json`, `p2-output-format`, `p2-stderr-diagnostics`. Run
-`agentnative check --principle 2 .` against your CLI to see each.
+Measured by check IDs `p2-output-json`, `p2-output-format`, `p2-stderr-diagnostics`. Run `agentnative check --principle
+2 .` against your CLI to see each.

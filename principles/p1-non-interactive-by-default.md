@@ -103,4 +103,4 @@ agent-tool deadlock.
 - OAuth flow that unconditionally opens a browser with no headless escape hatch.
 
 Measured by check IDs `p1-non-interactive` (behavioral) and `p1-non-interactive-source` (source). Run `agentnative check
-  --principle 1 .` against your CLI to see both.
+--principle 1 .` against your CLI to see both.

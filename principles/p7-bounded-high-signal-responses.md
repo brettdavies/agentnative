@@ -101,5 +101,5 @@ precise control over how much data arrives, keeping responses high-signal and in
 - Progress bars or spinners that write to stderr in non-TTY contexts, adding noise to agent logs.
 - No `--timeout` on network operations. A stalled request blocks the agent indefinitely.
 
-Measured by check IDs `p7-quiet`, `p7-limit`, `p7-timeout`. Run `agentnative check --principle 7 .` against
-your CLI to see each.
+Measured by check IDs `p7-quiet`, `p7-limit`, `p7-timeout`. Run `agentnative check --principle 7 .` against your CLI to
+see each.

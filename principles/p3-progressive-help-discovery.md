@@ -77,5 +77,5 @@ trial-and-errors its way into a working call, burning tokens and sometimes landi
 - Examples buried in a README or man page but absent from `--help` output.
 - `after_help` text that describes the flags in prose instead of demonstrating them in code.
 
-Measured by check IDs `p3-help`, `p3-after-help`, `p3-version`. Run `agentnative check --principle 3 .` against
-your CLI to see each.
+Measured by check IDs `p3-help`, `p3-after-help`, `p3-version`. Run `agentnative check --principle 3 .` against your CLI
+to see each.
