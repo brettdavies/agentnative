@@ -169,16 +169,17 @@ done by then.
 
 ---
 
-- [ ] U2. **G2 — Flip 7 principles to `status: active` + README "active stance" paragraph**
+- [x] U2. **G2 — Flip 7 principles to `status: active` + README "active stance" paragraph**
 
 **Goal:** Every principle file's frontmatter `status:` field is `active`; README has a 1-paragraph block explaining the
 active-with-pressure-tests-welcome posture.
 
-**Status:** **in-flight via [PR #12](https://github.com/brettdavies/agentnative/pull/12)** (2026-04-27). Box stays `[ ]`
-until merged to `dev`. PR includes: 7 principle status flips, validator enum extension
+**Status:** **shipped** via [PR #12](https://github.com/brettdavies/agentnative/pull/12), squash-merged to `dev` as
+commit `0a7769e` on 2026-04-27. Includes: 7 principle status flips, validator enum extension
 (`scripts/validate-principles.mjs`), `principles/AGENTS.md` lifecycle protocol update, README `## Status` section,
 VERSION bump `0.2.0 → 0.3.0` (MINOR per Q1 — widening the documented status enum is a contract change visible to
-validators). Pre-push hook (markdown wrap, lint, link check, validator + 3 regression fixtures) all green.
+validators), and a ride-along PR template reorganization (Changelog now position #2 for parity with sibling repos).
+Pre-push hook all-green at every push.
 
 **Pre-merge resolution of Open Questions Q1-spec / Q2-spec / Q3-spec / Q4-spec:**
 
@@ -240,15 +241,15 @@ validators). Pre-push hook (markdown wrap, lint, link check, validator + 3 regre
 
 ---
 
-- [ ] U3. **G3 — README hook above principles table**
+- [x] U3. **G3 — README hook above principles table**
 
 **Goal:** A 1–2-sentence hook above the Principles table that gives an HN scroll-reader the "why" before they decide
 whether to keep reading.
 
-**Status:** **in-flight via [PR #12](https://github.com/brettdavies/agentnative/pull/12)** (2026-04-27, second commit on
-the same branch as G2). Box stays `[ ]` until merged. Final wording: "AI agents operate CLIs differently than humans do
-— they can't answer interactive prompts, can't parse vague output, and can't recover from errors that don't say what to
-do next. The principles below define what *agent-native* means in RFC 2119 language, with machine-readable
+**Status:** **shipped** via [PR #12](https://github.com/brettdavies/agentnative/pull/12) (squash commit `0a7769e` on
+`dev`, 2026-04-27, second commit on the feature branch). Final wording shipped: "AI agents operate CLIs differently than
+humans do — they can't answer interactive prompts, can't parse vague output, and can't recover from errors that don't
+say what to do next. The principles below define what *agent-native* means in RFC 2119 language, with machine-readable
 `requirements[]` so a checker (and graders) can pin against the standard."
 
 **Files:**
