@@ -394,12 +394,19 @@ template resolves to a working "new issue" page on the correct repo.
 
 ---
 
-- [ ] U7. **G11 — Red-team pass on principle text (spec-side)**
+- [x] U7. **G11 — Red-team pass on principle text (spec-side)**
 
 **Goal:** Adversarial review of the seven principle texts complete. "But X exists" objections caught, internal
 inconsistencies caught, before the HN thread runs.
 
-**Status:** `not-started`. Schedule Wednesday per parent tracker.
+**Status:** `done`. Shipped 2026-04-27 via PR #13 (squash `ca1e4f6` on `dev`). Adversarial review run via
+`compound-engineering:ce-adversarial-document-reviewer` in parallel across all 7 principle files. 25 findings surfaced;
+per-row dispositions chosen by Brett: 11 prose edits applied, 10 `[later]` notes appended (registry-affecting
+applicability narrowings + MUST-content language-neutralizations bundled for v0.4.0), 2 `[wontfix]` notes, 2 skipped (no
+entry). No requirement IDs / `level` / `applicability` values changed; no `last-revised:` or `VERSION` bump triggered.
+Launch posture preserved — principles remain `status: active` and continue to accept pressure-tests as ordinary issues.
+Three summary-text tightenings (P4 `gating-before-network`, P6 `sigpipe`, P6 `global-flags`) introduce mild
+registry-readable drift documented in-file for v0.4.0 follow-up.
 
 **Files (read; modify only on findings):**
 
