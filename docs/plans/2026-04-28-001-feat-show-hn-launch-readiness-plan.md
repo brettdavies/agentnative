@@ -334,44 +334,47 @@ the next gate-status update commit on the parent tracker.
 
 ---
 
-- [ ] U6. **G9 — Issue routing sanity check (all 7 templates resolve)**
+- [x] U6. **G9 — Issue routing sanity check (all templates resolve)**
 
 **Goal:** Every issue-template link in `CONTRIBUTING.md`, `README.md`, `.github/ISSUE_TEMPLATE/config.yml`, and the PR
 template resolves to a working "new issue" page on the correct repo.
 
-**Status:** `not-started`. ~10 min.
+**Status:** `done` for spec-side; **one cross-repo finding for site companion plan to address** (see below).
 
-**Files (verify-only; modify only if a link is broken):**
+**Verified via `gh api`:**
 
-- `CONTRIBUTING.md` § "Where to file" — three in-repo links + four cross-repo links.
-- `README.md` — cross-repo CLI link in the hook section.
-- `.github/ISSUE_TEMPLATE/config.yml` — two cross-repo `contact_links`.
-- `.github/ISSUE_TEMPLATE/{grade-a-cli,pressure-test,spec-question}.yml` — exist locally; verify GitHub renders them.
+| Repo                 | Templates expected (per spec docs)                 | Templates on default branch                                    | Result          |
+| -------------------- | -------------------------------------------------- | -------------------------------------------------------------- | --------------- |
+| `agentnative` (spec) | `pressure-test`, `grade-a-cli`, `spec-question`    | all 3 + `config.yml`                                           | OK              |
+| `agentnative-cli`    | `false-positive`, `feature-request`, `scoring-bug` | all 3 + `config`/`grade-a-cli`/`pressure-test`/`spec-question` | OK              |
+| `agentnative-site`   | `site-bug`                                         | **none — `.github/ISSUE_TEMPLATE/` not on `main`**             | **BROKEN LINK** |
 
-**Approach:**
+**Cross-repo finding (action item for site companion plan):**
 
-- Open every link in incognito (no auth) and verify the destination renders the expected template.
-- Cross-repo links to be checked:
-- `agentnative-cli`: `false-positive.yml`, `feature-request.yml`, `scoring-bug.yml`, `issues/new/choose`.
-- `agentnative-site`: `site-bug.yml`, `issues/new/choose`.
-- If any cross-repo template doesn't exist yet (CLI or site never created it), file an issue on the target repo or
-  remove the broken link from this repo. Coordinate via parent tracker.
-- This unit is the cheapest one in the launch and catches embarrassing 404s — do it Tuesday morning.
+- The site repo has `.github/ISSUE_TEMPLATE/{config.yml,site-bug.yml}` on `dev` (committed via `70b38f9
+  chore(governance): rename prep and issue template migration (#23)`), but the dir is **not on `main`**.
+- GitHub surfaces issue templates from the default branch (`main`). With `blank_issues_enabled: false` in the site's
+  `config.yml`, an HN visitor clicking
+  `https://github.com/brettdavies/agentnative-site/issues/new?template=site-bug.yml` will hit a degraded UI on launch
+  day.
+- **Required fix (site repo, not spec):** the night-before `release/launch` PR for `agentnative-site` must include
+  `.github/ISSUE_TEMPLATE/{config.yml,site-bug.yml}`. Surface in the site companion plan when filed.
+- Spec-side cleanup: none needed. The CONTRIBUTING.md links are correct; the target repo is the one missing the
+  templates.
 
 **Verification:**
 
-- All 7+ links open the expected new-issue form in incognito.
-- No 404 anywhere.
-- Document the test in the commit body if any link was fixed.
+- `gh api repos/brettdavies/<repo>/contents/.github/ISSUE_TEMPLATE` confirms presence on default branch for spec
+- CLI; returns 404 for site.
 
-**Test scenarios:**
+- `curl -sI` against the cross-repo URLs returns 302 → login (anonymous) for all three, indicating the URL routes
+  correctly at HTTP layer; the template-existence problem is a default-branch content issue, not a URL syntax issue.
+- HN-visibility for spec + CLI templates: ✅ working today.
 
-- Happy path: every link renders the expected template form, with required AI-disclosure field present.
-- Edge case: `agentnative-cli` may not have `false-positive.yml`, `feature-request.yml`, `scoring-bug.yml` yet — they
-  are referenced by `CONTRIBUTING.md` but not necessarily filed in the CLI repo. Verify; coordinate cross-repo if
-  missing.
-- Error path: a link 404s. Decision: fix the link in this repo, or escalate to the target repo to add the missing
-  template.
+**Site finding propagated to:**
+
+- Central launch tracker (added to Day-1 Status Log under Gate 9).
+- This plan's Open Questions section as Q6-spec (cross-repo coordination required).
 
 ---
 
