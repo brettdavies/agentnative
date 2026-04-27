@@ -23,6 +23,29 @@ does not subsume the existing in-flight plan
 it coordinates with it. Implementation of this plan is the deliverable for launch week, not for this session — this
 session's deliverable is the plan file itself.
 
+## Plan-level status (2026-04-27)
+
+**All seven implementation units complete.** U1–U7 closed in two PRs and one audit pass:
+
+- U1, U4, U5, U6 — closed via the 2026-04-27 audit pass and the naming-alignment plan close-out (commit `98315cd` then
+  follow-ups).
+- U2, U3 — shipped via [PR #12](https://github.com/brettdavies/agentnative/pull/12), squash `0a7769e` on `dev`.
+- U7 — shipped via [PR #13](https://github.com/brettdavies/agentnative/pull/13), squash `ca1e4f6` on `dev`.
+
+**Remaining spec-owned launch-week work** is the **release PR cut** (`release/v0.3.0-launch`: `origin/main` →
+path-filtered patch from `dev` + regenerated CHANGELOG → PR to `main`). Recipe is in the
+[Pre-launch Release PR Checklist](#pre-launch-release-pr-checklist) section below; nothing new to design. Cut night-
+before per Brett's standing pattern. On merge, `publish.yml` tags `v0.3.0` and fires `repository_dispatch` to
+`agentnative-cli` and `agentnative-site`.
+
+**Spec-internal post-launch follow-ups** — recorded in-file for v0.4.0:
+
+- 10 `[later]`-tagged pressure-test notes across P3, P4, P5, P6, P7 (registry-affecting applicability narrowings +
+  MUST-content language-neutralization). Bundle into a coordinated v0.4.0 PR with explicit CLI registry coordination.
+- 3 summary-text drift items from G11 (P4 `gating-before-network`, P6 `sigpipe`, P6 `global-flags`) — minor
+  registry-readable drift documented in-file; tighten summaries to match prose in v0.4.0.
+- Q5-spec (dev/main CHANGELOG back-merge) — defer post-launch as `chore(release):` PR per the plan recommendation.
+
 ---
 
 ## Problem Frame
@@ -597,9 +620,10 @@ gh pr create --base main --head release/v0.3.0-launch \
 
 - Tag `v0.2.0` is current; v0.3.0 will be cut by this release PR.
 - Pre-push hook's release-branch semver check enforces strict-monotonic version bump.
-- If G11 (red-team pass, scheduled Wednesday) finds a tier-changing critique, decide pre-cut whether to absorb into
-  v0.3.0 (single release PR carrying both the active-stance change and the tier change) or ship as a follow-up v0.3.1.
-  Default: absorb into v0.3.0 if the change is small, defer to v0.3.1 if it's substantive.
+- G11 (red-team pass) shipped 2026-04-27 via PR #13 (squash `ca1e4f6`) with **no tier change and no `last-revised:`
+  bump** — the absorb-vs-defer-vs-follow-up branch in this section's earlier draft is moot. v0.3.0 ships exactly the
+  active-stance + governance-polish delta that PR #12 produced; G11's deferred items are documented in-file as `[later]`
+  pressure-test notes for a v0.4.0 PR.
 
 ---
 
