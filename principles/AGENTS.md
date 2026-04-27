@@ -29,7 +29,7 @@ order). Both must be present; both are load-bearing.
 id: p1
 title: Non-Interactive by Default
 last-revised: 2026-04-22
-status: draft              # draft | under-review | locked
+status: active             # draft | under-review | active | locked
 requirements:
   - id: p1-must-env-var
     level: must            # must | should | may
@@ -49,8 +49,11 @@ Fields:
 - `title` — human-readable principle title; mirrors the H1.
 - `last-revised: YYYY-MM-DD` — updates **only** when a MUST/SHOULD/MAY changes tier, is added, or is removed. Prose-only
   edits do not bump the date.
-- `status` — `draft` when first extracted, `under-review` during pressure-testing, `locked` when edits are stable for a
-  review cycle.
+- `status` — lifecycle marker. `draft` when first extracted; `under-review` during a pressure-test cycle; `active` once
+  the principle is published as part of the standard and accepting pressure-tests as normal-course feedback (default
+  state for shipped principles); `locked` when edits are intentionally frozen for a defined review window. Routine
+  pressure-tests against an `active` principle do **not** require flipping back to `under-review` — that flip is
+  reserved for cycles producing substantive critique that may change MUST/SHOULD/MAY tiers.
 - `requirements[]` — one entry per MUST/SHOULD/MAY bullet in the prose. Required fields per entry:
 - `id` — `p<n>-<level>-<slug>`, lowercase-kebab, unique across all seven files.
 - `level` — `must`, `should`, or `may` (lowercase). RFC 2119 semantics.
@@ -88,14 +91,27 @@ Drift in any of these fails the check with an actionable message naming the file
 
 ## Pressure-test protocol
 
-Principles start as `status: draft`. Moving to `locked` is gated on a pressure-test cycle:
+Principles start as `status: draft`, ship as `status: active`, and only flip to `under-review` or `locked` for specific
+reasons:
+
+- `draft` → `active`: when the principle is published as part of a release. The default shipped state. Pressure-tests
+  against an `active` principle are welcomed and tracked as ordinary issues via the `pressure-test.yml` template — no
+  status flip required for normal-course feedback.
+- `active` → `under-review`: only when a pressure-test cycle produces critique substantive enough that MUST/SHOULD/MAY
+  tiers may change. Stays `under-review` until the cycle resolves.
+- `under-review` → `active`: when findings are resolved (edited, demoted, merged, split, or `[wontfix]`-tagged) and the
+  principle is stable again.
+- `active` (or `under-review`) → `locked`: when edits are intentionally frozen for a defined review window. Use
+  sparingly — `locked` is a hard gate, not a quality marker.
+
+The cycle for substantive critique:
 
 1. Change status to `under-review`.
 2. Run at least one of the tests below. Log findings at the bottom of the file in a `## Pressure test notes` section.
 3. Resolve each finding: edit the principle, demote a MUST to SHOULD, merge with another principle, split into two, or
    reject the critique with a note explaining why.
-4. When findings are exhausted and edits are stable for a review cycle, change status to `locked`. Keep unresolved
-   findings with a `[wontfix]` or `[later]` tag.
+4. When findings are exhausted and edits are stable for a review cycle, change status back to `active` (or `locked` if
+   the principle is being explicitly frozen). Keep unresolved findings with a `[wontfix]` or `[later]` tag.
 
 **Tests (choose at least one; more is better):**
 
