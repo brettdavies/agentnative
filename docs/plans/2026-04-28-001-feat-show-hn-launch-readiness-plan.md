@@ -174,7 +174,18 @@ done by then.
 **Goal:** Every principle file's frontmatter `status:` field is `active`; README has a 1-paragraph block explaining the
 active-with-pressure-tests-welcome posture.
 
-**Status:** `not-started`. ~30 min execution; ~5 min review.
+**Status:** **in-flight via [PR #12](https://github.com/brettdavies/agentnative/pull/12)** (2026-04-27). Box stays `[ ]`
+until merged to `dev`. PR includes: 7 principle status flips, validator enum extension
+(`scripts/validate-principles.mjs`), `principles/AGENTS.md` lifecycle protocol update, README `## Status` section,
+VERSION bump `0.2.0 → 0.3.0` (MINOR per Q1 — widening the documented status enum is a contract change visible to
+validators). Pre-push hook (markdown wrap, lint, link check, validator + 3 regression fixtures) all green.
+
+**Pre-merge resolution of Open Questions Q1-spec / Q2-spec / Q3-spec / Q4-spec:**
+
+- Q1-spec: AGENTS.md enum updated in same commit. ✅
+- Q2-spec: validator enum updated in same commit. Tests pass. ✅
+- Q3-spec: CLI vendor parser confirmed status-agnostic (`grep status agentnative-cli/build.rs` → 0 hits). ✅
+- Q4-spec: README `## Status` paragraph mentions all 4 lifecycle values briefly + links to AGENTS.md. ✅
 
 **Files:**
 
@@ -234,7 +245,11 @@ active-with-pressure-tests-welcome posture.
 **Goal:** A 1–2-sentence hook above the Principles table that gives an HN scroll-reader the "why" before they decide
 whether to keep reading.
 
-**Status:** `not-started`. ~15 min copy block.
+**Status:** **in-flight via [PR #12](https://github.com/brettdavies/agentnative/pull/12)** (2026-04-27, second commit on
+the same branch as G2). Box stays `[ ]` until merged. Final wording: "AI agents operate CLIs differently than humans do
+— they can't answer interactive prompts, can't parse vague output, and can't recover from errors that don't say what to
+do next. The principles below define what *agent-native* means in RFC 2119 language, with machine-readable
+`requirements[]` so a checker (and graders) can pin against the standard."
 
 **Files:**
 
