@@ -2,7 +2,7 @@
 id: p5
 title: Safe Retries and Explicit Mutation Boundaries
 last-revised: 2026-04-22
-status: draft
+status: active
 requirements:
   - id: p5-must-force-yes
     level: must

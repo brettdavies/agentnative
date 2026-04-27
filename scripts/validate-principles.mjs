@@ -27,7 +27,7 @@ const PRINCIPLES_DIR = process.argv[2]
   : path.join(REPO_ROOT, "principles");
 const REQUIRED_KEYS = ["id", "title", "last-revised", "status", "requirements"];
 const VALID_LEVELS = new Set(["must", "should", "may"]);
-const VALID_STATUSES = new Set(["draft", "under-review", "locked"]);
+const VALID_STATUSES = new Set(["draft", "under-review", "active", "locked"]);
 const FILENAME_RE = /^(p[1-9][0-9]*)-.*\.md$/;
 
 function splitFrontmatter(content, file) {
@@ -140,7 +140,7 @@ function validateFile(file, content, seenIds, errors) {
     errors.push(`${base}: frontmatter id '${fm.id}' does not match filename prefix '${expectedId}'`);
   }
   if (fm.status && !VALID_STATUSES.has(fm.status)) {
-    errors.push(`${base}: invalid status '${fm.status}' (must be draft|under-review|locked)`);
+    errors.push(`${base}: invalid status '${fm.status}' (must be draft|under-review|active|locked)`);
   }
   if (!Array.isArray(fm.requirements)) {
     errors.push(`${base}: 'requirements' must be an array`);

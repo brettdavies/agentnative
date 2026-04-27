@@ -2,21 +2,33 @@
 
 Seven principles for CLI tools operated by AI agents.
 
+AI agents operate CLIs differently than humans do — they can't answer interactive prompts, can't parse vague output, and
+can't recover from errors that don't say what to do next. The principles below define what *agent-native* means in RFC
+2119 language, with machine-readable `requirements[]` so a checker (and graders) can pin against the standard.
+
 **Read the spec:** [anc.dev](https://anc.dev)
 
 **Check your CLI:** [agentnative-cli](https://github.com/brettdavies/agentnative-cli)
 
 ## Principles
 
-| # | Principle | Summary |
-| --- | --- | --- |
-| P1 | Non-Interactive by Default | Never block on TTY input during normal operation |
-| P2 | Structured, Parseable Output | Offer machine-readable formats alongside human text |
-| P3 | Progressive Help Discovery | Layer help from one-liner to full reference |
-| P4 | Fail Fast with Actionable Errors | Distinct exit codes, structured error output, fix suggestions |
-| P5 | Safe Retries and Explicit Mutation Boundaries | Idempotent reads, explicit mutation, dry-run support |
-| P6 | Composable and Predictable Command Structure | Consistent grammar, composable subcommands |
-| P7 | Bounded, High-Signal Responses | Predictable output size, pagination, filtering |
+| #   | Principle                                     | Summary                                                       |
+| --- | --------------------------------------------- | ------------------------------------------------------------- |
+| P1  | Non-Interactive by Default                    | Never block on TTY input during normal operation              |
+| P2  | Structured, Parseable Output                  | Offer machine-readable formats alongside human text           |
+| P3  | Progressive Help Discovery                    | Layer help from one-liner to full reference                   |
+| P4  | Fail Fast with Actionable Errors              | Distinct exit codes, structured error output, fix suggestions |
+| P5  | Safe Retries and Explicit Mutation Boundaries | Idempotent reads, explicit mutation, dry-run support          |
+| P6  | Composable and Predictable Command Structure  | Consistent grammar, composable subcommands                    |
+| P7  | Bounded, High-Signal Responses                | Predictable output size, pagination, filtering                |
+
+## Status
+
+All seven principles are `status: active` — published as part of the standard, not drafts. This is a working spec
+accepting pressure-tests, not a manifesto. File substantive critique via the
+[pressure-test issue template](https://github.com/brettdavies/agentnative/issues/new?template=pressure-test.yml); a
+principle moves to `under-review` when a finding may change MUST/SHOULD/MAY tiers, then back to `active` once resolved.
+See [`principles/AGENTS.md`](principles/AGENTS.md) for the full status lifecycle and pressure-test protocol.
 
 ## Versioning
 
