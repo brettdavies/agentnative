@@ -73,5 +73,5 @@ modify state" is a better sentence to put in `--help` than to assume.
 - No `--dry-run` option on bulk operations, where a preview prevents costly mistakes.
 - Operations that fail on retry because the first attempt partially succeeded — non-idempotent writes without rollback.
 
-Measured by check IDs `p5-dry-run`, `p5-destructive-guard`. Run `agentnative check --principle 5 .` against your
-CLI to see each.
+Measured by check IDs `p5-dry-run`, `p5-destructive-guard`. Run `agentnative check --principle 5 .` against your CLI to
+see each.

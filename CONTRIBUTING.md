@@ -58,8 +58,8 @@ This ensures the spec and checker stay in sync. The spec version bumps when a pr
 
 ## Misrouted issues
 
-If an issue lands in the wrong repo, it will be transferred to the correct one (all repos are under the same org).
-A `misrouted` label is applied before transfer so routing guidance can be improved.
+If an issue lands in the wrong repo, it will be transferred to the correct one (all repos are under the same org). A
+`misrouted` label is applied before transfer so routing guidance can be improved.
 
 ## Search before creating
 

@@ -82,8 +82,8 @@ Ordering lock: Release A must land on `main` before Release B, so the workflow e
 - `2b01eee` feat: requirement-ID frontmatter contract + governance infra (#3)
 - `3ef235c` docs(plans): mark plan 001 shipped and record close-out (direct commit; docs/plans only)
 
-No release has ever reached main. The first release is this plan's Release A (infra-only, no tag). The second release
-is Release B (v0.2.0, first tag). After B lands, roadmap items 3 (vault archival) and 5 (companion CLI PR) from
+No release has ever reached main. The first release is this plan's Release A (infra-only, no tag). The second release is
+Release B (v0.2.0, first tag). After B lands, roadmap items 3 (vault archival) and 5 (companion CLI PR) from
 [`2026-04-22-002-post-frontmatter-roadmap.md`](2026-04-22-002-post-frontmatter-roadmap.md) unblock.
 
 ## Key Decisions (already locked)
@@ -168,8 +168,8 @@ git cherry-pick <sha1> <sha2> ...
 git diff origin/main --stat               # verify no guarded paths leaked
 ```
 
-**The twist this plan introduces:** `docs/plans/` files are bundled INSIDE the squash commits (not as separate
-commits), so plain cherry-pick brings them along. After the cherry-pick, strip them:
+**The twist this plan introduces:** `docs/plans/` files are bundled INSIDE the squash commits (not as separate commits),
+so plain cherry-pick brings them along. After the cherry-pick, strip them:
 
 ```bash
 git rm -r --cached docs/plans/

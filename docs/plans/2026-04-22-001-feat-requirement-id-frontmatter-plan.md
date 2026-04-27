@@ -233,9 +233,9 @@ principle prose                                   │
 9. **Open the companion `agentnative-cli` PR.** Rewrites `registry.rs` to vendor + parse spec frontmatter. Link in this
    PR's Linked-check-review field.
 
-Units 2–7 have no hard dependencies on each other after 1 lands; they can be parallel commits if
-preferred. Unit 8 depends on Unit 2 (schema needs real frontmatter to validate). Unit 9 depends on Unit 2 (spec
-frontmatter must exist for the CLI to vendor).
+Units 2–7 have no hard dependencies on each other after 1 lands; they can be parallel commits if preferred. Unit 8
+depends on Unit 2 (schema needs real frontmatter to validate). Unit 9 depends on Unit 2 (spec frontmatter must exist for
+the CLI to vendor).
 
 ## Test Scenarios
 
