@@ -150,7 +150,7 @@ conflicts.
 **Approach:**
 
 - Redirect note content: 5-10 lines. Title: "This folder is archived"; body: link to
-  `https://github.com/brettdavies/agentnative-spec` and specifically to `principles/AGENTS.md` in that repo as the new
+  `https://github.com/brettdavies/agentnative` and specifically to `principles/AGENTS.md` in that repo as the new
   governance entry point. Cite the archival date and the tag (`v0.2.0`) that made this folder obsolete.
 - Move (not delete) existing files into `_archive-2026-04-23/`. Recovery via git blame is possible but slow; keeping the
   snapshot in-place is faster for anyone who wants to see what the vault looked like pre-repo.
@@ -170,7 +170,7 @@ conflicts.
 
 - `ls ~/obsidian-vault/Projects/brettdavies-agentnative/principles/` shows `README.md` and `_archive-2026-04-23/` only.
 - Opening the redirect note in Obsidian and clicking the GitHub link lands on
-  `https://github.com/brettdavies/agentnative-spec`.
+  `https://github.com/brettdavies/agentnative`.
 
 ---
 
@@ -180,8 +180,8 @@ conflicts.
 
 **Requirements:** R2, R3, R4
 
-**Dependencies:** U1 (learn from principles archival whether the move-to-_archive pattern behaves well in Obsidian
-Sync before applying it a second time)
+**Dependencies:** U1 (learn from principles archival whether the move-to-_archive pattern behaves well in Obsidian Sync
+before applying it a second time)
 
 **Files:** Depends on disposition:
 

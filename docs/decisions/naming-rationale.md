@@ -23,23 +23,29 @@ candidates so future contributors do not re-litigate ground the research already
 
 Each candidate was checked against npm, PyPI, crates.io, and GitHub for namespace density. Results from March 2026:
 
-| Name | npm | PyPI | crates.io | GitHub noise | Notes |
-| --- | --- | --- | --- | --- | --- |
-| `agentlint` | TAKEN (v0.3.0 security scanner) | TAKEN (v0.9.5, active) | available | 4+ projects | "lint" also technically wrong — 2/3 of checks are behavioral or project-file, not static source analysis |
-| `agentcheck` | available | TAKEN (ghost v0.1.0) | available | 20 repos (largest 42 stars) | `agentcheck.io` exists; SEO collision |
-| `agentaudit` | TAKEN (v3.14.0 active) | available | available | 26 repos | Direct collision in AI agent tooling |
-| `agentprobe` | TAKEN | TAKEN | available | 22 repos (incl. 24-star near-identical-purpose repo) | Worst-case collision |
-| `clint` | TAKEN (closure interrupt handlers, 6k dl) | TAKEN | TAKEN | — | Great name but dead end for a Rust binary |
-| `litmus` | TAKEN (BDD harness, 9k dl) | TAKEN | TAKEN | — | Strong metaphor, zero namespace |
-| `clivet` | available | available | available | — | Available but no "agent" in the name → discoverability loss |
-| **`agentnative`** | **available** | **available** | **available** | **2 empty repos, 0 stars** | Cleanest namespace of every name evaluated |
+| Name              | npm                                       | PyPI                   | crates.io     | GitHub noise                                         | Notes                                                                                                    |
+| ----------------- | ----------------------------------------- | ---------------------- | ------------- | ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `agentlint`       | TAKEN (v0.3.0 security scanner)           | TAKEN (v0.9.5, active) | available     | 4+ projects                                          | "lint" also technically wrong — 2/3 of checks are behavioral or project-file, not static source analysis |
+| `agentcheck`      | available                                 | TAKEN (ghost v0.1.0)   | available     | 20 repos (largest 42 stars)                          | `agentcheck.io` exists; SEO collision                                                                    |
+| `agentaudit`      | TAKEN (v3.14.0 active)                    | available              | available     | 26 repos                                             | Direct collision in AI agent tooling                                                                     |
+| `agentprobe`      | TAKEN                                     | TAKEN                  | available     | 22 repos (incl. 24-star near-identical-purpose repo) | Worst-case collision                                                                                     |
+| `clint`           | TAKEN (closure interrupt handlers, 6k dl) | TAKEN                  | TAKEN         | —                                                    | Great name but dead end for a Rust binary                                                                |
+| `litmus`          | TAKEN (BDD harness, 9k dl)                | TAKEN                  | TAKEN         | —                                                    | Strong metaphor, zero namespace                                                                          |
+| `clivet`          | available                                 | available              | available     | —                                                    | Available but no "agent" in the name → discoverability loss                                              |
+| **`agentnative`** | **available**                             | **available**          | **available** | **2 empty repos, 0 stars**                           | Cleanest namespace of every name evaluated                                                               |
 
 ## Decision
 
 - **Crate / package / standard name:** `agentnative`
 - **Binary alias:** `anc` (installed alongside `agentnative`, like `ripgrep` installs `rg`)
-- **GitHub org / repos:** `brettdavies/agentnative-spec` (this repo, SoT), `brettdavies/agentnative-cli`,
-  `brettdavies/agentnative-site`
+- **GitHub org / repos:** `brettdavies/agentnative` (this repo, SoT — bare brand name on GitHub),
+  `brettdavies/agentnative-cli`, `brettdavies/agentnative-site`
+- **Local working-tree convention:** the spec is checked out at `~/dev/agentnative-spec/` (the `-spec` suffix
+  disambiguates against the umbrella term `agentnative`, which would otherwise shadow the brand name in shell context).
+  CLI and site working trees match their GitHub names directly (`~/dev/agentnative-cli/`, `~/dev/agentnative-site/`).
+  The `agentnative-spec` slot on GitHub is a passive redirect to `brettdavies/agentnative` so external links of that
+  shape resolve cleanly — never claim that slot with a real repo, and never rename or delete `brettdavies/agentnative`
+  without re-establishing the redirect.
 - **Domain:** `anc.dev`
 
 ## Why `agentnative`

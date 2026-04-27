@@ -44,7 +44,7 @@ file is the public-repo record.
   notification, per `sot_contract.md` (hybrid propagation).
 - **Why:** SoT without propagation is a filing cabinet. Tagged releases give downstream consumers a stable pin; the
   dispatch lets them react without polling.
-- **Owner repo:** `brettdavies/agentnative-spec` (this repo — `.github/workflows/publish.yml`).
+- **Owner repo:** `brettdavies/agentnative` (this repo — `.github/workflows/publish.yml`).
 - **Dependencies:** `2026-04-22-001` merged to `main` (the ID contract that downstream consumers will pin against must
   exist first).
 - **Revisit trigger:** Next `VERSION` bump that downstream consumers actually need to hear about — realistically
