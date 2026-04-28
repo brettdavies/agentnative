@@ -17,7 +17,7 @@ can't recover from errors that don't say what to do next. The principles below d
 ## Quick start
 
 ```bash
-brew install brettdavies/tap/anc
+brew install brettdavies/tap/agentnative
 anc check .
 ```
 
