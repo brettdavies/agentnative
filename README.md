@@ -17,9 +17,13 @@ can't recover from errors that don't say what to do next. The principles below d
 ## Quick start
 
 ```bash
-cargo install agentnative
+brew install brettdavies/tap/anc
 anc check .
 ```
+
+The `anc` binary is also published as a Rust crate (`cargo install agentnative`) and as platform-specific archives on
+[GitHub Releases](https://github.com/brettdavies/agentnative-cli/releases). Brew is the recommended path — it works
+without the Rust toolchain.
 
 Example output:
 
