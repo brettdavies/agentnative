@@ -6,9 +6,56 @@ AI agents operate CLIs differently than humans do — they can't answer interact
 can't recover from errors that don't say what to do next. The principles below define what *agent-native* means in RFC
 2119 language, with machine-readable `requirements[]` so a checker (and graders) can pin against the standard.
 
-**Read the spec:** [anc.dev](https://anc.dev)
+## The trifecta
 
-**Check your CLI:** [agentnative-cli](https://github.com/brettdavies/agentnative-cli)
+- **Spec** — this repo. Seven RFC 2119 principles plus machine-readable `requirements[]` in YAML frontmatter. Currently
+  v0.3.0; all principles ship as `status: active`.
+- **Linter** — [`anc`](https://github.com/brettdavies/agentnative-cli). Scores any CLI repo against the spec. Pins
+  against requirement IDs, not prose.
+- **Leaderboard** — [anc.dev](https://anc.dev). Top CLIs graded live; submit a PR to add yours.
+
+## Quick start
+
+```bash
+cargo install agentnative
+anc check .
+```
+
+Example output:
+
+<!-- TODO: replace with actual `anc check` output before PR to main -->
+
+```text
+agentnative v0.3.0 — checking ./
+
+P1 Non-Interactive by Default          PASS
+P2 Structured, Parseable Output        PASS
+P3 Progressive Help Discovery          FAIL  p3-must-subcommand-examples
+P4 Fail Fast with Actionable Errors    PASS
+P5 Safe Retries / Mutation Boundaries  PASS
+P6 Composable Command Structure        PASS
+P7 Bounded High-Signal Responses       WARN  p7-should-limit (recommended)
+
+Score: 78/100
+Run `anc check . --output json` for machine-readable output, or
+`anc explain p3-must-subcommand-examples` for a remediation note.
+```
+
+## Live leaderboard
+
+<!-- TODO: replace with actual anc100 scores before PR to main; preserve format -->
+
+| Rank | CLI       | Score  |
+| ---: | --------- | ------ |
+|    1 | `gh`      | 89/100 |
+|    2 | `git`     | 82/100 |
+|    3 | `ripgrep` | 78/100 |
+|    4 | `jq`      | 71/100 |
+|    5 | `kubectl` | 67/100 |
+|    6 | `aws`     | 54/100 |
+
+Full board (anc100) at [anc.dev](https://anc.dev). Submit a PR to grade an additional tool; scoring is reproducible from
+the linter source.
 
 ## Principles
 
@@ -42,35 +89,28 @@ that principle changes tier, is added, or is removed. Prose-only edits do not up
 
 Current version: see [VERSION](VERSION).
 
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for:
-
-- Where to file issues (routing across spec, tool, and site repos)
-- AI disclosure requirements
-- Human co-sign policy for spec changes
-- Coupled release protocol
-
-## License
-
-Spec text is available under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
-
-The `anc` checker tool is separately licensed under MIT and Apache-2.0.
-
-Scripts under `scripts/` (the principle-frontmatter validator, its regression fixtures, and the pre-push hook) are not
-spec text; they are dual-licensed under either MIT or Apache-2.0 at your option, matching the `anc` checker. Each script
-carries an `SPDX-License-Identifier: MIT OR Apache-2.0` header. See [`LICENSE`](LICENSE) for the carve-out,
-[`LICENSE-MIT`](LICENSE-MIT), and [`LICENSE-APACHE`](LICENSE-APACHE).
-
-## Related
-
-- [anc.dev](https://anc.dev) — the rendered spec site
-- [agentnative-cli](https://github.com/brettdavies/agentnative-cli) — the CLI linter that checks compliance
-- [agentnative-site](https://github.com/brettdavies/agentnative-site) — the website source
-
 ## Decision records
 
 - [P1 — behavioral MUST wording](docs/decisions/p1-behavioral-must.md) — why the MUST describes observable behavior
   instead of enumerating prompt and TUI APIs, and what the automated-check verification boundary is.
 - [Naming — `agentnative`, `anc`, `anc.dev`](docs/decisions/naming-rationale.md) — the rationale behind the project
   name, the `anc` binary alias, and the `anc.dev` domain, plus the candidates that were rejected.
+
+## Related
+
+- [anc.dev](https://anc.dev) — the rendered spec site and live leaderboard
+- [agentnative-cli](https://github.com/brettdavies/agentnative-cli) — the `anc` linter
+- [agentnative-site](https://github.com/brettdavies/agentnative-site) — the website source
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for issue routing across spec/tool/site repos, AI disclosure requirements, the
+human co-sign policy for spec changes, and the coupled release protocol.
+
+## License
+
+- **Spec text:** [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+- **`anc` checker tool:** MIT or Apache-2.0
+- **Scripts under `scripts/`:** MIT or Apache-2.0
+
+See [LICENSE](LICENSE) for the full carve-out; per-file SPDX headers name the exact license per file.
