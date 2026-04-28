@@ -55,8 +55,9 @@ per the path-filtered-diff recipe in the [Pre-launch Release PR Checklist](#pre-
 **Remaining spec-owned launch-week work** is the **release PR cut** (`release/v0.3.0-launch`: `origin/main` →
 path-filtered patch from `dev` + regenerated CHANGELOG → PR to `main`). Recipe is in the
 [Pre-launch Release PR Checklist](#pre-launch-release-pr-checklist) section below; nothing new to design. Cut night-
-before per Brett's standing pattern. On merge, `publish.yml` tags `v0.3.0` and fires `repository_dispatch` to
-`agentnative-cli` and `agentnative-site`.
+before per Brett's standing pattern. On merge, `publish.yml` tags `v0.3.0` and fires a `spec-release` dispatch to
+`agentnative-cli` and `agentnative-site`; no downstream handlers are wired as of v0.3.0, so cross-repo sync (CLI
+re-vendor, site/skill `sync-spec`) runs manually per the per-repo launch plans.
 
 **Spec-internal post-launch follow-ups** — recorded in-file for v0.4.0:
 
@@ -634,7 +635,10 @@ gh pr create --base main --head release/v0.3.0-launch \
 
 1. Creates tag `v0.3.0` on the merge commit.
 2. Creates GitHub Release for `v0.3.0` with the CHANGELOG section as body.
-3. Fires `repository_dispatch` to `agentnative-cli` and `agentnative-site` (handlers wired during v0.2.0 close-out).
+3. Fires `repository_dispatch` (event_type `spec-release`) to `agentnative-cli` and `agentnative-site`. As of v0.3.0
+   neither downstream has a handler wired, so the event is unconsumed and cross-repo sync (CLI re-vendor, site/skill
+   `sync-spec`) runs manually per the per-repo launch plans. The dispatch is non-fatal by design — wiring handlers is
+   post-launch follow-up.
 
 ### Pre-cut sanity
 
