@@ -23,7 +23,7 @@ does not subsume the existing in-flight plan
 it coordinates with it. Implementation of this plan is the deliverable for launch week, not for this session — this
 session's deliverable is the plan file itself.
 
-## Plan-level status (2026-04-27)
+## Plan-level status (last updated 2026-04-28)
 
 **All seven implementation units complete.** U1–U7 closed in two PRs and one audit pass:
 
@@ -31,6 +31,26 @@ session's deliverable is the plan file itself.
   follow-ups).
 - U2, U3 — shipped via [PR #12](https://github.com/brettdavies/agentnative/pull/12), squash `0a7769e` on `dev`.
 - U7 — shipped via [PR #13](https://github.com/brettdavies/agentnative/pull/13), squash `ca1e4f6` on `dev`.
+
+**Additional launch-readiness polish landed 2026-04-28 via
+[PR #14](https://github.com/brettdavies/agentnative/pull/14)** (squash `32e47e2` on `dev`). Off-plan work that surfaced
+during Show HN post drafting — gaps between what the post promises and what an HN visitor finds when they click through
+to the spec repo:
+
+- **README restructured for HN-visitor flow.** `## The trifecta` callout (spec + linter + leaderboard as equals); `##
+  Quick start` leading with `brew install brettdavies/tap/agentnative` (canonical install per Gate 7), `cargo install
+  agentnative` and GitHub Releases as alternatives; `## Live leaderboard` preview table with placeholder top-N scores;
+  admin sections (Versioning, Decision records, Related, Contributing, License) reordered below spec content. License
+  tightened from 4 paragraphs to 3 bullets; Contributing tightened from 4-bullet list to 1 paragraph.
+- **Leaderboard URLs corrected** from bare `anc.dev` (the principles homepage) to `anc.dev/scorecards` (the actual
+  leaderboard) in both the trifecta callout and the Live leaderboard section.
+- **AGENTS.md** adds `brettdavies/agentnative-skill` as a documented downstream consumer (introductory list + cross-repo
+  context table); replaces the prior `~/.claude/skills/agent-native-cli/` row with the public `~/dev/agentnative-skill`
+  row.
+
+**Two TODOs deferred to `release/v0.3.0-launch`** (not landed on `dev`): replace illustrative `anc check` output with a
+real run; replace placeholder leaderboard scores with actual anc100 top-N rows. Both swaps live on the release branch
+per the path-filtered-diff recipe in the [Pre-launch Release PR Checklist](#pre-launch-release-pr-checklist) section.
 
 **Remaining spec-owned launch-week work** is the **release PR cut** (`release/v0.3.0-launch`: `origin/main` →
 path-filtered patch from `dev` + regenerated CHANGELOG → PR to `main`). Recipe is in the
