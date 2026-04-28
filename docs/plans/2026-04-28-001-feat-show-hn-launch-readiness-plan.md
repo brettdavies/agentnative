@@ -11,6 +11,10 @@ parent: ~/.gstack/projects/brettdavies-agentnative/brett-dev-design-show-hn-laun
 > **Parent:** `~/.gstack/projects/brettdavies-agentnative/brett-dev-design-show-hn-launch-inversion-20260427-144756.md`
 > — central launch tracker. This plan inherits gate definitions, scope, and approach (Inversion) from the parent.
 > Updates to gate scope or status land on the parent first; this plan tracks spec-side execution detail.
+>
+> **Release version + order:** see central tracker § Release Versions and Order — SoT for v0.3.0 launch wave.
+> Spec `v0.3.0` tag is **step 1** of the launch wave and the HARD GATE for CLI plan U1.5 (re-vendor) and skill task #15
+> (v0.2.0 release). Slip → push launch 24h.
 
 ## Overview
 
@@ -56,8 +60,20 @@ per the path-filtered-diff recipe in the [Pre-launch Release PR Checklist](#pre-
 path-filtered patch from `dev` + regenerated CHANGELOG → PR to `main`). Recipe is in the
 [Pre-launch Release PR Checklist](#pre-launch-release-pr-checklist) section below; nothing new to design. Cut night-
 before per Brett's standing pattern. On merge, `publish.yml` tags `v0.3.0` and fires a `spec-release` dispatch to
-`agentnative-cli` and `agentnative-site`; no downstream handlers are wired as of v0.3.0, so cross-repo sync (CLI
-re-vendor, site/skill `sync-spec`) runs manually per the per-repo launch plans.
+`agentnative-cli` and `agentnative-site`; no downstream handlers are wired as of v0.3.0, so cross-repo sync runs
+manually per the per-repo launch plans. Three downstream surfaces vendor spec content and need re-vendoring against
+`v0.3.0` to ship coherent active-status principles on launch day:
+
+- **`agentnative-cli`** — vendors via `scripts/sync-spec.sh` into `src/principles/spec/`. Re-vendor lands as CLI plan
+  unit U1.5 before the CLI `release/launch` cut. CLI plan path:
+  `agentnative-cli/docs/plans/2026-04-28-001-feat-show-hn-launch-readiness-plan.md`.
+- **`agentnative-site`** — vendors via `sync-spec` into the site-render pipeline (post-launch path; site
+  `release/launch` ships current vendored content for launch day). Site plan path:
+  `agentnative-site/docs/plans/2026-04-28-001-feat-show-hn-launch-readiness-plan.md`.
+- **`agentnative-skill`** — vendors `agentnative-spec` into `bundle/spec/` per the bundle restructure (PR #4,
+  `feat(bundle)!`: pivot to anc; vendor agentnative-spec). Re-vendor against `v0.3.0` is part of the skill `v0.2.0`
+  cherry-pick scope (task #15). Skill plan path:
+  `agentnative-skill/docs/plans/2026-04-27-001-bootstrap-agentnative-skill-plan.md` ("Outstanding tasks → task #15").
 
 **Spec-internal post-launch follow-ups** — recorded in-file for v0.4.0:
 
