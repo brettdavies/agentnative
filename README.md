@@ -96,8 +96,6 @@ Current version: see [VERSION](VERSION).
 
 - [P1 — behavioral MUST wording](docs/decisions/p1-behavioral-must.md) — why the MUST describes observable behavior
   instead of enumerating prompt and TUI APIs, and what the automated-check verification boundary is.
-- [Naming — `agentnative`, `anc`, `anc.dev`](docs/decisions/naming-rationale.md) — the rationale behind the project
-  name, the `anc` binary alias, and the `anc.dev` domain, plus the candidates that were rejected.
 
 ## Related
 

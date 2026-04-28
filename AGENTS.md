@@ -42,8 +42,6 @@ frontmatter are the machine-readable contract with downstream repos.
 - `docs/decisions/` — named decision records cited from principle prose and repo docs.
   [`p1-behavioral-must.md`](docs/decisions/p1-behavioral-must.md) records the reasoning behind P1's behavioral-MUST
   wording and the verification boundary automated checks can claim.
-  [`naming-rationale.md`](docs/decisions/naming-rationale.md) records why the project is named `agentnative` with alias
-  `anc` and domain `anc.dev`, and the candidate names that were rejected.
 
 ## Voice
 
