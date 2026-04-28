@@ -12,7 +12,7 @@ can't recover from errors that don't say what to do next. The principles below d
   v0.3.0; all principles ship as `status: active`.
 - **Linter** — [`anc`](https://github.com/brettdavies/agentnative-cli). Scores any CLI repo against the spec. Pins
   against requirement IDs, not prose.
-- **Leaderboard** — [anc.dev](https://anc.dev). Top CLIs graded live; submit a PR to add yours.
+- **Leaderboard** — [anc.dev/scorecards](https://anc.dev/scorecards). Top CLIs graded live; submit a PR to add yours.
 
 ## Quick start
 
@@ -21,9 +21,8 @@ brew install brettdavies/tap/agentnative
 anc check .
 ```
 
-The `anc` binary is also published as a Rust crate (`cargo install agentnative`) and as platform-specific archives on
-[GitHub Releases](https://github.com/brettdavies/agentnative-cli/releases). Brew is the recommended path — it works
-without the Rust toolchain.
+Also installable via `cargo install agentnative` or platform-specific archives on
+[GitHub Releases](https://github.com/brettdavies/agentnative-cli/releases).
 
 Example output:
 
@@ -58,8 +57,8 @@ Run `anc check . --output json` for machine-readable output, or
 |    5 | `kubectl` | 67/100 |
 |    6 | `aws`     | 54/100 |
 
-Full board (anc100) at [anc.dev](https://anc.dev). Submit a PR to grade an additional tool; scoring is reproducible from
-the linter source.
+Full board (anc100) at [anc.dev/scorecards](https://anc.dev/scorecards). Submit a PR to grade an additional tool;
+scoring is reproducible from the linter source.
 
 ## Principles
 
