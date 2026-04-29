@@ -2,24 +2,6 @@
 
 <!-- What does this PR change and why? -->
 
-## Linked check review
-
-<!-- REQUIRED for principle edits (any MUST/SHOULD/MAY tier add/remove/move).
-     Paste ONE of:
-- A PR URL from brettdavies/agentnative-cli (e.g., https://github.com/brettdavies/agentnative-cli/pull/42)
-- "no check changes needed" with brief justification
--->
-
-## Human reviewer
-
-<!-- REQUIRED for AI-assisted PRs and all principle edits. GitHub handle of the human who reviewed this submission. -->
-
-**Reviewer:** @
-
-## AI disclosure
-
-<!-- REQUIRED. One sentence: what was AI-written, what was human-written? -->
-
 ## Changelog
 
 <!-- CRITICAL: This section is the source of truth for CHANGELOG.md.
@@ -63,3 +45,21 @@
 ### Security
 
 -
+
+## Linked check review
+
+<!-- REQUIRED for principle edits (any MUST/SHOULD/MAY tier add/remove/move).
+     Paste ONE of:
+- A PR URL from brettdavies/agentnative-cli (e.g., https://github.com/brettdavies/agentnative-cli/pull/42)
+- "no check changes needed" with brief justification
+-->
+
+## Human reviewer
+
+<!-- REQUIRED for AI-assisted PRs and all principle edits. GitHub handle of the human who reviewed this submission. -->
+
+**Reviewer:** @
+
+## AI disclosure
+
+<!-- REQUIRED. One sentence: what was AI-written, what was human-written? -->

@@ -20,7 +20,9 @@
 header = """
 # Changelog
 
-All notable changes to the agent-native CLI standard are documented here.
+All notable changes to this repository are documented here — governance, validator, release infrastructure, README, decision records.
+
+Changes to the standard itself — principle MUST/SHOULD/MAY tier moves, requirement IDs added/removed/renamed, applicability shifts — are tracked per-principle in `principles/p*-*.md` via the `last-revised:` calver frontmatter field and the `## Pressure test notes` section appended to each file.
 
 """
 

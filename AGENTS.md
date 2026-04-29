@@ -13,6 +13,11 @@ Source of truth for the 7 principles that define agent-native CLIs. Downstream c
 - [`brettdavies/agentnative-site`](https://github.com/brettdavies/agentnative-site) (`~/dev/agentnative-site`) — the
   anc.dev site. Syncs `principles/*.md`, `VERSION`, and `CHANGELOG.md` into `content/` via `scripts/sync-spec.sh`
   (commit-a-copy, not submodule).
+- [`brettdavies/agentnative-skill`](https://github.com/brettdavies/agentnative-skill) (`~/dev/agentnative-skill`) — the
+  agent-facing skill bundle (Claude Code / Cursor / Codex / etc.). Vendors `principles/*.md`, `VERSION`, and
+  `CHANGELOG.md` into `bundle/spec/` via `scripts/sync-spec.sh` (commit-a-copy, not submodule). The bundle teaches
+  agents how to invoke `anc` and supplies surrounding context (templates, references, getting-started); it does not
+  check compliance itself.
 
 This repo does **not** build anything. It publishes canonical markdown. `VERSION` + per-principle `last-revised:`
 frontmatter are the machine-readable contract with downstream repos.
@@ -37,8 +42,6 @@ frontmatter are the machine-readable contract with downstream repos.
 - `docs/decisions/` — named decision records cited from principle prose and repo docs.
   [`p1-behavioral-must.md`](docs/decisions/p1-behavioral-must.md) records the reasoning behind P1's behavioral-MUST
   wording and the verification boundary automated checks can claim.
-  [`naming-rationale.md`](docs/decisions/naming-rationale.md) records why the project is named `agentnative` with alias
-  `anc` and domain `anc.dev`, and the candidate names that were rejected.
 
 ## Voice
 
@@ -50,8 +53,8 @@ The spec speaks as a **standard**, not a person. Think RFC, not blog post.
 - Good: "MUST support `--output json` for machine-readable output."
 - Bad: "It's really important to have JSON output for your CLI."
 
-Use RFC 2119 language (MUST, SHOULD, MAY) for requirements. Concrete examples, not abstractions. Show the failure
-mode, then show the fix.
+Use RFC 2119 language (MUST, SHOULD, MAY) for requirements. Concrete examples, not abstractions. Show the failure mode,
+then show the fix.
 
 ## Editing principles
 
@@ -106,12 +109,12 @@ symlink is missing, recreate it: `ln -s ~/dev/solutions-docs docs/solutions`.
 
 ## Cross-repo context
 
-| Location | What lives there | Why it matters here |
-| --- | --- | --- |
-| `~/dev/agentnative` (`brettdavies/agentnative-cli`) | Rust `anc` linter, 46-entry principle registry, scorecard emitter | Consumes this repo's `VERSION` + principle IDs. Coupled-release norm links spec PRs to checker PRs. |
-| `~/dev/agentnative-site` (`brettdavies/agentnative-site`) | anc.dev website, markdown-first SSG, `/scorecards` leaderboard | Syncs `principles/*.md`, `VERSION`, `CHANGELOG.md` into `content/` via commit-a-copy script. Site copy is written manually from this repo, not build-time imported. |
-| `~/dev/solutions-docs` (`brettdavies/solutions-docs`) | Shared cross-repo solutions archive | Reachable via `docs/solutions/` symlink. Search before researching from scratch. |
-| `~/.claude/skills/agent-native-cli/` | Rust/clap + Python/Go/Node implementation patterns | Code examples that embody the principles; useful when authoring or critiquing principle prose. |
+| Location                                                    | What lives there                                                                                                                                    | Why it matters here                                                                                                                                                                                              |
+| ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `~/dev/agentnative` (`brettdavies/agentnative-cli`)         | Rust `anc` linter, 46-entry principle registry, scorecard emitter                                                                                   | Consumes this repo's `VERSION` + principle IDs. Coupled-release norm links spec PRs to checker PRs.                                                                                                              |
+| `~/dev/agentnative-site` (`brettdavies/agentnative-site`)   | anc.dev website, markdown-first SSG, `/scorecards` leaderboard                                                                                      | Syncs `principles/*.md`, `VERSION`, `CHANGELOG.md` into `content/` via commit-a-copy script. Site copy is written manually from this repo, not build-time imported.                                              |
+| `~/dev/solutions-docs` (`brettdavies/solutions-docs`)       | Shared cross-repo solutions archive                                                                                                                 | Reachable via `docs/solutions/` symlink. Search before researching from scratch.                                                                                                                                 |
+| `~/dev/agentnative-skill` (`brettdavies/agentnative-skill`) | Agent-facing skill bundle: vendored spec at `bundle/spec/`, framework idioms (Rust/clap + Python/Go/Node), starter templates, getting-started loops | Vendors this repo's `principles/*.md`, `VERSION`, `CHANGELOG.md` into `bundle/spec/` via commit-a-copy. Teaches agents (Claude Code, Cursor, Codex) how to invoke `anc` and remediate findings against the spec. |
 
 ## Repo conventions
 
