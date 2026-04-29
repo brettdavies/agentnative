@@ -1,7 +1,7 @@
 ---
 title: "feat: Show HN launch readiness — spec"
 type: feat
-status: active
+status: complete
 date: 2026-04-28
 parent: ~/.gstack/projects/brettdavies-agentnative/brett-dev-design-show-hn-launch-inversion-20260427-144756.md
 ---
@@ -27,7 +27,19 @@ does not subsume the existing in-flight plan
 it coordinates with it. Implementation of this plan is the deliverable for launch week, not for this session — this
 session's deliverable is the plan file itself.
 
-## Plan-level status (last updated 2026-04-28)
+## Plan-level status (last updated 2026-04-29)
+
+**Wave step 1/7 complete — spec v0.3.0 published 2026-04-29 09:26 PT.**
+[PR #15](https://github.com/brettdavies/agentnative/pull/15) squash-merged to `main` as `5cea8bf`. `publish.yml`
+extracted the `## [0.3.0] - 2026-04-28` section from `CHANGELOG.md`, pushed tag `v0.3.0`, created the public GitHub
+Release at [releases/tag/v0.3.0](https://github.com/brettdavies/agentnative/releases/tag/v0.3.0) (`isDraft: false`,
+`isPrerelease: false`, `make_latest: true`), and dispatched `repository_dispatch event_type: spec-release` to
+`agentnative-cli` and `agentnative-site` (no handlers wired as of v0.3.0 — informational only; CLI U1.5, skill task #15,
+and site `release/launch` consume the tag manually). Release-branch carried two non-PR direct commits beyond the
+cherry-picked PRs: `5cea8bf` itself bundled the squash; the launch-eve red-team session also added a RELEASES.md
+heading-shape fix (`9b5a8d6` on `release/v0.3.0-launch`, folded into the squash) correcting `## v$VERSION` prose to the
+actual Keep-a-Changelog `## [$VERSION]` shape that `publish.yml`'s awk regex matches. Show HN post moves to **Thu
+2026-04-30 09:00 PT** per parent-tracker Q4 (24h push to absorb downstream wave bake time).
 
 **All seven implementation units complete.** U1–U7 closed in two PRs and one audit pass:
 
@@ -52,17 +64,13 @@ to the spec repo:
   context table); replaces the prior `~/.claude/skills/agent-native-cli/` row with the public `~/dev/agentnative-skill`
   row.
 
-**Two TODOs deferred to `release/v0.3.0-launch`** (not landed on `dev`): replace illustrative `anc check` output with a
-real run; replace placeholder leaderboard scores with actual anc100 top-N rows. Both swaps live on the release branch
-per the path-filtered-diff recipe in the [Pre-launch Release PR Checklist](#pre-launch-release-pr-checklist) section.
+**Two TODOs landed on `release/v0.3.0-launch`** (release-branch direct commits, captured in the squash): real `anc check
+.` output replaced the illustrative example (run against `agentnative-cli`); real anc100 top-N rows replaced placeholder
+leaderboard scores (sourced from `agentnative-site/scorecards/`). Both swaps shipped to `main` via the v0.3.0 release.
 
-**Remaining spec-owned launch-week work** is the **release PR cut** (`release/v0.3.0-launch`: `origin/main` →
-path-filtered patch from `dev` + regenerated CHANGELOG → PR to `main`). Recipe is in the
-[Pre-launch Release PR Checklist](#pre-launch-release-pr-checklist) section below; nothing new to design. Cut night-
-before per Brett's standing pattern. On merge, `publish.yml` tags `v0.3.0` and fires a `spec-release` dispatch to
-`agentnative-cli` and `agentnative-site`; no downstream handlers are wired as of v0.3.0, so cross-repo sync runs
-manually per the per-repo launch plans. Three downstream surfaces vendor spec content and need re-vendoring against
-`v0.3.0` to ship coherent active-status principles on launch day:
+**Spec-side launch work complete.** The release PR cut + tag + Release publish executed cleanly per the
+[Pre-launch Release PR Checklist](#pre-launch-release-pr-checklist) recipe. Three downstream surfaces vendor spec
+content and now need re-vendoring against the published `v0.3.0` tag — none auto-propagated; each runs manually:
 
 - **`agentnative-cli`** — vendors via `scripts/sync-spec.sh` into `src/principles/spec/`. Re-vendor lands as CLI plan
   unit U1.5 before the CLI `release/launch` cut. CLI plan path:
