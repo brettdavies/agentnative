@@ -169,7 +169,7 @@ archival would drop live context. U2 below makes this decision explicit before e
 
 ## Implementation Units
 
-- [ ] U1. **Archive vault `principles/` folder**
+- [x] U1. **Archive vault `principles/` folder** *(shipped 2026-04-29; see Completion Notes above)*
 
 **Goal:** Replace `~/obsidian-vault/Projects/brettdavies-agentnative/principles/` contents with a single redirect note.
 All existing files move to a sibling `_archive-2026-04-23/` subfolder so they're preserved but clearly superseded.
@@ -212,7 +212,8 @@ conflicts.
 
 ---
 
-- [ ] U2. **Decide and apply disposition for vault `research/` folder**
+- [x] U2. **Decide and apply disposition for vault `research/` folder** *(shipped 2026-04-29 with disposition (a) retire
+  fully; see Completion Notes above)*
 
 **Goal:** Resolve the research-folder question (retire / migrate / keep-with-governance-update) and apply the decision.
 
@@ -288,9 +289,9 @@ before applying it a second time)
 
 ## Documentation / Operational Notes
 
-- Strike item 3 from roadmap 002 once U1 + U2 land (status: shipped with date + disposition-choice noted).
-- If (b) migrate is chosen in U2: the follow-up link-rewrite work in CLI + site repos is filed as issues in those repos,
-  referencing this plan.
+- Item 3 of roadmap 002 was struck as shipped on 2026-04-29 with disposition (a) "retire fully" recorded.
+- Disposition (a) was chosen, so no follow-up link-rewrite work in CLI/site repos is required (inbound-link audit
+  returned zero hits across all four downstream repos).
 
 ## Sources & References
 
