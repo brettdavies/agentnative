@@ -68,9 +68,10 @@ file is the public-repo record.
   `agentnative-site` (~100 tools per `doctrine_decisions.md`) for badge to have adjacent context.
 - **Revisit trigger:** Explicitly on hold per 2026-04-22 user direction. Revisit when the leaderboard has a credible
   number of tools AND at least one CLI author asks for a badge they can embed.
-- **Plan:** [`2026-04-23-001-feat-badge-surface-plan.md`](2026-04-23-001-feat-badge-surface-plan.md) filed 2026-04-23
-  with `status: on-hold`. Plan captures the spec-side conformance convention (U1 + U2) and explicitly defers site-side
-  rendering to a separate follow-up plan in `agentnative-site`.
+- **Plan:**
+  [`site/2026-04-23-002-feat-badge-surface-plan.md`](https://github.com/brettdavies/agentnative-site/blob/dev/docs/plans/2026-04-23-002-feat-badge-surface-plan.md)
+  filed 2026-04-23 with `status: on-hold`. Plan captures the spec-side conformance convention (U1 + U2) and explicitly
+  defers site-side rendering to a separate follow-up plan in `agentnative-site`.
 
 ### 3. Obsidian vault archival — ✅ SHIPPED 2026-04-29
 
@@ -151,13 +152,13 @@ here, or (c) been migrated to GitHub issues once the repo has issues enabled. It
 Closed per a plan-file-migration interpretation of option (c): every item has graduated to a per-item plan document that
 carries its own status, acceptance criteria, and revisit triggers. Item-by-item disposition at close:
 
-| #   | Item                | Status                                               | Plan                                                                                                                               |
-| --- | ------------------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | Publish workflow    | shipped 2026-04-23 (tag `v0.2.0`)                    | [`2026-04-22-003`](2026-04-22-003-release-infra-and-v0.2.0-cut-plan.md)                                                            |
-| 2   | Badge surface       | plan filed, `status: on-hold`                        | [`2026-04-23-001`](2026-04-23-001-feat-badge-surface-plan.md)                                                                      |
-| 3   | Vault archival      | plan filed, `status: active`                         | [`2026-04-23-002`](2026-04-23-002-feat-vault-archival-plan.md)                                                                     |
-| 4   | Site `sync-spec.sh` | plan filed, `status: active` (in `agentnative-site`) | [`site/2026-04-23-001`](https://github.com/brettdavies/agentnative-site/blob/dev/docs/plans/2026-04-23-001-feat-sync-spec-plan.md) |
-| 5   | CLI companion PR    | plan filed, `status: active` (in `agentnative-cli`)  | [`cli/2026-04-23-001`](https://github.com/brettdavies/agentnative-cli/blob/dev/docs/plans/2026-04-23-001-feat-spec-vendor-plan.md) |
+| #   | Item                | Status                                               | Plan                                                                                                                                   |
+| --- | ------------------- | ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Publish workflow    | shipped 2026-04-23 (tag `v0.2.0`)                    | [`2026-04-22-003`](2026-04-22-003-release-infra-and-v0.2.0-cut-plan.md)                                                                |
+| 2   | Badge surface       | plan filed, `status: on-hold`                        | [`site/2026-04-23-002`](https://github.com/brettdavies/agentnative-site/blob/dev/docs/plans/2026-04-23-002-feat-badge-surface-plan.md) |
+| 3   | Vault archival      | plan filed, `status: active`                         | [`2026-04-23-002`](2026-04-23-002-feat-vault-archival-plan.md)                                                                         |
+| 4   | Site `sync-spec.sh` | plan filed, `status: active` (in `agentnative-site`) | [`site/2026-04-23-001`](https://github.com/brettdavies/agentnative-site/blob/dev/docs/plans/2026-04-23-001-feat-sync-spec-plan.md)     |
+| 5   | CLI companion PR    | plan filed, `status: active` (in `agentnative-cli`)  | [`cli/2026-04-23-001`](https://github.com/brettdavies/agentnative-cli/blob/dev/docs/plans/2026-04-23-001-feat-spec-vendor-plan.md)     |
 
 None of the filed plans have had implementation work yet — acceptance criteria remain unticked and statuses reflect
 pre-execution reality. The badge-surface plan (item 2) is `on-hold` by design (awaiting leaderboard maturity +

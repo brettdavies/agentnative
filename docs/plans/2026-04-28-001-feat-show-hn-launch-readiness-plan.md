@@ -159,8 +159,12 @@ Each requirement maps to a parent-tracker gate; the parent's "Notes" become acce
 — `status: active`. U1 shipped (commit `07d89a4`). U2–U9 still open. **G5 below references this plan's units rather than
 restating them.**
 
-- [`2026-04-23-001-feat-badge-surface-plan.md`](2026-04-23-001-feat-badge-surface-plan.md) — `status: on-hold`. Not
-  launch-blocking; revisit triggers are post-launch (leaderboard maturity + CLI-author demand).
+-
+
+[`site/2026-04-23-002-feat-badge-surface-plan.md`](https://github.com/brettdavies/agentnative-site/blob/dev/docs/plans/2026-04-23-002-feat-badge-surface-plan.md)
+— `status: on-hold` at launch-readiness writing; moved to `agentnative-site` 2026-04-29 and flipped `active`. Not
+launch-blocking; revisit triggers are post-launch (leaderboard maturity + CLI-author demand).
+
 - [`2026-04-23-002-feat-vault-archival-plan.md`](2026-04-23-002-feat-vault-archival-plan.md) — `status: active`. Gate 6
   in the parent tracker. Outside this plan's spec-owned scope; will be advanced or deferred separately based on parent
   Q2.
@@ -712,7 +716,7 @@ gh pr create --base main --head release/v0.3.0-launch \
 - **Coordinated in-flight plan:**
   [`2026-04-27-001-refactor-three-repo-naming-alignment-plan.md`](2026-04-27-001-refactor-three-repo-naming-alignment-plan.md)
 - **Adjacent in-flight plans (no coordination required this launch):**
-  [`2026-04-23-001-feat-badge-surface-plan.md`](2026-04-23-001-feat-badge-surface-plan.md),
+  [`site/2026-04-23-002-feat-badge-surface-plan.md`](https://github.com/brettdavies/agentnative-site/blob/dev/docs/plans/2026-04-23-002-feat-badge-surface-plan.md),
   [`2026-04-23-002-feat-vault-archival-plan.md`](2026-04-23-002-feat-vault-archival-plan.md)
 - **Cross-repo companion plans (filed in their own sessions):**
 - `agentnative-cli/docs/plans/2026-04-28-001-feat-show-hn-launch-readiness-plan.md`
