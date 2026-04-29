@@ -72,21 +72,22 @@ file is the public-repo record.
   with `status: on-hold`. Plan captures the spec-side conformance convention (U1 + U2) and explicitly defers site-side
   rendering to a separate follow-up plan in `agentnative-site`.
 
-### 3. Obsidian vault archival — UNBLOCKED (v0.2.0 shipped) — PLAN FILED
+### 3. Obsidian vault archival — ✅ SHIPPED 2026-04-29
 
 - **What:** Archive `~/obsidian-vault/Projects/brettdavies-agentnative/principles/` and `../research/`. The vault's
-  `principles/AGENTS.md` still claims the folder is "upstream source of truth" — stale as of this repo's creation.
-  Replace both folders with a short redirect note pointing to this repo.
+  `principles/AGENTS.md` still claimed the folder was "upstream source of truth" — stale as of this repo's creation.
+  Both folders now carry a short redirect `README.md` pointing to this repo, with original contents preserved at
+  `_archive-2026-04-23/` subfolders.
 - **Why:** Two SoTs is zero SoTs. Pressure-testers reading the vault today would miss the live frontmatter contract
   entirely.
-- **Owner repo:** The vault (private). Not a git repo with PRs; a manual edit session.
-- **Dependencies:** ✅ `2026-04-22-001` merged to `main` via v0.2.0 (commit `83bf0fd`, tag `v0.2.0`). Redirect note can
-  now point to a stable public URL.
-- **Revisit trigger:** Ready to pick up — next time the vault is touched for any reason, or immediately if Brett wants
-  the redirect posted before downstream consumers start linking.
-- **Plan:** [`2026-04-23-002-feat-vault-archival-plan.md`](2026-04-23-002-feat-vault-archival-plan.md) filed 2026-04-23.
-  U1 archives `principles/` cleanly; U2 resolves an open question about the `research/` folder (retire fully vs migrate
-  to spec repo vs keep + update governance) via an inbound-link audit before applying the chosen disposition.
+- **Owner repo:** The vault (private). Not a git repo with PRs; manual edit session.
+- **Shipped 2026-04-29:** U1 archived `principles/` (9 files moved to `_archive-2026-04-23/`, redirect README written).
+  U2 inbound-link audit found zero references to `research/` paths in CLI/site/skill/solutions-docs → disposition (a)
+  retire fully applied; same archival pattern as U1. Bonus: audit surfaced a stale vault link in
+  `agentnative-site/docs/VOICE.md:110` citing `principles/AGENTS.md` at the vault path; live fix landed in the site
+  repo's working tree pointing at <https://github.com/brettdavies/agentnative/blob/main/principles/AGENTS.md>. See
+  [`2026-04-23-002-feat-vault-archival-plan.md`](2026-04-23-002-feat-vault-archival-plan.md) close-out for full per-unit
+  record.
 
 ### 4. Site-side `scripts/sync-spec.sh` — PLAN FILED
 
