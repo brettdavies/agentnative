@@ -116,6 +116,18 @@ that principle changes tier, is added, or is removed. Prose-only edits do not up
 
 Current version: see [VERSION](VERSION).
 
+## Badge
+
+CLI tools whose scorecards meet the agent-native floor can embed a live-score badge in their READMEs:
+
+```markdown
+[![agent-native](https://anc.dev/badge/<tool>.svg)](https://anc.dev/scorecards/<tool>)
+```
+
+The badge text reflects the tool's current score from the live scorecard; clicking through shows the per-requirement
+breakdown. See [`docs/badge.md`](docs/badge.md) for the claim convention — eligibility, embed URL, version pinning,
+honesty expectation, regression behavior.
+
 ## Decision records
 
 - [P1 — behavioral MUST wording](docs/decisions/p1-behavioral-must.md) — why the MUST describes observable behavior
