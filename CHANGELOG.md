@@ -4,6 +4,15 @@ All notable changes to this repository are documented here — governance, valid
 
 Changes to the standard itself — principle MUST/SHOULD/MAY tier moves, requirement IDs added/removed/renamed, applicability shifts — are tracked per-principle in `principles/p*-*.md` via the `last-revised:` calver frontmatter field and the `## Pressure test notes` section appended to each file.
 
+## [0.3.1] - 2026-05-04
+
+### Added
+
+- Badge claim convention (`docs/badge.md`) — defines eligibility floor (≥80% pass-rate), embed shape, score-text format, color thresholds, and version-pinning posture for tool authors who self-host the agent-native badge linked to a live scorecard. by @brettdavies in [#18](https://github.com/brettdavies/agentnative/pull/18)
+- README and CONTRIBUTING pointers to the badge convention so HN visitors and tool authors land on the convention from the two top-level entry points.
+
+**Full Changelog**: [v0.3.0...v0.3.1](https://github.com/brettdavies/agentnative/compare/v0.3.0...v0.3.1)
+
 ## [0.3.0] - 2026-04-28
 
 ### Added
