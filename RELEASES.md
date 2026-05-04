@@ -163,10 +163,10 @@ RFC content) and matches `p1-*.md` through any future `p8+` additions. Adding `V
 governance/tooling pushes that bump VERSION cut a release without needing a principle edit.
 
 **CHANGELOG.md is the release signal.** When the trigger fires, `publish.yml` reads `VERSION` and looks for a matching
-`## v$VERSION — YYYY-MM-DD` section in `CHANGELOG.md`. If that section is missing, the workflow logs `::notice::No '##
-v$VERSION' section … skipping release cut` and exits cleanly — no tag, no Release, no dispatch. A principle push without
-a CHANGELOG bump is treated as a no-op, not an error. The release author opts in by committing the CHANGELOG entry on
-the release branch.
+`## [$VERSION] - YYYY-MM-DD` section in `CHANGELOG.md` (Keep-a-Changelog shape, produced by `cliff.toml` +
+`scripts/generate-changelog.sh`). If that section is missing, the workflow logs `::notice::No '## [$VERSION]' section …
+skipping release cut` and exits cleanly — no tag, no Release, no dispatch. A principle push without a CHANGELOG bump is
+treated as a no-op, not an error. The release author opts in by committing the CHANGELOG entry on the release branch.
 
 **CHANGELOG is generated locally, PR-body-driven.** The release author runs `scripts/generate-changelog.sh` on the
 release branch. Stage 1 runs `git-cliff --tag v$VERSION --unreleased --prepend CHANGELOG.md` to produce a skeleton
