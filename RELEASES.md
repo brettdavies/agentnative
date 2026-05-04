@@ -62,14 +62,66 @@ git log --oneline dev --not origin/main
 # 3. Cherry-pick the ones you want to ship. Docs commits stay on dev.
 git cherry-pick <sha1> <sha2> ...
 
-# 4. Verify no guarded paths leaked through:
-git diff origin/main --stat
-# If anything under docs/plans/, docs/solutions/, or docs/brainstorms/
-# shows up, you cherry-picked a docs commit by mistake — reset and redo.
+# 4. Triple-diff verification — belt-and-suspenders sweep that catches both
+#    directions of drift before the release tag goes out:
+#
+#    A. main → release  (what users will see; the intended ship surface)
+#    B. release → dev   (should be empty for non-doc paths until the
+#                        bump/CHANGELOG commits land, and even then should
+#                        only list those release-prep files — anything else
+#                        is a missed cherry-pick)
+#    C. dev → main      (sanity: phantom commits dev "appears ahead" on
+#                        because cherry-pick rewrites SHAs post-squash)
+git diff origin/main..HEAD --stat                                                # A
+git diff HEAD..origin/dev --name-only | grep -v '^docs/' || echo "(none)"        # B
+git diff origin/dev..origin/main --stat | tail -5                                # C
+#
+# Re-confirm no guarded paths leaked (this caught the original miss class):
+git diff origin/main..HEAD --name-only \
+  | grep -E '^(docs/plans|docs/brainstorms|docs/ideation|docs/reviews|docs/solutions|\.context)' \
+  && echo "LEAKED — reset and redo" || echo "(clean — no guarded paths)"
+#
+# Patch-id cherry check — catches commits on dev that have NO patch-id
+# equivalent on release. The file-level diff in B misses this class when
+# the same content happens to land via a different commit.
+#
+# IMPORTANT: in a squash-merge workflow this output is noisy. Every '+'
+# line needs human triage — it does NOT auto-block the release. Expected
+# sources of '+' lines that are NOT real misses:
+#
+#   1. Historical commits squash-merged in prior releases. The squash
+#      commit on main has a different patch-id than the dev commits it
+#      consolidates, so old commits show as '+' forever. Anything older
+#      than the previous release tag is almost always this.
+#   2. Cherry-picks where conflict resolution stripped guarded paths
+#      (docs/plans, docs/brainstorms, etc.) or otherwise altered the
+#      tree. Same source-code intent, different patch-id.
+#   3. Intentionally skipped commits — docs-only commits, release-prep
+#      backports, revert-and-redo prep steps.
+#
+# A real miss looks like: a recent feat/fix/chore commit on dev whose
+# *file content* is not yet on main. To triage a '+' line:
+#
+#   git show <sha> --stat                       # what did it touch?
+#   git diff origin/main..HEAD -- <those-files> # already on release?
+#
+# If every touched file is guarded (docs/plans/, docs/brainstorms/, etc.)
+# OR the content is already on main via a prior squash, it's a false
+# positive — no action. Otherwise cherry-pick the commit and re-run the
+# triple-diff.
+git cherry HEAD origin/dev | grep '^+' || echo "(none — release is patch-equivalent through dev)"
+#
+# If B lists any non-docs path you didn't expect, fetch dev, identify the
+# commit (`git log dev --not origin/main`), cherry-pick it, re-run the
+# triple-diff. Missed cherry-picks have shipped to main on this and sibling
+# repos before — this step is the cheap way to catch them.
 
 # 5. (Language-specific: bump version, regenerate changelog, etc.)
 
-# 6. Push and open the PR:
+# 6. Review CHANGELOG.md. See "PRs and changelog generation" below for the
+#    cliff.toml chore-skip footgun and how to recover.
+
+# 7. Push and open the PR:
 git push -u origin release/<slug>
 gh pr create --base main --head release/<slug> --title "release: <summary>"
 ```
@@ -127,6 +179,13 @@ Changelog**: v<prev>...v<this>` compare link.
 **PR body is the source of truth.** If a bullet is wrong — typo, missed detail, wrong category — edit the PR body on
 GitHub (PR bodies remain editable after merge) and re-run `scripts/generate-changelog.sh`. It re-fetches from the API
 every run. Never hand-write `CHANGELOG.md`; `CI reads CHANGELOG, the script writes it, the PR body governs it.`
+
+**`cliff.toml` skips `chore`/`style`/`test`/`ci`/`build` commits regardless of PR-body content.** If a cherry-picked PR
+has user-facing `## Changelog` content but its commit subject starts with one of those types, the post-processor never
+sees its PR number and the bullets get silently dropped. After running the script, cross-check the generated section
+against `gh pr view <num> --json body` for each cherry-picked PR; correct mistyped PR titles (e.g. `chore` → `feat`) and
+re-amend the cherry-pick subject before re-running. See "Prefer `feat`/`fix` over `chore`" in global CLAUDE.md for
+prevention.
 
 **Tag-exists guard.** Once a CHANGELOG entry is present, `publish.yml` refuses to run if `v$VERSION` already exists on
 origin. VERSION must be bumped to cut a new release — the workflow will never re-tag a published version.
