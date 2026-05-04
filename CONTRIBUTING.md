@@ -56,6 +56,12 @@ changes a principle's MUST/SHOULD/MAY requirements:
 
 This ensures the spec and checker stay in sync. The spec version bumps when a principle's revision date changes.
 
+## Badge claim
+
+CLI tools whose scorecards meet the agent-native floor can embed a live-score badge in their READMEs. The full claim
+convention — eligibility, embed URL pattern, version pinning, honesty expectation, and regression behavior — lives in
+[`docs/badge.md`](docs/badge.md). The badge SVG is rendered on `anc.dev` from the tool's current scorecard.
+
 ## Misrouted issues
 
 If an issue lands in the wrong repo, it will be transferred to the correct one (all repos are under the same org). A
