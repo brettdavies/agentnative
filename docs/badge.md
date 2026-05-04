@@ -1,6 +1,6 @@
 ---
 title: "Agent-Native Badge — claim convention"
-last-revised: 2026-04-29
+last-revised: 2026-05-04
 ---
 
 # Agent-Native Badge — claim convention
@@ -12,12 +12,6 @@ happens when a tool's score changes.
 The badge SVG is rendered at site build time by [`agentnative-site`](https://github.com/brettdavies/agentnative-site)
 using [`badge-maker`](https://www.npmjs.com/package/badge-maker) — the same library shields.io uses internally. This
 document is the spec-side contract that the renderer honors.
-
-> **Draft status (2026-04-29):** four product decisions are still TBD pending the launch-eve site/spec coordination.
-> They appear inline below as `[**TBD: …**]` markers and are tracked in the cross-repo coordinator plan at
-> [`agentnative-site` `docs/plans/2026-04-23-002-feat-badge-surface-plan.md`](https://github.com/brettdavies/agentnative-site/blob/dev/docs/plans/2026-04-23-002-feat-badge-surface-plan.md)
-> § "Deferred to Implementation". This convention does not publish (and the badge cannot be embedded with the floor's
-> public guarantee in force) until those values land.
 
 ## What the badge claims
 
@@ -38,12 +32,11 @@ A tool can embed the badge when all of these hold:
 - A scorecard for the tool exists on `agentnative-site` (`scorecards/<tool>-v<version>.json` under
   [`brettdavies/agentnative-site`](https://github.com/brettdavies/agentnative-site/tree/dev/scorecards)).
 - The tool's score (`pass / (pass + warn + fail)`) meets or exceeds the **eligibility floor**.
-- [**TBD: optionally, a list of universal-MUST principles that must all pass regardless of overall score**] — to be
-  decided alongside the floor value, since the two together define what the badge actually attests.
 
-**Eligibility floor:** [**TBD — calibrated against the launch-day leaderboard distribution so a typical scored tool
-clears it without effort but a tool with multiple universal-MUST failures does not**]. Final value lands during
-launch-eve coordination and is published verbatim in this section.
+**Eligibility floor: ≥80% pass-rate.** Single gate — no separate principle-count requirement, since 80% pass-rate
+already implies most principles are met. The floor was calibrated against the 96-tool launch-day leaderboard: it
+captures the top quartile (24 tools eligible at launch), sits above the 70% median so the badge means "upper segment",
+and below 90% so the embed snippet still appears on a meaningful portion of pages.
 
 A tool whose score drops below the floor does not need to remove the badge — the badge URL renders below-floor colors
 automatically (see "Regression behavior" below).
@@ -75,28 +68,25 @@ Replace `<tool>` with the tool's registry slug — the same slug used in the sco
 
 ## Badge text and color
 
-The badge label is fixed: `agent-native`. The message text is the live score read from the tool's most recent scorecard.
+The badge label is `agent-native vMAJOR.MINOR`, where `MAJOR.MINOR` is the spec version against which the tool was
+scored. The message text is the live score read from the tool's most recent scorecard.
 
-**Score-text format:** [**TBD: `91%` vs `91/100` vs `6/7 principles met` vs a hybrid — decided during launch-eve
-coordination based on what reads cleanest at badge size and aligns with the leaderboard's own score presentation**].
+**Score-text format:** `XX%` (rounded percent — e.g., `91%`). Matches the leaderboard's score column and reads cleanest
+at badge size. `91/100` and `6/7 principles met` were the alternatives considered.
 
-**Color thresholds:** [**TBD — green / yellow / red cutoffs to match the scorecard-page styling on `anc.dev` so a reader
-sees consistent signal across surfaces**]. The color and the score reflect the same underlying data; the badge should
-not paint a tool greener than its scorecard page does.
+**Color thresholds:** `≥80%` brightgreen, `60–79%` yellow, `<60%` red. The color and the score reflect the same
+underlying data; the badge should not paint a tool greener than its scorecard page does. Below-floor scorecards still
+get a rendered SVG so a tool watching its own regression sees the visual color drop.
 
 ## Version pinning
 
-[**TBD: URL pattern. Two candidates:**
+The badge URL is `/badge/<tool>.svg` — always-latest. The badge tracks the tool's current score against the spec version
+the scorecard was last graded under, and that spec version surfaces in the badge label text (`agent-native
+vMAJOR.MINOR`), not in the URL path. Trust-and-verify means the URL must reflect current state, not a snapshot; pinning
+the spec version into the path would invert that posture.
 
-- `/badge/<tool>.svg` — always-latest. The badge tracks the tool's current score against the spec version the scorecard
-  was last graded under. Simplest to embed, but the spec version implicit in the badge moves over time.
-- `/badge/<tool>/<spec-version>.svg` — pinned. The embedder picks a spec version explicitly. More precise; more brittle
-  if the embedder forgets to bump.
-
-Decision lands during launch-eve coordination.**]
-
-Either way, the spec version against which the tool was scored is visible somewhere a reader can find it — the scorecard
-page (`anc.dev/scorecards/<tool>`) always names it explicitly in the page header.
+The scorecard page (`anc.dev/scorecards/<tool>`) also names the spec version explicitly in the page header for any
+reader who wants to confirm what the badge is asserting.
 
 ## Honesty expectation
 
