@@ -1,7 +1,7 @@
 ---
 id: p2
 title: Structured, Parseable Output
-last-revised: 2026-04-22
+last-revised: 2026-05-06
 status: active
 requirements:
   - id: p2-must-output-flag
@@ -20,10 +20,24 @@ requirements:
     level: must
     applicability: universal
     summary: When `--output json` is active, errors are emitted as JSON (to stderr) with at least `error`, `kind`, and `message` fields.
+  - id: p2-must-schema-print
+    level: must
+    applicability:
+      if: CLI emits structured output
+    summary: "CLIs that emit structured output expose the output schema via a `schema` subcommand or `--schema` flag — runtime-discoverable, with a documented format identifier."
   - id: p2-should-consistent-envelope
     level: should
     applicability: universal
     summary: JSON output uses a consistent envelope — a top-level object with predictable keys — across every command.
+  - id: p2-should-schema-file
+    level: should
+    applicability:
+      if: CLI emits structured output
+    summary: "Output schemas are also exported to a stable file path (e.g., `schema/<command>.json`) so CI/static-analysis consumers pin without invoking the tool."
+  - id: p2-should-json-aliases
+    level: should
+    applicability: universal
+    summary: "`--json` and `--jsonl` are accepted as aliases for `--output json` and `--output jsonl` — the short forms work alongside the canonical enum."
   - id: p2-may-more-formats
     level: may
     applicability: universal
@@ -74,11 +88,22 @@ catastrophically later.
 
 - When `--output json` is active, errors MUST be emitted as JSON to stderr with at least `error`, `kind`, and `message`
   fields. A plain-text error inside a JSON run breaks the consumer's parser on the only shape it was told to expect.
+- CLIs that emit structured output (`--output json|jsonl`) MUST expose the output schema at runtime via a `schema`
+  subcommand (or a `--schema` flag on each data-emitting subcommand). The schema MUST identify its format — canonical
+  recommendation is JSON Schema 2020-12, the same dialect OpenAPI 3.1 uses — so an agent reading the schema loads the
+  right validator without parsing prose. A consumer asking "what shape am I about to receive?" gets a machine-readable
+  answer in one call.
 
 **SHOULD:**
 
 - JSON output uses a consistent envelope — a top-level object with predictable keys — across every command so agents can
   rely on the same shape.
+- The schema SHOULD also be exported to a stable file path in the source repo (e.g., `schema/<command>.json`) so
+  consumers can pin against it at install or CI time without invoking the tool. The print form is the runtime contract;
+  the file form is the build-time contract.
+- CLIs SHOULD accept `--json` as an alias for `--output json` and `--jsonl` as an alias for `--output jsonl`. The
+  `--output` enum remains the canonical surface for the format MUST (`p2-must-output-flag`); a Cloudflare-style CLI
+  shipping only the short forms still satisfies the canonical MUST through the alias path.
 
 **MAY:**
 
