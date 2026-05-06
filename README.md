@@ -115,6 +115,37 @@ honesty expectation, regression behavior.
 - [agentnative-cli](https://github.com/brettdavies/agentnative-cli) — the `anc` linter
 - [agentnative-site](https://github.com/brettdavies/agentnative-site) — the website source
 
+## Acknowledgements
+
+The principles in this spec descend from multiple streams of agent-CLI thinking that converged in late 2025 and 2026,
+not from a single source.
+
+- **Foundational CLI doctrine** — Adam Wiggins' [12-factor methodology](https://12factor.net/) (the env-var contract in
+  P1 inherits Factor III; the stdout-as-event-stream framing in P2 inherits Factor XI), the
+  [POSIX Utility Conventions](https://pubs.opengroup.org/onlinepubs/9699919799/) (argument grammar, env-var naming), the
+  [Command Line Interface Guidelines](https://clig.dev/) (load-bearing for P3, P5, and P6), Eric S. Raymond's
+  [The Art of Unix Programming](http://www.catb.org/esr/writings/taoup/html/), the [NO_COLOR](https://no-color.org/)
+  standard, and the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/).
+- **Agent-CLI synthesis (parallel work, 2025–2026)** — Anthropic's
+  [Writing tools for agents](https://www.anthropic.com/engineering/writing-tools-for-agents), Sriram Madapusi
+  Vasudevan's [InfoQ pieces on AI-agent CLIs](https://www.infoq.com/articles/ai-agent-cli/) (2025-08), Cloudflare's
+  [The CLI for all of Cloudflare](https://blog.cloudflare.com/cf-cli-local-explorer/) (2026-04, "agents are the primary
+  customer of our APIs"), Andrej Karpathy on terminal-as-legacy-tech, the Speakeasy and AppleBOY/Wu three-layer
+  (API/CLI/skills) architecture, Michael Yuan's compound-failure framing, and other contemporaneous voices on dev.to and
+  Medium.
+- **Trevin's [7 Principles for Agent-Friendly CLIs](https://x.com/trevin/status/2037250000821059933) (2026-03-26) and
+  follow-up [10 Principles for Agent-Native CLIs](https://x.com/trevin/status/2051316002730991795) (2026-05-04)** named
+  the genre and gave it momentum. Trevin's seven-axis decomposition was the proximate ancestor of this spec's initial
+  draft; the v0.4.0 release rewrote affected requirement bullets in the spec's own RFC 2119 voice as the prose-refresh
+  backlog from the v0.3.0 ecosystem-build cycle cleared.
+- **The anc.dev ecosystem's contribution is mechanism** — the [`anc`](https://github.com/brettdavies/agentnative-cli)
+  linter (with auto-fix runway), the [live leaderboard](https://anc.dev/scorecards), the [score badge](docs/badge.md),
+  and the cross-repo coupled-release norm. Where Trevin and others published frameworks, this project ships verifiable
+  conformance.
+
+Voice and identity decisions for the spec live in [`BRAND.md`](BRAND.md) and the spec-channel
+[`.impeccable.md`](.impeccable.md).
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for issue routing across spec/tool/site repos, AI disclosure requirements, the
