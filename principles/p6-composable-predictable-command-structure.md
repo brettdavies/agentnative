@@ -1,13 +1,18 @@
 ---
 id: p6
 title: Composable and Predictable Command Structure
-last-revised: 2026-04-22
+last-revised: 2026-05-06
 status: active
 requirements:
   - id: p6-must-sigpipe
     level: must
     applicability: universal
     summary: SIGPIPE is handled so piping to `head`/`tail` does not crash the process (Rust example below; Python/Go/Node have language-specific equivalents).
+  - id: p6-must-sigterm
+    level: must
+    applicability:
+      if: CLI has long-running operations
+    summary: "Long-running operations handle SIGTERM gracefully — flush or roll back partial writes, release locks, exit non-zero within a bounded window. Next invocation succeeds without manual cleanup."
   - id: p6-must-no-color
     level: must
     applicability: universal
@@ -54,6 +59,11 @@ requirements:
     level: may
     applicability: universal
     summary: "`--color auto|always|never` flag for explicit color control beyond TTY auto-detection."
+  - id: p6-may-standard-names
+    level: may
+    applicability:
+      if: CLI uses subcommands
+    summary: "Subcommand verbs MAY follow community-standard names (`get`/`list`/`create`/`update`/`delete`); flag spellings MAY follow widely-used canonical forms (`--force`, `--yes`, `--limit`, `--quiet`, `--verbose`)."
 ---
 
 # P6: Composable and Predictable Command Structure
@@ -92,6 +102,12 @@ tool a building block rather than a dead end.
   (`signal.signal(signal.SIGPIPE, signal.SIG_DFL)`); Go — the runtime's default handling already exits cleanly on
   EPIPE writes; Node.js — handle `EPIPE` on `process.stdout`.
 
+- Agent harnesses send SIGTERM when their own timeout fires. A CLI that exits abruptly leaving a half-written file, a
+  stale `*.tmp` artifact, or a held flock makes the next invocation fail with a confusing error the agent cannot
+  diagnose. Long-running operations MUST handle SIGTERM by flushing or rolling back partial writes, releasing acquired
+  locks, and exiting non-zero within a bounded shutdown window. The next invocation MUST succeed without manual cleanup
+  of the previous run's state. This complements the existing SIGPIPE MUST (`p6-must-sigpipe`).
+
 - TTY detection, plus support for `NO_COLOR` and `TERM=dumb`. When stdout or stderr is not a terminal, color codes are
   suppressed automatically.
 - Shell completions available via a `completions` subcommand (clap_complete in Rust; equivalents elsewhere). This is a
@@ -118,6 +134,11 @@ tool a building block rather than a dead end.
 **MAY:**
 
 - A `--color auto|always|never` flag for explicit color control beyond TTY auto-detection.
+- Subcommand verbs MAY follow community-standard names — `get` / `list` / `create` / `update` / `delete` — and flag
+  spellings MAY follow widely-used canonical forms (`--force` for confirmation bypass, `--yes` for prompt bypass,
+  `--limit` for pagination, `--quiet`/`--verbose` for volume control). Convergence reduces an agent's per-tool
+  relearning cost: an agent that has seen `kubectl get` and `gh repo list` recognizes `tool list` immediately, without
+  re-reading `--help`.
 
 ## Evidence
 
