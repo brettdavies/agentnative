@@ -36,12 +36,14 @@ set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 
 # Collect markdown files once. Excludes node_modules and .git by path,
-# and the intentionally-malformed validator fixtures which are test
-# data, not authored prose.
+# the intentionally-malformed validator fixtures (test data, not authored
+# prose), and `.context/` (globally-gitignored local-only working notes,
+# vault-source snapshots, and research artifacts that never ship).
 mapfile -t MD_FILES < <(
   find . -type f -name '*.md' \
     -not -path './node_modules/*' \
     -not -path './.git/*' \
+    -not -path './.context/*' \
     -not -path './scripts/__fixtures__/*' \
     -not -name 'CHANGELOG.md' \
     | sort
