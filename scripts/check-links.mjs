@@ -3,11 +3,13 @@
 //
 // Relative-link target check for committed markdown.
 //
-// Walks every `*.md` under the repo (excluding node_modules and .git),
-// extracts every `[text](target)` link outside fenced and inline code,
-// skips absolute URLs / mailto / pure anchors, and confirms the
-// remaining relative target resolves on disk. Prints every broken link
-// with source file and line number. Exit 1 if any are broken.
+// Walks every `*.md` under the repo (excluding node_modules, .git, target,
+// vendor, and `.context/` — globally-gitignored local-only research and
+// vault-source snapshots that never ship), extracts every `[text](target)`
+// link outside fenced and inline code, skips absolute URLs / mailto / pure
+// anchors, and confirms the remaining relative target resolves on disk.
+// Prints every broken link with source file and line number. Exit 1 if any
+// are broken.
 //
 // Anchor portions after `#` are stripped — this checks that the file
 // exists, not that the anchor does.
@@ -17,7 +19,7 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const IGNORE_DIRS = new Set(["node_modules", ".git", "target", "vendor"]);
+const IGNORE_DIRS = new Set(["node_modules", ".git", "target", "vendor", ".context"]);
 const LINK_RE = /\[[^\]]*\]\(([^)]+)\)/g;
 const URL_LIKE = /^(https?:|mailto:|ftp:|data:|#)/i;
 const FENCE_RE = /^(```|~~~)/;
