@@ -6,12 +6,14 @@ AI agents operate CLIs differently than humans do — they can't answer interact
 can't recover from errors that don't say what to do next. The principles below define what *agent-native* means in RFC
 2119 language, with machine-readable `requirements[]` so a checker (and graders) can pin against the standard.
 
-## The trifecta
+## The four artifacts
 
 - **Spec** — this repo. Seven RFC 2119 principles plus machine-readable `requirements[]` in YAML frontmatter. Currently
-  v0.3.0; all principles ship as `status: active`.
+  v0.3.1; all principles ship as `status: active`.
 - **Linter** — [`anc`](https://github.com/brettdavies/agentnative-cli). Scores any CLI repo against the spec. Pins
   against requirement IDs, not prose.
+- **Skill bundle** — [`agentnative-skill`](https://github.com/brettdavies/agentnative-skill). Agent-facing guide that
+  teaches agents how to invoke `anc` and remediate findings against the spec; vendors the principles for offline use.
 - **Leaderboard** — [anc.dev/scorecards](https://anc.dev/scorecards). Top CLIs graded live; submit a PR to add yours.
 
 ## Quick start
@@ -136,12 +138,13 @@ not from a single source.
 - **Trevin's [7 Principles for Agent-Friendly CLIs](https://x.com/trevin/status/2037250000821059933) (2026-03-26) and
   follow-up [10 Principles for Agent-Native CLIs](https://x.com/trevin/status/2051316002730991795) (2026-05-04)** named
   the genre and gave it momentum. Trevin's seven-axis decomposition was the proximate ancestor of this spec's initial
-  draft; the v0.4.0 release rewrote affected requirement bullets in the spec's own RFC 2119 voice as the prose-refresh
+  draft; the v0.3.1 release rewrote affected requirement bullets in the spec's own RFC 2119 voice as the prose-refresh
   backlog from the v0.3.0 ecosystem-build cycle cleared.
 - **The anc.dev ecosystem's contribution is mechanism** — the [`anc`](https://github.com/brettdavies/agentnative-cli)
-  linter (with auto-fix runway), the [live leaderboard](https://anc.dev/scorecards), the [score badge](docs/badge.md),
-  and the cross-repo coupled-release norm. Where Trevin and others published frameworks, this project ships verifiable
-  conformance.
+  linter (with auto-fix runway), the [`agentnative-skill`](https://github.com/brettdavies/agentnative-skill) bundle that
+  teaches agents how to invoke `anc` and remediate findings, the [live leaderboard](https://anc.dev/scorecards), the
+  [score badge](docs/badge.md), and the cross-repo coupled-release norm. Where Trevin and others published frameworks,
+  this project ships verifiable conformance.
 
 Voice and identity decisions for the spec live in [`BRAND.md`](BRAND.md) and the spec-channel
 [`.impeccable.md`](.impeccable.md).
