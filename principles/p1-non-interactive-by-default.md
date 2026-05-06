@@ -1,7 +1,7 @@
 ---
 id: p1
 title: Non-Interactive by Default
-last-revised: 2026-04-22
+last-revised: 2026-05-06
 status: active
 requirements:
   - id: p1-must-env-var
@@ -17,6 +17,11 @@ requirements:
     applicability:
       if: CLI authenticates against a remote service
     summary: Headless authentication path (`--no-browser` / OAuth Device Authorization Grant).
+  - id: p1-must-secret-non-leaky-path
+    level: must
+    applicability:
+      if: CLI accepts secret material (tokens, passwords, keys) as input
+    summary: "Sensitive inputs are readable via stdin or a `--*-file` flag; flag-value and env-var inputs MAY exist for convenience but MUST NOT be the only path."
   - id: p1-should-tty-detection
     level: should
     applicability: universal
@@ -70,6 +75,12 @@ agent-tool deadlock.
   OAuth 2.0 Device Authorization Grant ([RFC 8628](https://www.rfc-editor.org/rfc/rfc8628)): the CLI prints a URL and a
   code; the user authorizes on another device. Agents cannot open browsers. Non-canonical alternatives (`--device-code`,
   `--remote`, `--headless`) are acceptable but SHOULD migrate toward `--no-browser`.
+- CLIs that accept secret material — tokens, passwords, private keys — MUST provide at least one input path that does
+  not leak the value into process listings (`ps`), shell history, or the parent environment. The two leak-resistant
+  paths are stdin and a `--*-file` flag pointing to a credential file. Flag-value (`--token <value>`) and
+  environment-variable (`TOOL_TOKEN`) paths MAY exist as convenience surfaces but MUST NOT be the only programmatic
+  path. Cloud-CLI env-var conventions (`AWS_ACCESS_KEY_ID`, `GH_TOKEN`) are accepted as convenience paths under this
+  rule, not as substitutes for it.
 
 **SHOULD:**
 
@@ -102,6 +113,7 @@ agent-tool deadlock.
 - `stdin().read_line()` in a code path reached during normal operation without a TTY check first.
 - Hard-coded credentials prompts with no env-var or config-file alternative.
 - OAuth flow that unconditionally opens a browser with no headless escape hatch.
+- A `--password <value>` flag with no stdin or file alternative — every invocation leaks the secret into `ps` output.
 
 Measured by check IDs `p1-non-interactive` (behavioral) and `p1-non-interactive-source` (source). Run `agentnative check
 --principle 1 .` against the CLI under test to see both.
