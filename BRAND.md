@@ -49,10 +49,6 @@ These bans apply across every channel:
 - **No verbatim quotation from any single source.** Where multiple sources converge on a claim, the standard's wording
   sounds like triangulation, not citation. Lineage belongs in the README's `Acknowledgements` section, not in the
   contract.
-- **No AI-slop fingerprints (visual channels).** Cyan/purple gradients, gradient text, glassmorphism, hero washes,
-  dashboard card grids, side-stripe borders on callouts.
-- **No second-favorite fonts (visual channels).** Inter, Plex, Fraunces, Lora, DM Sans, Space Grotesk, Instrument Serif,
-  Outfit, Plus Jakarta Sans. The right answer for any new channel is further out than the catalog's first scroll.
 
 ## Voice anchors — concrete examples
 
@@ -61,7 +57,6 @@ These bans apply across every channel:
 | "CLI tools MUST run without human input."                                                                                 | "We believe CLI tools should be non-interactive because agents can't handle prompts."       |
 | "Authentication failed: token expired (`expires_at: 2026-03-25T00:00:00Z`). Run `tool auth refresh` or set `TOOL_TOKEN`." | "Sorry, looks like authentication didn't work. Please try again."                           |
 | "Numeric output is locale-independent: `.` decimal, no thousands grouping, regardless of `LC_NUMERIC`."                   | "We typically recommend C locale for JSON output to avoid potential issues across locales." |
-| One distinctive typeface family with character.                                                                           | The reflex-default catalog.                                                                 |
 
 ## Channels
 
