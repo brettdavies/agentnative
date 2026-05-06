@@ -1,7 +1,7 @@
 ---
 id: p4
 title: Fail Fast with Actionable Errors
-last-revised: 2026-04-22
+last-revised: 2026-05-06
 status: active
 requirements:
   - id: p4-must-try-parse
@@ -29,6 +29,11 @@ requirements:
     level: should
     applicability: universal
     summary: "Error output respects `--output json`: JSON-formatted errors go to stderr when JSON output is selected."
+  - id: p4-should-enumerate-valid-set
+    level: should
+    applicability:
+      if: CLI rejects input against a closed set
+    summary: "When rejecting input against an enum or fixed-allowed-values set, the error message includes the valid set."
 ---
 
 # P4: Fail Fast with Actionable Errors
@@ -88,6 +93,14 @@ OAuth or asks the user to check their config file. Getting that wrong wastes ent
   three-tier definition (meta-commands, local-only commands, network commands) lives in P6 (`p6-should-tier-gating`);
   this requirement specifies the network-call ordering consequence.
 - Error output respects `--output json`: JSON-formatted errors go to stderr when JSON output is selected.
+- When the failure is "invalid value for X" against a known closed set — an enum field, a documented allow-list, a typed
+  parameter — the error SHOULD include the valid set. An agent reading `error: invalid visibility` guesses and retries;
+  an agent reading `error: --visibility must be one of: public, private, unlisted (got "secret")` self-corrects in one
+  round-trip.
+
+  ```text
+  error: --visibility must be one of: public, private, unlisted (got "secret")
+  ```
 
 ## Evidence
 
