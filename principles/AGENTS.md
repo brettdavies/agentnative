@@ -1,6 +1,6 @@
 # Principles folder — agent instructions
 
-This folder holds the canonical specification of the 7 agent-native CLI principles. It is the **source of truth** for
+This folder holds the canonical specification of the 8 agent-native CLI principles. It is the **source of truth** for
 every downstream consumer — the `anc` CLI linter (which reads the frontmatter to build its requirement registry), the
 `anc.dev` site (which commits a copy of these files via `scripts/sync-spec.sh`), and any third party that cites the
 standard.
@@ -15,7 +15,7 @@ Principle prose is enforced by the Vale rule packs at `styles/brand/` (universal
 
 ## What belongs here
 
-- One file per principle: `p<n>-<slug>.md`, seven in total.
+- One file per principle: `p<n>-<slug>.md`, eight in total.
 - This file (`AGENTS.md`), documenting the per-file shape and pressure-test protocol.
 
 **Does not belong here:** website copy, CLI check implementations, research extracts, per-tool scorecards, or any
@@ -49,7 +49,7 @@ requirements:
 
 Fields:
 
-- `id` — lowercase principle code (`p1` through `p7`). Matches the filename prefix.
+- `id` — lowercase principle code (`p1` through `p8`). Matches the filename prefix.
 - `title` — human-readable principle title; mirrors the H1.
 - `last-revised: YYYY-MM-DD` — updates **only** when a MUST/SHOULD/MAY changes tier, is added, or is removed. Prose-only
   edits do not bump the date.
@@ -59,7 +59,7 @@ Fields:
   pressure-tests against an `active` principle do **not** require flipping back to `under-review` — that flip is
   reserved for cycles producing substantive critique that may change MUST/SHOULD/MAY tiers.
 - `requirements[]` — one entry per MUST/SHOULD/MAY bullet in the prose. Required fields per entry:
-- `id` — `p<n>-<level>-<slug>`, lowercase-kebab, unique across all seven files.
+- `id` — `p<n>-<level>-<slug>`, lowercase-kebab, unique across all eight files.
 - `level` — `must`, `should`, or `may` (lowercase). RFC 2119 semantics.
 - `applicability` — either the string `universal` or an object `{if: "<reason>"}`. `universal` applies to every CLI;
   conditional applies only when the named surface exists.
@@ -86,7 +86,7 @@ copy, the coverage-matrix generator) scan for these boundaries.
 Every PR touching `principles/**` runs `.github/workflows/validate-principles.yml`, which checks:
 
 - Required frontmatter fields are present on every file.
-- `requirements[].id` values are unique across all seven files.
+- `requirements[].id` values are unique across all eight files.
 - The number of MUST / SHOULD / MAY entries in `requirements[]` equals the number of MUST / SHOULD / MAY bullets in the
   prose.
 - `applicability` is either the string `universal` or an object with an `if:` key — no other shapes.

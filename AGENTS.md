@@ -5,7 +5,7 @@ standard. This file is for any agent (Claude Code or otherwise) opening this rep
 
 ## Project
 
-Source of truth for the 7 principles that define agent-native CLIs. Downstream consumers:
+Source of truth for the 8 principles that define agent-native CLIs. Downstream consumers:
 
 - [`brettdavies/agentnative-cli`](https://github.com/brettdavies/agentnative-cli) (`~/dev/agentnative`) — the Rust `anc`
   linter. Pins a `SPEC_VERSION` const at compile time; coupled-release norm requires a companion PR when principle
@@ -24,7 +24,7 @@ frontmatter are the machine-readable contract with downstream repos.
 
 ## Authoritative content
 
-- `principles/p1-*.md` through `p7-*.md` — each principle, with YAML frontmatter (`id`, `title`, `last-revised`,
+- `principles/p1-*.md` through `p8-*.md` — each principle, with YAML frontmatter (`id`, `title`, `last-revised`,
   `status`, `requirements[]`) and MUST/SHOULD/MAY prose in RFC 2119 language. `requirements[]` is the machine-readable
   contract: each entry carries a stable `id`, a `level` (must/should/may), an `applicability` (`universal` or `{if:
   <reason>}`), and a one-sentence `summary`. Downstream consumers (the `anc` CLI, the site) read the frontmatter; the
@@ -137,6 +137,6 @@ symlink is missing, recreate it: `ln -s ~/dev/solutions-docs docs/solutions`.
 1. Read `CONTRIBUTING.md` for the graduated AI-disclosure gate and coupled-release protocol — these are governance
    constraints, not optional conventions.
 2. Read `RELEASES.md` for the `dev` → `release/*` → `main` cherry-pick flow and the guard workflows.
-3. Skim the 7 `principles/p<n>-*.md` files to understand what's in-scope for this repo (vs. the CLI or site).
+3. Skim the 8 `principles/p<n>-*.md` files to understand what's in-scope for this repo (vs. the CLI or site).
 4. Before proposing changes that affect cross-repo surfaces, `qmd query "<topic>" --collection solutions` to check for
    prior art and documented decisions.
