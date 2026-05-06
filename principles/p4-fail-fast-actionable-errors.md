@@ -15,7 +15,7 @@ requirements:
   - id: p4-must-actionable-errors
     level: must
     applicability: universal
-    summary: Every error message contains what failed, why, and what to do next.
+    summary: Every error message names the failure, the cause, and a concrete remediation (a command or a value, not a hint to consult docs).
   - id: p4-should-structured-enum
     level: should
     applicability: universal
@@ -72,7 +72,8 @@ OAuth or asks the user to check their config file. Getting that wrong wastes ent
   These codes blend the bash 0/1/2 convention with BSD `sysexits.h` 77/78 (`EX_NOPERM`, `EX_CONFIG`); the result is the
   de-facto agent-facing dialect, not strict `sysexits.h` compliance.
 
-- Every error message contains **what failed**, **why**, and **what to do next**. Example:
+- Every error message MUST name the failure, the cause, and the remediation. The remediation is concrete: a command to
+  run or a value to set, not a hint to consult documentation.
 
   ```text
   Authentication failed: token expired (expires_at: 2026-03-25T00:00:00Z).

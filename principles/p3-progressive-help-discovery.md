@@ -46,9 +46,10 @@ trial-and-errors its way into a working call, burning tokens and sometimes landi
 
 **MUST:**
 
-- Every subcommand ships at least one concrete invocation example showing the command with realistic arguments, rendered
-  in the section that appears after the flags list. In clap this is the `after_help` attribute.
-- The top-level command ships 2–3 examples covering the primary use cases.
+- Every subcommand MUST render at least one concrete invocation example with realistic arguments, in the section that
+  appears after the flags list (clap's `after_help` attribute is the Rust realization; other frameworks have equivalents
+  — see Evidence).
+- The top-level command MUST render 2–3 examples covering the primary use cases.
 
 **SHOULD:**
 

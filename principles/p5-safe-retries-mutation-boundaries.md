@@ -47,17 +47,17 @@ does not modify state" is a better sentence to put in `--help` than to assume.
 
 **MUST:**
 
-- Destructive operations (delete, overwrite, bulk modify) require an explicit `--force` or `--yes` flag. Without it, the
-  tool refuses the operation or enters dry-run mode — never mutates silently.
-- The distinction between read and write commands is clear from the command name and help text alone. An agent reading
-  `--help` immediately knows whether a command mutates state.
-- A `--dry-run` flag is present on every write command. When set, the command validates inputs and reports what it would
-  do without executing. Dry-run output respects `--output json` so agents can parse the preview programmatically.
+- Destructive operations (delete, overwrite, bulk modify) MUST require an explicit `--force` or `--yes` flag. Without
+  it, the command refuses the operation or enters dry-run mode; it MUST NOT mutate silently.
+- The read-vs-write distinction MUST be visible from the command name and `--help` text alone. A reader scanning the
+  help output immediately knows whether a command mutates state.
+- Every write command MUST support `--dry-run`: validate inputs and report the intended effect without executing it.
+  Dry-run output respects `--output json`.
 
 **SHOULD:**
 
-- Write operations are idempotent where the domain allows it — running the same command twice produces the same result
-  rather than doubling the effect.
+- Write operations SHOULD be idempotent where the domain allows it. Running the same command twice produces the same end
+  state, not a doubled effect.
 
 ## Evidence
 

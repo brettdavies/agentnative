@@ -105,14 +105,15 @@ tool a building block rather than a dead end.
 
 **SHOULD:**
 
-- Commands that accept input read from stdin when no file argument is provided. Pipeline composition depends on it.
-- Subcommand naming follows a consistent `noun verb` or `verb noun` convention throughout the tool. Mixing patterns
-  (e.g., `list-users` alongside `user show`) forces agents to learn exceptions.
+- Commands that accept input data SHOULD read from stdin when no file argument is provided. Pipeline composition depends
+  on it.
+- Subcommand naming SHOULD follow one consistent grammar (`noun verb` or `verb noun`) throughout the tool. Mixed
+  patterns (e.g., `list-users` alongside `user show`) force consumers to memorize exceptions instead of applying a rule.
 - A three-tier dependency gating pattern: Tier 1 (meta-commands like `completions`, `version`) needs nothing; Tier 2
   (local commands) needs config; Tier 3 (network commands) needs config + auth. `completions` and `version` always work,
   even in broken environments.
-- Operations are modeled as subcommands, not flags. `tool search "query"` is correct; `tool --search "query"` is wrong.
-  Flags modify behavior (`--quiet`, `--output json`); subcommands select operations.
+- Operations SHOULD be modeled as subcommands, not flags. `tool search "query"` is correct; `tool --search "query"`
+  conflates two roles. Flags modify behavior (`--quiet`, `--output json`); subcommands select operations.
 
 **MAY:**
 

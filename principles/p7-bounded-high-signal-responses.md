@@ -12,7 +12,7 @@ requirements:
     level: must
     applicability:
       if: CLI has list-style commands
-    summary: "List operations clamp to a sensible default maximum; when truncated, indicate it (`\"truncated\": true` in JSON, stderr note in text)."
+    summary: "List operations clamp to a documented default maximum; when truncated, indicate it (`\"truncated\": true` in JSON, stderr note in text)."
   - id: p7-should-verbose
     level: should
     applicability: universal
@@ -57,9 +57,9 @@ high-signal and inside budget.
 
 **MUST:**
 
-- A `--quiet` flag suppresses non-essential output: progress indicators, informational messages, decorative formatting.
-  When `--quiet` is set, only requested data and errors appear. Implementations typically route diagnostics through a
-  macro that short-circuits when quiet is on:
+- A `--quiet` flag MUST suppress non-essential output (progress indicators, informational messages, decorative
+  formatting). Under `--quiet`, only requested data and errors appear. The Rust realization typically gates diagnostics
+  through a macro:
 
   ```rust
   macro_rules! diag {
@@ -69,19 +69,19 @@ high-signal and inside budget.
   }
   ```
 
-- List operations clamp to a sensible default maximum. A `list` without `--limit` does not return more than a
-  configurable ceiling (e.g., 100 items). If more items exist, the output indicates truncation — `"truncated": true` in
-  JSON, a stderr note in text mode.
+- List operations MUST clamp to a documented default maximum. A `list` invoked without `--limit` returns no more than a
+  configurable ceiling (e.g., 100 items). When the underlying result set exceeds the ceiling, the output signals
+  truncation: `"truncated": true` in JSON, a stderr note in text mode.
 
 **SHOULD:**
 
 - A `--verbose` flag (or `-v` / `-vv`) escalates diagnostic detail when agents need to debug failures.
-- A `--limit` or `--max-results` flag lets callers request exactly the number of items they want.
+- A `--limit` (or `--max-results`) flag SHOULD let callers request exactly the number of items they want.
 - A `--timeout` flag bounds execution time. An agent waiting indefinitely on a hung network call cannot proceed.
 
 **MAY:**
 
-- Cursor-based pagination flags (`--after`, `--before`) for efficient traversal of large result sets.
+- Cursor-based pagination flags (`--after`, `--before`) MAY be offered for efficient traversal of large result sets.
 - Automatic verbosity reduction in non-TTY contexts (the same behavior `--quiet` explicitly requests).
 
 ## Evidence
