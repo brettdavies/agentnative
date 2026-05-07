@@ -1,8 +1,48 @@
 # Changelog
 
-All notable changes to this repository are documented here — governance, validator, release infrastructure, README, decision records.
+All notable changes to this repository are documented here: governance, validator, release infrastructure, README, decision records.
 
-Changes to the standard itself — principle MUST/SHOULD/MAY tier moves, requirement IDs added/removed/renamed, applicability shifts — are tracked per-principle in `principles/p*-*.md` via the `last-revised:` calver frontmatter field and the `## Pressure test notes` section appended to each file.
+Changes to the standard itself (principle MUST/SHOULD/MAY tier moves, requirement IDs added/removed/renamed, applicability shifts) are tracked per-principle in `principles/p*-*.md` via the `last-revised:` calver frontmatter field and the `## Pressure test notes` section appended to each file.
+
+## [0.4.0] - 2026-05-07
+
+### Added
+
+- P1 MUST `p1-must-secret-non-leaky-path` (conditional on CLI accepting secret material): sensitive inputs are readable via stdin or a `--*-file` flag; flag-value and env-var inputs MAY exist for convenience but MUST NOT be the only path. by @brettdavies in [#25](https://github.com/brettdavies/agentnative/pull/25)
+- P2 MUST `p2-must-schema-print` (conditional on structured output): expose the output schema via a `schema` subcommand or `--schema` flag, runtime-discoverable, with a documented format identifier (canonical recommendation: JSON Schema 2020-12).
+- P2 SHOULD `p2-should-schema-file` (conditional on structured output): also export the schema to a stable file path so CI and static-analysis consumers can pin without invoking the tool.
+- P2 SHOULD `p2-should-json-aliases`: accept `--json` and `--jsonl` as aliases for `--output json` and `--output jsonl`.
+- P4 SHOULD `p4-should-enumerate-valid-set` (conditional on closed-set rejection): when rejecting input against an enum or fixed-allowed-values set, the error message includes the valid set.
+- P6 MUST `p6-must-sigterm` (conditional on long-running operations): flush or roll back partial writes, release locks, exit non-zero within a bounded shutdown window. Next invocation succeeds without manual cleanup.
+- P6 MAY `p6-may-standard-names` (conditional on subcommands): follow community-standard verbs (`get` / `list` / `create` / `update` / `delete`) and flag spellings (`--force`, `--yes`, `--limit`, `--quiet`, `--verbose`).
+- New principle **P8 Discoverable Through Agent Skill Bundles** (four requirements: `p8-must-bundle-install`, `p8-should-bundle-exists`, `p8-may-install-all`, `p8-may-bundle-update`). CLIs ship a top-level skill bundle (`AGENTS.md`, `SKILL.md`, or equivalent) and provide an install path that registers the bundle with installed agent runtimes (canonical form: `tool skill install [<host>]`).
+
+### Changed
+
+- `VERSION`: 0.3.1 → 0.4.0 (MINOR per `principles/AGENTS.md`'s versioning rules; new MUSTs added). by @brettdavies in [#25](https://github.com/brettdavies/agentnative/pull/25)
+- `.impeccable.md`: new spec-channel anti-pattern "No false canonicalization". When a bullet names an outcome the implementer can satisfy any way, prose uses indefinite articles and avoids language that canonicalizes one shape; when a bullet names a citable single-shape pattern, prose uses definite articles and cites the source.
+
+**Full Changelog**: [v0.4.0...v0.4.0](https://github.com/brettdavies/agentnative/compare/v0.4.0...v0.4.0)
+
+## [0.4.0] - 2026-05-07
+
+### Added
+
+- P1 MUST `p1-must-secret-non-leaky-path` (conditional on CLI accepting secret material): sensitive inputs are readable via stdin or a `--*-file` flag; flag-value and env-var inputs MAY exist for convenience but MUST NOT be the only path. by @brettdavies in [#25](https://github.com/brettdavies/agentnative/pull/25)
+- P2 MUST `p2-must-schema-print` (conditional on structured output): expose the output schema via a `schema` subcommand or `--schema` flag, runtime-discoverable, with a documented format identifier (canonical recommendation: JSON Schema 2020-12).
+- P2 SHOULD `p2-should-schema-file` (conditional on structured output): also export the schema to a stable file path so CI and static-analysis consumers can pin without invoking the tool.
+- P2 SHOULD `p2-should-json-aliases`: accept `--json` and `--jsonl` as aliases for `--output json` and `--output jsonl`.
+- P4 SHOULD `p4-should-enumerate-valid-set` (conditional on closed-set rejection): when rejecting input against an enum or fixed-allowed-values set, the error message includes the valid set.
+- P6 MUST `p6-must-sigterm` (conditional on long-running operations): flush or roll back partial writes, release locks, exit non-zero within a bounded shutdown window. Next invocation succeeds without manual cleanup.
+- P6 MAY `p6-may-standard-names` (conditional on subcommands): follow community-standard verbs (`get` / `list` / `create` / `update` / `delete`) and flag spellings (`--force`, `--yes`, `--limit`, `--quiet`, `--verbose`).
+- New principle **P8 Discoverable Through Agent Skill Bundles** (four requirements: `p8-must-bundle-install`, `p8-should-bundle-exists`, `p8-may-install-all`, `p8-may-bundle-update`). CLIs ship a top-level skill bundle (`AGENTS.md`, `SKILL.md`, or equivalent) and provide an install path that registers the bundle with installed agent runtimes (canonical form: `tool skill install [<host>]`).
+
+### Changed
+
+- `VERSION`: 0.3.1 → 0.4.0 (MINOR per `principles/AGENTS.md`'s versioning rules; new MUSTs added). by @brettdavies in [#25](https://github.com/brettdavies/agentnative/pull/25)
+- `.impeccable.md`: new spec-channel anti-pattern "No false canonicalization". When a bullet names an outcome the implementer can satisfy any way, prose uses indefinite articles and avoids language that canonicalizes one shape; when a bullet names a citable single-shape pattern, prose uses definite articles and cites the source.
+
+**Full Changelog**: [v0.3.1...v0.4.0](https://github.com/brettdavies/agentnative/compare/v0.3.1...v0.4.0)
 
 ## [0.3.1] - 2026-05-07
 
