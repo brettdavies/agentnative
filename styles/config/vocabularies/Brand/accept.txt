@@ -1,9 +1,11 @@
 APIs
 Andrej
+Anthropic
 CLIs
 Composability
 Composable
 Config
+ESR
 Frontmatter
 Hostname
 Karpathy
@@ -13,6 +15,7 @@ Madapusi
 Misrouted
 OAuth
 Overclaim
+PR
 Parseable
 README
 READMEs
@@ -23,6 +26,7 @@ TUIs
 Tailnet
 Tailscale
 Trevin
+Vasudevan
 agentic
 agentnative
 allowlist
@@ -49,6 +53,7 @@ idempotency
 kubectl
 leaderboard
 maintainer
+markdownlint
 namespace
 npm
 orchestrator
@@ -60,6 +65,7 @@ repos
 rsync
 ruleset
 rulesets
+runtime
 semver
 softenings
 stderr
