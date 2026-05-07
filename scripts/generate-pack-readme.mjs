@@ -61,12 +61,30 @@ function fmtMessage(msg) {
   return msg.replaceAll("'%s'", "`<matched text>`").replaceAll("%s", "`<matched text>`");
 }
 
+function wrapParagraph(text, width = 120) {
+  const words = text.split(/\s+/);
+  const lines = [];
+  let line = "";
+  for (const word of words) {
+    if (!line) {
+      line = word;
+    } else if (line.length + 1 + word.length <= width) {
+      line += " " + word;
+    } else {
+      lines.push(line);
+      line = word;
+    }
+  }
+  if (line) lines.push(line);
+  return lines.join("\n");
+}
+
 function renderRule(packName, rule) {
   const out = [];
   out.push(`## ${packName}.${rule.name}`, "");
   if (rule.source) out.push(`*Source: ${rule.source}*`, "");
   const message = fmtMessage(rule.message);
-  if (message) out.push(`**Message:** ${message}`, "");
+  if (message) out.push(wrapParagraph(`**Message:** ${message}`), "");
   if (rule.link) out.push(`**Rationale:** <${rule.link}>`, "");
   if (rule.level) out.push(`**Pack default severity:** \`${rule.level}\` (overridden per-channel via \`.vale.ini\`).`, "");
   if (Array.isArray(rule.tokens) && rule.tokens.length) {
@@ -88,7 +106,9 @@ function renderReadme(packName, rules) {
   const lines = [];
   lines.push(`# ${packName} Vale rule pack`, "");
   lines.push(
-    `Auto-generated reference for the rules enforced by \`styles/${packName}/*.yml\`. Each rule's narrative rationale lives in \`BRAND.md\` (universal) or \`.impeccable.md\` (channel). The rule pack is the executable contract for the literal phrases / regex; this README is the human-readable companion.`,
+    wrapParagraph(
+      `Auto-generated reference for the rules enforced by \`styles/${packName}/*.yml\`. Each rule's narrative rationale lives in \`BRAND.md\` (universal) or \`.impeccable.md\` (channel). The rule pack is the executable contract for the literal phrases / regex; this README is the human-readable companion.`,
+    ),
     "",
   );
   if (!rules.length) {

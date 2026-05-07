@@ -45,6 +45,9 @@ mapfile -t MD_FILES < <(
     -not -path './.git/*' \
     -not -path './.context/*' \
     -not -path './scripts/__fixtures__/*' \
+    -not -path './styles/proselint/*' \
+    -not -path './styles/write-good/*' \
+    -not -path './styles/.vale-config/*' \
     -not -name 'CHANGELOG.md' \
     | sort
 )

@@ -1,6 +1,8 @@
 # Brand Vale rule pack
 
-Auto-generated reference for the rules enforced by `styles/Brand/*.yml`. Each rule's narrative rationale lives in `BRAND.md` (universal) or `.impeccable.md` (channel). The rule pack is the executable contract for the literal phrases / regex; this README is the human-readable companion.
+Auto-generated reference for the rules enforced by `styles/Brand/*.yml`. Each rule's narrative rationale lives in
+`BRAND.md` (universal) or `.impeccable.md` (channel). The rule pack is the executable contract for the literal phrases /
+regex; this README is the human-readable companion.
 
 ## Brand.FillerAdjectives
 
@@ -44,7 +46,8 @@ Auto-generated reference for the rules enforced by `styles/Brand/*.yml`. Each ru
 
 *Source: BRAND.md § Universal anti-patterns — No marketing register.*
 
-**Message:** Marketing register: `<matched text>`. The standard speaks in third person about contracts, not first person about beliefs.
+**Message:** Marketing register: `<matched text>`. The standard speaks in third person about contracts, not first person
+about beliefs.
 
 **Rationale:** <https://github.com/brettdavies/agentnative/blob/main/BRAND.md#universal-anti-patterns>
 
