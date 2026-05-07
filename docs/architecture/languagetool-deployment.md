@@ -21,8 +21,13 @@ Tailnet membership is the trust boundary. The container binds to `0.0.0.0:8081` 
 does not forward 8081, and `tailscale serve` / `tailscale funnel` are not configured. Reachability is therefore:
 
 - Devices on the home LAN (`192.168.1.5:8081`) — yes.
-- Devices on the tailnet (`pool:8081` via MagicDNS or `100.75.41.53:8081`) — yes.
+- Devices on the tailnet (`pool.tail42ba87.ts.net:8081` or `100.75.41.53:8081`) — yes.
 - Public internet — no.
+
+**Hostname guidance for clients:** prefer the FQDN `pool.tail42ba87.ts.net` over the bare short name `pool`. On
+macOS+Tailscale, short-name resolution intermittently times out at 5s before falling through to MagicDNS, while the FQDN
+resolves in ~1.5ms and is stable across DNS cache states. Tailnet IP `100.75.41.53` works too but is brittle if `pool`
+is ever re-keyed.
 
 There is no TLS on the service itself. WireGuard already encrypts in-transit; layering TLS adds cert management for no
 security gain. If a future client requires HTTPS, terminate via `tailscale serve --bg --https=443 http://localhost:8081`
@@ -154,7 +159,10 @@ narrative version.
 
 | Date | Test | Result |
 | - | - | - |
-| 2026-05-06 | `GET http://pool:8081/v2/languages` from `bretts-air` over MagicDNS | 200, full list, 5.0s warm |
-| 2026-05-06 | `POST http://pool:8081/v2/check` with seeded prose | 200, 3 rules-only matches (HE_VERB_AGR, THIS_NNS, PLURAL_VERB_AFTER_THIS) |
+| 2026-05-06 | Warm probe via FQDN (3 attempts) | 200 in 12-23ms each; namelookup ~1.5ms |
+| 2026-05-06 | Warm probe via bare short name `pool` | DNS resolution times out at 5s — short name unreliable on macOS+Tailscale; clients should use FQDN |
+| 2026-05-06 | Cold-start probe (post `docker restart`, time-to-first-200) | 2.6s (5 polls @ 0.5s) — well under the 60s `start_period` |
+| 2026-05-06 | `POST /v2/check` with seeded prose | 200, 3 rules-only matches (HE_VERB_AGR, THIS_NNS, PLURAL_VERB_AFTER_THIS) |
+| 2026-05-06 | TS-off probe (TS disabled on dev Mac, FQDN unresolvable) | curl exit 6 in 0.06s — failure path correct |
 | 2026-05-06 | `docker inspect languagetool --format {{.State.Health.Status}}` | `healthy` |
 | 2026-05-06 | `tailscale serve status` / `tailscale funnel status` on pool | empty — no public exposure |
