@@ -9,6 +9,11 @@ Everything about this folder is optimized for one property: a principle's requir
 from the file without parsing prose. Frontmatter carries the machine-readable contract; prose carries the human-readable
 expansion.
 
+Principle prose is enforced by the Vale rule packs at `styles/brand/` (universal anti-patterns) and `styles/spec/`
+(spec-channel register). The pre-push hook runs the orchestrator at `scripts/prose-check.sh` against these files; see
+[`docs/architecture/voice-enforcement.md`](../docs/architecture/voice-enforcement.md) for the layered architecture.
+`BRAND.md` and `.impeccable.md` carry the narrative identity the rule packs encode.
+
 ## What belongs here
 
 - One file per principle: `p<n>-<slug>.md`, seven in total.

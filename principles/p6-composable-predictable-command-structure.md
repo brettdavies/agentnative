@@ -105,14 +105,15 @@ tool a building block rather than a dead end.
 
 **SHOULD:**
 
-- Commands that accept input read from stdin when no file argument is provided. Pipeline composition depends on it.
-- Subcommand naming follows a consistent `noun verb` or `verb noun` convention throughout the tool. Mixing patterns
-  (e.g., `list-users` alongside `user show`) forces agents to learn exceptions.
+- Commands that accept input data SHOULD read from stdin when no file argument is provided. Pipeline composition depends
+  on it.
+- Subcommand naming SHOULD follow one consistent grammar (`noun verb` or `verb noun`) throughout the tool. Mixed
+  patterns (e.g., `list-users` alongside `user show`) force consumers to memorize exceptions instead of applying a rule.
 - A three-tier dependency gating pattern: Tier 1 (meta-commands like `completions`, `version`) needs nothing; Tier 2
   (local commands) needs config; Tier 3 (network commands) needs config + auth. `completions` and `version` always work,
   even in broken environments.
-- Operations are modeled as subcommands, not flags. `tool search "query"` is correct; `tool --search "query"` is wrong.
-  Flags modify behavior (`--quiet`, `--output json`); subcommands select operations.
+- Operations SHOULD be modeled as subcommands, not flags. `tool search "query"` is correct; `tool --search "query"`
+  conflates two roles. Flags modify behavior (`--quiet`, `--output json`); subcommands select operations.
 
 **MAY:**
 
@@ -137,7 +138,7 @@ tool a building block rather than a dead end.
 - No stdin support on commands where piped input is a natural use case.
 
 Measured by check IDs `p6-sigpipe`, `p6-no-color`, `p6-completions`, `p6-timeout`, `p6-agents-md`. Run `agentnative
-check --principle 6 .` against your CLI to see each.
+check --principle 6 .` against the CLI under test to see each.
 
 ## Pressure test notes
 
@@ -154,7 +155,7 @@ recorded verbatim per `principles/AGENTS.md` § "Pressure-test protocol".
   that piping to `head`, `tail`, or any tool that closes the pipe early does not crash the process"); the Rust snippet
   stays as the canonical example; per-language one-liners cover Python, Go, and Node. Frontmatter summary updated to
   match.
-- **[edit]** *Must-vs-should.* "The `global = true` MUST is a clap-API artifact — the behavioral requirement is 'agentic
+- **[edit]** *MUST-vs-SHOULD.* "The `global = true` MUST is a clap-API artifact — the behavioral requirement is 'agentic
   flags propagate to every subcommand,' which is what the prose actually says. The frontmatter summary baking `global =
   true` into a universal contract overfits to one library." Resolved: frontmatter summary and prose bullet now lead with
   the behavioral requirement ("propagate to every subcommand"), with `global = true` cited as the clap-specific example.

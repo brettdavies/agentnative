@@ -56,6 +56,12 @@ The spec speaks as a **standard**, not a person. Think RFC, not blog post.
 Use RFC 2119 language (MUST, SHOULD, MAY) for requirements. Concrete examples, not abstractions. Show the failure mode,
 then show the fix.
 
+The voice contract has an executable enforcement layer: `styles/brand/` and `styles/spec/` are Vale rule packs (this
+file's voice contract, in code form). `BRAND.md` and `.impeccable.md` carry the narrative identity; the rule packs
+encode the literal phrases that fire on push. See
+[`docs/architecture/voice-enforcement.md`](docs/architecture/voice-enforcement.md) for the layered architecture and
+contributor flow.
+
 ## Editing principles
 
 - Update `last-revised: YYYY-MM-DD` only when a MUST/SHOULD/MAY changes tier, is added, or is removed. Prose-only edits
