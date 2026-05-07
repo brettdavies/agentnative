@@ -78,7 +78,7 @@ The trailing HTML comment on each generated README names the script and flags th
 - Custom packs: `brand`, `spec` (committed in this repo).
 - Baseline packs: `write-good@v0.4.1`, `proselint@v0.3.4` (gitignored, materialized locally by `vale sync` from URLs
   pinned in the `Packages` directive).
-- Vocabulary: `Vocab = Brand` activates `styles/config/vocabularies/Brand/{accept,reject}.txt`.
+- Vocabulary: `Vocab = brand` activates `styles/config/vocabularies/brand/{accept,reject}.txt`.
 - Severity overrides: brand and spec rules at `error`; `write-good.Passive` and `write-good.TooWordy` at `warning`;
   `write-good.E-Prime`, `proselint.But`, `proselint.Annotations`, and `Vale.Terms` disabled.
 
@@ -194,13 +194,13 @@ grammar and spelling drift; it does not own the voice contract.
 
 ## Vocabularies
 
-`styles/config/vocabularies/Brand/accept.txt` lists technical terms and proper names that Vale's built-in spell-checker
+`styles/config/vocabularies/brand/accept.txt` lists technical terms and proper names that Vale's built-in spell-checker
 does not recognize. The list grew from the first-pass `Vale.Spelling` survey against the spec corpus. Add an entry when
 a legitimate term fires `Vale.Spelling`; do not write a per-rule exception for spelling.
 
 `reject.txt` is empty at v1 — placeholder for a future deny-list use.
 
-The `Vocab = Brand` directive in `.vale.ini` activates the accept-list. `Vale.Terms` is disabled because it used the
+The `Vocab = brand` directive in `.vale.ini` activates the accept-list. `Vale.Terms` is disabled because it used the
 Vocab as a case-canonicalization rule and fought the spec voice's pattern of using "CLI" (acronym in prose) and "cli"
 (identifier in code) interchangeably.
 
