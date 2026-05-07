@@ -25,12 +25,12 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 const FIXTURES = path.join(HERE, "__fixtures__/prose-check");
 
 const CASES = [
-  { name: "marketing-register", expect: /Brand\.MarketingRegister/ },
-  { name: "hedge-words", expect: /Brand\.HedgeWords/ },
-  { name: "filler-adjectives", expect: /Brand\.FillerAdjectives/ },
-  { name: "rfc-keywords", expect: /Spec\.RFCKeywords/ },
-  { name: "first-person-plural", expect: /Spec\.FirstPersonPlural/ },
-  { name: "second-person-imperative", expect: /Spec\.SecondPersonImperative/ },
+  { name: "marketing-register", expect: /brand\.MarketingRegister/ },
+  { name: "hedge-words", expect: /brand\.HedgeWords/ },
+  { name: "filler-adjectives", expect: /brand\.FillerAdjectives/ },
+  { name: "rfc-keywords", expect: /spec\.RFCKeywords/ },
+  { name: "first-person-plural", expect: /spec\.FirstPersonPlural/ },
+  { name: "second-person-imperative", expect: /spec\.SecondPersonImperative/ },
 ];
 
 let failed = 0;

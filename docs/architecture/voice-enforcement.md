@@ -25,12 +25,12 @@ LAYER 1 — Identity (narrative SoT, human-authored)
   .impeccable.md               spec channel register, anti-pattern categories with rationale
 
 LAYER 2 — Reference companion (derivative, generated)
-  styles/Brand/README.md       auto-generated from styles/Brand/*.yml; lists enforced literals + rationale
-  styles/Spec/README.md        auto-generated from styles/Spec/*.yml
+  styles/brand/README.md       auto-generated from styles/brand/*.yml; lists enforced literals + rationale
+  styles/spec/README.md        auto-generated from styles/spec/*.yml
 
 LAYER 3 — Enforcement (executable SoT for literals)
-  styles/Brand/*.yml           Vale rule pack — universal anti-patterns
-  styles/Spec/*.yml            Vale rule pack — spec-channel register
+  styles/brand/*.yml           Vale rule pack — universal anti-patterns
+  styles/spec/*.yml            Vale rule pack — spec-channel register
   styles/proselint/*           Vale-synced from a pinned release zip
   styles/write-good/*          Vale-synced from a pinned release zip
 ```
@@ -46,14 +46,14 @@ Custom packs, committed and owned:
 
 | Pack | Rules | Narrative source |
 | - | - | - |
-| `styles/Brand/` | `MarketingRegister`, `HedgeWords`, `FillerAdjectives` | BRAND.md § Universal anti-patterns |
-| `styles/Spec/` | `RFCKeywords`, `FirstPersonPlural`, `SecondPersonImperative` | `.impeccable.md` § Register |
+| `styles/brand/` | `MarketingRegister`, `HedgeWords`, `FillerAdjectives` | BRAND.md § Universal anti-patterns |
+| `styles/spec/` | `RFCKeywords`, `FirstPersonPlural`, `SecondPersonImperative` | `.impeccable.md` § Register |
 
-Each rule sets `level: warning` in its YAML; `.vale.ini` promotes Brand and Spec rules to `error` for the spec channel.
+Each rule sets `level: warning` in its YAML; `.vale.ini` promotes brand and spec rules to `error` for the spec channel.
 Channel-specific opt-up or opt-down lives in the per-channel `.vale.ini`, not in the pack itself, so the pack stays
 shareable across channels.
 
-`Spec.RFCKeywords` runs case-sensitive (`ignorecase: false`) so it flags lowercase `must` / `should` / `may` / `shall`
+`spec.RFCKeywords` runs case-sensitive (`ignorecase: false`) so it flags lowercase `must` / `should` / `may` / `shall`
 while leaving the legitimate uppercase RFC keywords alone.
 
 ## Per-pack README generator
@@ -63,7 +63,7 @@ file lists the literal phrases or regex enforced by each rule, the source narrat
 `.impeccable.md` for rationale.
 
 ```bash
-bun scripts/generate-pack-readme.mjs            # writes both Brand and Spec READMEs
+bun scripts/generate-pack-readme.mjs            # writes both brand and spec READMEs
 bun scripts/generate-pack-readme.mjs --check    # drift check; exits 1 if a YAML changed without regen
 bun scripts/generate-pack-readme.mjs Brand      # target a specific pack
 ```
@@ -75,11 +75,11 @@ The trailing HTML comment on each generated README names the script and flags th
 
 `.vale.ini` composes:
 
-- Custom packs: `Brand`, `Spec` (committed in this repo).
+- Custom packs: `brand`, `spec` (committed in this repo).
 - Baseline packs: `write-good@v0.4.1`, `proselint@v0.3.4` (gitignored, materialized locally by `vale sync` from URLs
   pinned in the `Packages` directive).
 - Vocabulary: `Vocab = Brand` activates `styles/config/vocabularies/Brand/{accept,reject}.txt`.
-- Severity overrides: Brand and Spec rules at `error`; `write-good.Passive` and `write-good.TooWordy` at `warning`;
+- Severity overrides: brand and spec rules at `error`; `write-good.Passive` and `write-good.TooWordy` at `warning`;
   `write-good.E-Prime`, `proselint.But`, `proselint.Annotations`, and `Vale.Terms` disabled.
 
 Excluded paths (via empty `BasedOnStyles =`): `docs/{brainstorms,plans,research}/`, `AGENTS.md`, `CHANGELOG.md` — these
@@ -211,7 +211,7 @@ Tracked here so future work has explicit anchor points.
 ### Consumer sync via scripts/sync-spec.sh extension
 
 Each consumer repo (`agentnative-site`, `agentnative-cli`, `agentnative-skill`, `agent-skills/agentnative`) extends its
-`scripts/sync-spec.sh` to also pull `styles/Brand/` from the spec at vendoring time. v1 consumers do a one-time manual
+`scripts/sync-spec.sh` to also pull `styles/brand/` from the spec at vendoring time. v1 consumers do a one-time manual
 copy. Extension is one PR per consumer; AE5 is re-verified at the automated-sync level once it lands.
 
 ### Channel `.impeccable.md` for cli and skill repos

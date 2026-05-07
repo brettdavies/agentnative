@@ -39,8 +39,8 @@ Two first-class consumers across all channels:
 ## Universal anti-patterns
 
 These bans apply across every channel. The narrative below explains *why* each category is banned; the executable
-contract for *what* is banned lives in [`styles/Brand/README.md`](styles/Brand/README.md), generated from the Vale rule
-pack at `styles/Brand/*.yml`.
+contract for *what* is banned lives in [`styles/brand/README.md`](styles/brand/README.md), generated from the Vale rule
+pack at `styles/brand/*.yml`.
 
 - **No marketing register.** First-person belief and recommendation framings are out. The standard speaks in the third
   person about contracts, not in the first person about beliefs.
@@ -53,7 +53,7 @@ pack at `styles/Brand/*.yml`.
 ## Voice anchors — concrete examples
 
 The ✓ column shows the contract voice. The ✗ column names the category of failure rather than reproducing literal banned
-phrases — those live in [`styles/Brand/README.md`](styles/Brand/README.md). The category labels describe the shape of
+phrases — those live in [`styles/brand/README.md`](styles/brand/README.md). The category labels describe the shape of
 the failure each ✓ phrasing replaces.
 
 | ✓                                                                                                                         | ✗                                                                                      |
