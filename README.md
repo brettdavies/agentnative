@@ -6,6 +6,11 @@ AI agents operate CLIs differently than humans do — they can't answer interact
 can't recover from errors that don't say what to do next. The principles below define what *agent-native* means in RFC
 2119 language, with machine-readable `requirements[]` so a checker (and graders) can pin against the standard.
 
+**Early-stage spec.** Ideas, debate, and contributions are welcome — pressure-tests against any principle, real-CLI
+grading submissions, counter-examples that argue a tier sits wrong, or new principles that the genre is missing. The
+spec is published as `status: active` because the contracts are stable enough to cite, not because anything here is
+locked. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for how to file each type.
+
 ## The four artifacts
 
 - **Spec** — this repo. Seven RFC 2119 principles plus machine-readable `requirements[]` in YAML frontmatter. Currently
@@ -136,14 +141,13 @@ not from a single source.
   compound-failure framing, and other contemporaneous voices on dev.to and Medium.
 - **Trevin's [7 Principles for Agent-Friendly CLIs](https://x.com/trevin/status/2037250000821059933) (2026-03-26) and
   follow-up [10 Principles for Agent-Native CLIs](https://x.com/trevin/status/2051316002730991795) (2026-05-04)** named
-  the genre and gave it momentum. Trevin's seven-axis decomposition was the proximate ancestor of this spec's initial
-  draft; the v0.3.1 release rewrote affected requirement bullets in the spec's own RFC 2119 voice as the prose-refresh
-  backlog from the v0.3.0 ecosystem-build cycle cleared.
-- **The anc.dev ecosystem's contribution is mechanism** — the [`anc`](https://github.com/brettdavies/agentnative-cli)
-  linter (with auto-fix runway), the [`agentnative-skill`](https://github.com/brettdavies/agentnative-skill) bundle that
-  teaches agents how to invoke `anc` and remediate findings, the [live leaderboard](https://anc.dev/scorecards), the
-  [score badge](docs/badge.md), and the cross-repo coupled-release norm. Where Trevin and others published frameworks,
-  this project ships verifiable conformance.
+  the genre and gave it momentum. Trevin's seven-axis decomposition is the proximate ancestor of this spec's initial
+  draft.
+- **What this project adds is mechanism** — the [`anc`](https://github.com/brettdavies/agentnative-cli) linter (with
+  auto-fix runway), the [`agentnative-skill`](https://github.com/brettdavies/agentnative-skill) bundle that teaches
+  agents how to invoke `anc` and remediate findings, the [live leaderboard](https://anc.dev/scorecards), the
+  [score badge](docs/badge.md), and the cross-repo coupled-release norm. The principles above name the contract; this
+  tooling makes conformance verifiable so a CLI can claim agent-native and a reader can check.
 
 Voice and identity decisions for the spec live in [`BRAND.md`](BRAND.md) and the spec-channel
 [`.impeccable.md`](.impeccable.md).
