@@ -47,13 +47,13 @@ trial-and-errors its way into a working call, burning tokens and sometimes landi
 **MUST:**
 
 - Every subcommand MUST render at least one concrete invocation example with realistic arguments, in the section that
-  appears after the flags list (clap's `after_help` attribute is the Rust realization; other frameworks have equivalents
-  — see Evidence).
+  appears after the flags list. Clap's `after_help` attribute is the Rust realization; other frameworks have equivalents
+  (see Evidence section below).
 - The top-level command MUST render 2–3 examples covering the primary use cases.
 
 **SHOULD:**
 
-- Examples show human and agent invocations side by side — a text-output example followed by its `--output json`
+- Examples show human and agent invocations side by side: a text-output example followed by its `--output json`
   equivalent. Readers see the pair; agents see the JSON form.
 - Short `about` for command-list summaries; `long_about` reserved for detailed descriptions visible with `--help` but
   not `-h`.
@@ -72,7 +72,7 @@ trial-and-errors its way into a working call, burning tokens and sometimes landi
 
 ## Anti-Patterns
 
-- Relying solely on `///` doc comments — those populate `about` / `long_about`, not `after_help`, so no examples render
+- Relying solely on `///` doc comments: those populate `about` / `long_about`, not `after_help`, so no examples render
   after the flags list.
 - A single `about` string serving as both summary and usage documentation.
 - Examples buried in a README or man page but absent from `--help` output.
@@ -83,7 +83,7 @@ under test to see each.
 
 ## Pressure test notes
 
-### 2026-04-27 — Show HN launch red-team pass
+### 2026-04-27: Show HN launch red-team pass
 
 Adversarial review via `compound-engineering:ce-adversarial-document-reviewer` ahead of the v0.3.0 launch. Findings
 recorded verbatim per `principles/AGENTS.md` § "Pressure-test protocol".

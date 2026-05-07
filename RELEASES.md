@@ -117,7 +117,7 @@ git cherry HEAD origin/dev | grep '^+' || echo "(none — release is patch-equiv
 # If B lists any non-docs path you didn't expect, fetch dev, identify the
 # commit (`git log dev --not origin/main`), cherry-pick it, re-run the
 # triple-diff. Missed cherry-picks have shipped to main on this and sibling
-# repos before — this step is the cheap way to catch them.
+# repos before — this step is a cheap way to catch them.
 
 # 5. (Language-specific: bump version, regenerate changelog, etc.)
 
@@ -141,6 +141,33 @@ the remote on merge. `dev` is untouched.
 Branching from `dev` and then `gio trash`-ing the guarded paths seems simpler but produces `add/add` merge conflicts
 whenever `dev` and `main` have diverged (which they always do after the first squash merge). The file appears as "added"
 on both sides with different content. Always branch from `origin/main` and cherry-pick onto it.
+
+## PR body
+
+Every PR — feature, fix, docs, release — uses `.github/pull_request_template.md` verbatim. Five sections, no inventions:
+`## Summary`, `## Changelog`, `## Linked check review`, `## Human reviewer`, `## AI disclosure`.
+
+- **Summary** is the NEW user-facing substance the PR ships. What is changing for the consumer that was not already
+  there. One short paragraph fits. Do NOT recap the workflow (cherry-pick / regenerate / dispatch / pre-push gate / CI
+  behavior is documented in this file and `.github/`). Do NOT paste triple-diff output, pre-push gate results, or CI
+  check status into the body. Those are author verification artifacts that stay local; anomalies get fixed before push,
+  not audit-trailed in the body.
+- **Changelog** subsections (`### Added` / `### Changed` / `### Fixed` / `### Removed` / `### Security`) hold the
+  user-facing entries. The template's RULES (in the HTML comment at the top of the section) are literal: 1-5 bullets,
+  delete empty subsections entirely, each bullet starts with a verb. Prose-only edits leave the section empty or omit
+  it.
+- **Linked check review** carries the companion-PR URL on `agentnative-cli` (or "no check changes needed" with
+  justification) per the coupled-release norm in `principles/AGENTS.md`. Required for any PR that adds, removes, or
+  re-tiers a `requirements[]` entry.
+- Internal tooling commits (`chore(cliff): ...`, `chore(prose-check): ...`, etc.) do NOT appear in the PR body's `##
+  Changelog`. `cliff.toml` skips `^chore` (and `^style` / `^test` / `^ci` / `^build`) and they are not user-facing.
+- **Release PRs** repeat the entries from the upstream feature PRs they cherry-pick. The repetition is intentional and
+  harmless: `cliff.toml`'s `^release` skip prevents the release-PR squash commit from being double-counted in any future
+  regeneration.
+
+The PR body is read by humans reviewing what shipped. Workflow mechanics, verification output, and tool-fix provenance
+are noise from that perspective; they belong in this file (`RELEASES.md`), the script outputs, and the commit history
+respectively.
 
 ## PRs and changelog generation
 
