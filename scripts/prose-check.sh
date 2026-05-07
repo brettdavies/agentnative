@@ -53,7 +53,15 @@ LT_BLOCKING_CATEGORIES='^(TYPOS|GRAMMAR|CONFUSED_WORDS)$'
 #   THIS_NNS               Misfires on "all of these hold" technical claims.
 #   NON_STANDARD_WORD      Misfires on identifier strings inside code spans.
 #   POSSESSIVE_APOSTROPHE  Misfires on code-comment-style prose.
-LT_DENY_RULES_DEFAULT='^(MD_BASEFORM|MUST_HAVE_TO|HAVE_PART_AGREEMENT|PREPOSITION_VERB|THIS_NNS|NON_STANDARD_WORD|POSSESSIVE_APOSTROPHE)$'
+#   A_INSTALL              Misfires on "an install path" / "a full reinstall"
+#                          — CLI-domain noun usage of install/reinstall that
+#                          LT's noun lexicon does not cover.
+#   IS_AND_ARE             Misfires on parenthetical-clause subjects, e.g.
+#                          "runtimes (Claude Code, Cursor, ... and others as
+#                          the ecosystem evolves)" — LT picks the wrong head
+#                          noun when a parenthetical sits between subject and
+#                          verb.
+LT_DENY_RULES_DEFAULT='^(MD_BASEFORM|MUST_HAVE_TO|HAVE_PART_AGREEMENT|PREPOSITION_VERB|THIS_NNS|NON_STANDARD_WORD|POSSESSIVE_APOSTROPHE|A_INSTALL|IS_AND_ARE)$'
 LT_DENY_RULES="${LT_DENY_RULES:-$LT_DENY_RULES_DEFAULT}"
 
 CHANGED_ONLY=0
