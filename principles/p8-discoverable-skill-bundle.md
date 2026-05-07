@@ -31,7 +31,7 @@ requirements:
 
 A skill bundle is a structured markdown file (canonical names: `AGENTS.md` or `SKILL.md`) with YAML frontmatter that
 names the tool, describes its capabilities, and provides workflow guidance an agent can load into its runtime. The
-bundle lives outside the CLI's flag space — agents discover it via filesystem convention, not via `--help`.
+bundle lives outside the CLI's flag space: agents discover it via filesystem convention, not via `--help`.
 
 ## Why Agents Need It
 
@@ -53,8 +53,8 @@ recognizes the tool's idioms across every subsequent invocation.
 
 **SHOULD:**
 
-- CLIs SHOULD ship a top-level agent-discoverable markdown bundle — canonical names are `AGENTS.md` or `SKILL.md`, both
-  recognized by major agent runtimes — with YAML frontmatter naming the tool and summarizing its capabilities. The
+- CLIs SHOULD ship a top-level agent-discoverable markdown bundle (canonical names are `AGENTS.md` or `SKILL.md`, both
+  recognized by major agent runtimes) with YAML frontmatter naming the tool and summarizing its capabilities. The
   bundle's first job is to be findable by filesystem convention; its second is to teach the agent how to invoke the tool
   well.
 
@@ -73,15 +73,15 @@ recognizes the tool's idioms across every subsequent invocation.
 - A `skill` subcommand group in the CLI enum (e.g., `tool skill install`, `tool skill update`, `tool skill list`).
 - An installer that targets the runtime cascade directly (file writes to `~/.claude/skills/<tool>/`, etc.) rather than
   requiring the runtime to be running.
-- Bundle content versioned alongside the CLI's release — the bundle ships from the same commit as the binary, not from a
+- Bundle content versioned alongside the CLI's release: the bundle ships from the same commit as the binary, not from a
   separate doc tree that drifts.
 
 ## Anti-Patterns
 
-- A CLI shipping a skill bundle with no install path — the bundle sits unread until a human manually copies it.
-- An install path that requires the agent runtime to be running — `tool skill install` writes to the runtime's
-  filesystem cascade (e.g., `~/.claude/skills/`) rather than requiring an active session.
-- A bundle whose contents drift from the CLI's actual surface — the bundle is part of the CLI's release artifact, not a
+- A CLI shipping a skill bundle with no install path: the bundle sits unread until a human manually copies it.
+- An install path that requires the agent runtime to be running: `tool skill install` writes to the runtime's filesystem
+  cascade (e.g., `~/.claude/skills/`) rather than requiring an active session.
+- A bundle whose contents drift from the CLI's actual surface: the bundle is part of the CLI's release artifact, not a
   separate doc tree.
 
 The vendor census in the v0.4.0 source-mining sprint documents the shipped patterns across Firecrawl, CLI-Anything, gws,

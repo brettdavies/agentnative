@@ -48,7 +48,7 @@ coverage.
 P1's MUST is worded in terms of observable behavior, not enumerated APIs:
 
 > When `--no-interactive` is set, or when stdin is not a TTY, the tool does not enter any blocking-interactive
-> surface. It uses defaults, reads from stdin, or exits with an actionable error. "Blocking-interactive surface"
+> surface: it uses defaults, reads from stdin, or exits with an actionable error. "Blocking-interactive surface"
 > includes prompt library calls AND TUI session initialization.
 
 The principle text carries a scope note that is explicit about the verification boundary: `agent` = a process invoking

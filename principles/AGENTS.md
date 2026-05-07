@@ -1,7 +1,7 @@
-# Principles folder — agent instructions
+# Principles folder: agent instructions
 
 This folder holds the canonical specification of the 8 agent-native CLI principles. It is the **source of truth** for
-every downstream consumer — the `anc` CLI linter (which reads the frontmatter to build its requirement registry), the
+every downstream consumer: the `anc` CLI linter (which reads the frontmatter to build its requirement registry), the
 `anc.dev` site (which commits a copy of these files via `scripts/sync-spec.sh`), and any third party that cites the
 standard.
 
@@ -49,34 +49,34 @@ requirements:
 
 Fields:
 
-- `id` — lowercase principle code (`p1` through `p8`). Matches the filename prefix.
-- `title` — human-readable principle title; mirrors the H1.
-- `last-revised: YYYY-MM-DD` — updates **only** when a MUST/SHOULD/MAY changes tier, is added, or is removed. Prose-only
+- `id`: lowercase principle code (`p1` through `p8`). Matches the filename prefix.
+- `title`: human-readable principle title; mirrors the H1.
+- `last-revised: YYYY-MM-DD`. Updates **only** when a MUST/SHOULD/MAY changes tier, is added, or is removed. Prose-only
   edits do not bump the date.
-- `status` — lifecycle marker. `draft` when first extracted; `under-review` during a pressure-test cycle; `active` once
+- `status`: lifecycle marker. `draft` when first extracted; `under-review` during a pressure-test cycle; `active` once
   the principle is published as part of the standard and accepting pressure-tests as normal-course feedback (default
   state for shipped principles); `locked` when edits are intentionally frozen for a defined review window. Routine
-  pressure-tests against an `active` principle do **not** require flipping back to `under-review` — that flip is
-  reserved for cycles producing substantive critique that may change MUST/SHOULD/MAY tiers.
-- `requirements[]` — one entry per MUST/SHOULD/MAY bullet in the prose. Required fields per entry:
-- `id` — `p<n>-<level>-<slug>`, lowercase-kebab, unique across all eight files.
-- `level` — `must`, `should`, or `may` (lowercase). RFC 2119 semantics.
-- `applicability` — either the string `universal` or an object `{if: "<reason>"}`. `universal` applies to every CLI;
+  pressure-tests against an `active` principle do **not** require flipping back to `under-review`. That flip is reserved
+  for cycles producing substantive critique that may change MUST/SHOULD/MAY tiers.
+- `requirements[]`: one entry per MUST/SHOULD/MAY bullet in the prose. Required fields per entry:
+- `id`: `p<n>-<level>-<slug>`, lowercase-kebab, unique across all eight files.
+- `level`: `must`, `should`, or `may` (lowercase). RFC 2119 semantics.
+- `applicability`: either the string `universal` or an object `{if: "<reason>"}`. `universal` applies to every CLI;
   conditional applies only when the named surface exists.
-- `summary` — one sentence. Duplicated between frontmatter and prose; the prose bullet can expand with examples, but the
+- `summary`: one sentence. Duplicated between frontmatter and prose; the prose bullet can expand with examples, but the
   first-sentence meaning must match.
 
 The summary duplication is intentional. Machine consumers parse the frontmatter; humans read the prose. Keeping them in
-sync is a review responsibility (enforced by the CI validator — see below).
+sync is a review responsibility (enforced by the CI validator, see below).
 
 ### Prose sections (fixed order)
 
-1. **Definition** — one or two sentences. What the principle demands.
-2. **Why Agents Need It** — the cost of violating it, expressed in agent-operational terms.
-3. **Requirements** — MUST / SHOULD / MAY bullets using RFC 2119 language. Bullet count per level must equal the
+1. **Definition.** One or two sentences. What the principle demands.
+2. **Why Agents Need It.** The cost of violating it, expressed in agent-operational terms.
+3. **Requirements.** MUST / SHOULD / MAY bullets using RFC 2119 language. Bullet count per level must equal the
    `requirements[]` count per level in frontmatter.
-4. **Evidence** — what to look for when verifying compliance.
-5. **Anti-Patterns** — what to reject.
+4. **Evidence.** What to look for when verifying compliance.
+5. **Anti-Patterns.** What to reject.
 
 Preserve section names and MUST/SHOULD/MAY structure on edits. Downstream tools (the site renderer, the CLI's vendored
 copy, the coverage-matrix generator) scan for these boundaries.
@@ -89,7 +89,7 @@ Every PR touching `principles/**` runs `.github/workflows/validate-principles.ym
 - `requirements[].id` values are unique across all eight files.
 - The number of MUST / SHOULD / MAY entries in `requirements[]` equals the number of MUST / SHOULD / MAY bullets in the
   prose.
-- `applicability` is either the string `universal` or an object with an `if:` key — no other shapes.
+- `applicability` is either the string `universal` or an object with an `if:` key. No other shapes.
 
 Drift in any of these fails the check with an actionable message naming the file and the specific mismatch.
 
@@ -99,14 +99,14 @@ Principles start as `status: draft`, ship as `status: active`, and only flip to 
 reasons:
 
 - `draft` → `active`: when the principle is published as part of a release. The default shipped state. Pressure-tests
-  against an `active` principle are welcomed and tracked as ordinary issues via the `pressure-test.yml` template — no
+  against an `active` principle are welcomed and tracked as ordinary issues via the `pressure-test.yml` template. No
   status flip required for normal-course feedback.
 - `active` → `under-review`: only when a pressure-test cycle produces critique substantive enough that MUST/SHOULD/MAY
   tiers may change. Stays `under-review` until the cycle resolves.
 - `under-review` → `active`: when findings are resolved (edited, demoted, merged, split, or `[wontfix]`-tagged) and the
   principle is stable again.
 - `active` (or `under-review`) → `locked`: when edits are intentionally frozen for a defined review window. Use
-  sparingly — `locked` is a hard gate, not a quality marker.
+  sparingly, because `locked` is a hard gate, not a quality marker.
 
 The cycle for substantive critique:
 
@@ -119,23 +119,23 @@ The cycle for substantive critique:
 
 **Tests (choose at least one; more is better):**
 
-- **Adversarial review** — ask a separate reviewer (`/codex review`, a subagent, or a human) to find the weakest claim
-  in the principle. Capture the critique verbatim in the notes section.
-- **Real-CLI dogfood** — grade 5+ real CLIs against the principle (`gh`, `jq`, `ripgrep`, `wrangler`, plus one
+- **Adversarial review.** Ask a separate reviewer (`/codex review`, a subagent, or a human) to find the weakest claim in
+  the principle. Capture the critique verbatim in the notes section.
+- **Real-CLI dogfood.** Grade 5+ real CLIs against the principle (`gh`, `jq`, `ripgrep`, `wrangler`, plus one
   intentionally bad CLI as a negative control). Record which CLIs pass/fail and on which specific requirement.
-- **Requirement-level challenge** — for each MUST, ask: "Would a well-designed agent-facing CLI ever legitimately
-  violate this?" If yes, the MUST may be wrong.
+- **Requirement-level challenge.** For each MUST, ask: "Would a well-designed agent-facing CLI ever legitimately violate
+  this?" If yes, the MUST may be wrong.
 
 ## Editing a principle
 
 When a principle changes, the order of operations is:
 
-1. Edit prose and frontmatter together — a new MUST bullet in prose needs a new `requirements[]` entry with matching
+1. Edit prose and frontmatter together: a new MUST bullet in prose needs a new `requirements[]` entry with matching
    `id`, `level`, `summary`, and `applicability`. Removing a bullet removes the corresponding entry.
 2. If a requirement's tier changed (MUST ↔ SHOULD ↔ MAY) or a requirement was added/removed, bump `last-revised:` to
-   today's date and bump `VERSION` (MINOR for MUST changes, PATCH for SHOULD/MAY changes — see `CONTRIBUTING.md`).
-3. If a requirement `id` changed or was removed, note this in the PR body — downstream `anc` consumers pin against IDs,
-   and renaming an ID is a breaking change for their registry drift check.
+   today's date and bump `VERSION` (MINOR for MUST changes, PATCH for SHOULD/MAY changes; see `CONTRIBUTING.md`).
+3. If a requirement `id` changed or was removed, note this in the PR body, because downstream `anc` consumers pin
+   against IDs, and renaming an ID is a breaking change for their registry drift check.
 4. Include a `## Changelog` section in the PR body naming the affected principle and the change.
 
 ## Coupled-release protocol
@@ -151,9 +151,9 @@ This is a documented norm, not a CI gate. The PR template enforces the field; re
 
 ## Cross-references
 
-- [`CONTRIBUTING.md`](../CONTRIBUTING.md) — AI disclosure, human co-sign, coupled-release protocol, versioning policy.
-- [`AGENTS.md`](../AGENTS.md) — repo-level overview for any agent opening this repo fresh.
-- [`docs/decisions/`](../docs/decisions/) — decision records cited from principle prose. The behavioral-MUST reasoning
+- [`CONTRIBUTING.md`](../CONTRIBUTING.md): AI disclosure, human co-sign, coupled-release protocol, versioning policy.
+- [`AGENTS.md`](../AGENTS.md): repo-level overview for any agent opening this repo fresh.
+- [`docs/decisions/`](../docs/decisions/): decision records cited from principle prose. The behavioral-MUST reasoning
   that shapes P1's current wording lives here.
-- [`../VERSION`](../VERSION) — spec version; bumped alongside principle tier changes.
-- [`../CHANGELOG.md`](../CHANGELOG.md) — grouped by principle; generated from PR `## Changelog` sections.
+- [`../VERSION`](../VERSION): spec version; bumped alongside principle tier changes.
+- [`../CHANGELOG.md`](../CHANGELOG.md): grouped by principle; generated from PR `## Changelog` sections.
