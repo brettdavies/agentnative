@@ -13,8 +13,8 @@ and artifacts in its own `.impeccable.md`.
   citing.
 - **Precise.** RFC 2119 language. Anchors stable and citable. Numbers measured, not asserted. Where a contract has a
   canonical realization (a flag spelling, an exit code, a path), it is named explicitly.
-- **Inviting.** The reader (or agent handler) should want to keep reading. That comes from details: typography that
-  rewards a slow read, prose that rewards a fast scan, code blocks that read like reference material a reader can trust.
+- **Inviting.** The reader (or agent handler) keeps reading by design. That comes from details: typography that rewards
+  a slow read, prose that rewards a fast scan, code blocks that read like reference material a reader can trust.
   Inviting is not "friendly" and it is not "marketing." It rewards engagement.
 
 ## Voice anchor
@@ -28,7 +28,7 @@ name the canonical fix.
 Two first-class consumers across all channels:
 
 - **Humans** evaluating, adopting, implementing, or extending the standard. Spec-channel readers are technically deep
-  and arrive with skepticism; site-channel readers are time-pressured and may decide in 60 seconds whether to take the
+  and arrive with skepticism; site-channel readers are time-pressured and decide in 60 seconds whether to take the
   standard seriously; linter users invoke at the terminal. Each channel narrows further in its own `.impeccable.md`.
 - **AI agents** consuming the standard programmatically — markdown via `Accept: text/markdown`, requirement IDs via
   frontmatter parsing, skill bundles via `SKILL.md`/`AGENTS.md` discovery, linter findings via JSON. Their UX is "do
@@ -38,25 +38,29 @@ Two first-class consumers across all channels:
 
 ## Universal anti-patterns
 
-These bans apply across every channel:
+These bans apply across every channel. The narrative below explains *why* each category is banned; the executable
+contract for *what* is banned lives in [`styles/Brand/README.md`](styles/Brand/README.md), generated from the Vale rule
+pack at `styles/Brand/*.yml`.
 
-- **No marketing register.** "We believe…", "We recommend…", "It's really important to…" — out. The standard speaks in
-  the third person about contracts, not in the first person about beliefs.
-- **No hedge words.** "Typically", "usually", "in most cases", "it is generally agreed" — out. MUST is the contract.
-  SHOULD is the contract. Hedges undercut both.
-- **No filler adjectives.** "Best-in-class", "robust", "leveraging", "synergy", "next-generation" — out. Concrete before
-  abstract; the noun does the work.
+- **No marketing register.** First-person belief and recommendation framings are out. The standard speaks in the third
+  person about contracts, not in the first person about beliefs.
+- **No hedge words.** Probabilistic softeners undercut MUST and SHOULD. The contract is the contract.
+- **No filler adjectives.** Marketing modifiers do no work. Concrete before abstract; the noun carries the meaning.
 - **No verbatim quotation from any single source.** Where multiple sources converge on a claim, the standard's wording
   sounds like triangulation, not citation. Lineage belongs in the README's `Acknowledgements` section, not in the
   contract.
 
 ## Voice anchors — concrete examples
 
-| ✓                                                                                                                         | ✗                                                                                           |
-| ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| "CLI tools MUST run without human input."                                                                                 | "We believe CLI tools should be non-interactive because agents can't handle prompts."       |
-| "Authentication failed: token expired (`expires_at: 2026-03-25T00:00:00Z`). Run `tool auth refresh` or set `TOOL_TOKEN`." | "Sorry, looks like authentication didn't work. Please try again."                           |
-| "Numeric output is locale-independent: `.` decimal, no thousands grouping, regardless of `LC_NUMERIC`."                   | "We typically recommend C locale for JSON output to avoid potential issues across locales." |
+The ✓ column shows the contract voice. The ✗ column names the category of failure rather than reproducing literal banned
+phrases — those live in [`styles/Brand/README.md`](styles/Brand/README.md). The category labels describe the shape of
+the failure each ✓ phrasing replaces.
+
+| ✓                                                                                                                         | ✗                                                                                      |
+| ------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| "CLI tools MUST run without human input."                                                                                 | First-person belief framing with lowercase RFC keyword and audience speculation.       |
+| "Authentication failed: token expired (`expires_at: 2026-03-25T00:00:00Z`). Run `tool auth refresh` or set `TOOL_TOKEN`." | Apologetic register with vague remediation and no actionable diagnostic.               |
+| "Numeric output is locale-independent: `.` decimal, no thousands grouping, regardless of `LC_NUMERIC`."                   | First-person recommendation with hedge word and unspecific "potential issues" framing. |
 
 ## Channels
 

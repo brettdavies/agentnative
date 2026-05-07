@@ -79,8 +79,8 @@ scoring is reproducible from the linter source.
 All seven principles are `status: active` — published as part of the standard, not drafts. This is a working spec
 accepting pressure-tests, not a manifesto. File substantive critique via the
 [pressure-test issue template](https://github.com/brettdavies/agentnative/issues/new?template=pressure-test.yml); a
-principle moves to `under-review` when a finding may change MUST/SHOULD/MAY tiers, then back to `active` once resolved.
-See [`principles/AGENTS.md`](principles/AGENTS.md) for the full status lifecycle and pressure-test protocol.
+principle moves to `under-review` when a finding might change MUST/SHOULD/MAY tiers, then back to `active` once
+resolved. See [`principles/AGENTS.md`](principles/AGENTS.md) for the full status lifecycle and pressure-test protocol.
 
 ## Versioning
 
@@ -131,10 +131,9 @@ not from a single source.
 - **Agent-CLI synthesis (parallel work, 2025–2026)** — Anthropic's
   [Writing tools for agents](https://www.anthropic.com/engineering/writing-tools-for-agents), Sriram Madapusi
   Vasudevan's [InfoQ pieces on AI-agent CLIs](https://www.infoq.com/articles/ai-agent-cli/) (2025-08), Cloudflare's
-  [The CLI for all of Cloudflare](https://blog.cloudflare.com/cf-cli-local-explorer/) (2026-04, "agents are the primary
-  customer of our APIs"), Andrej Karpathy on terminal-as-legacy-tech, the Speakeasy and AppleBOY/Wu three-layer
-  (API/CLI/skills) architecture, Michael Yuan's compound-failure framing, and other contemporaneous voices on dev.to and
-  Medium.
+  [The CLI for all of Cloudflare](https://blog.cloudflare.com/cf-cli-local-explorer/) (2026-04), Andrej Karpathy on
+  terminal-as-legacy-tech, the Speakeasy and AppleBOY/Wu three-layer (API/CLI/skills) architecture, Michael Yuan's
+  compound-failure framing, and other contemporaneous voices on dev.to and Medium.
 - **Trevin's [7 Principles for Agent-Friendly CLIs](https://x.com/trevin/status/2037250000821059933) (2026-03-26) and
   follow-up [10 Principles for Agent-Native CLIs](https://x.com/trevin/status/2051316002730991795) (2026-05-04)** named
   the genre and gave it momentum. Trevin's seven-axis decomposition was the proximate ancestor of this spec's initial

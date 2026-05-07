@@ -69,7 +69,7 @@ agent-tool deadlock.
 - A headless authentication path if the CLI authenticates. The canonical flag is `--no-browser`, which triggers the
   OAuth 2.0 Device Authorization Grant ([RFC 8628](https://www.rfc-editor.org/rfc/rfc8628)): the CLI prints a URL and a
   code; the user authorizes on another device. Agents cannot open browsers. Non-canonical alternatives (`--device-code`,
-  `--remote`, `--headless`) are acceptable but should migrate toward `--no-browser`.
+  `--remote`, `--headless`) are acceptable but SHOULD migrate toward `--no-browser`.
 
 **SHOULD:**
 
@@ -104,7 +104,7 @@ agent-tool deadlock.
 - OAuth flow that unconditionally opens a browser with no headless escape hatch.
 
 Measured by check IDs `p1-non-interactive` (behavioral) and `p1-non-interactive-source` (source). Run `agentnative check
---principle 1 .` against your CLI to see both.
+--principle 1 .` against the CLI under test to see both.
 
 ## Pressure test notes
 

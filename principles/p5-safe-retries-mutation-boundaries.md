@@ -74,8 +74,8 @@ does not modify state" is a better sentence to put in `--help` than to assume.
 - No `--dry-run` option on bulk operations, where a preview prevents costly mistakes.
 - Operations that fail on retry because the first attempt partially succeeded — non-idempotent writes without rollback.
 
-Measured by check IDs `p5-dry-run`, `p5-destructive-guard`. Run `agentnative check --principle 5 .` against your CLI to
-see each.
+Measured by check IDs `p5-dry-run`, `p5-destructive-guard`. Run `agentnative check --principle 5 .` against the CLI
+under test to see each.
 
 ## Pressure test notes
 
@@ -93,12 +93,12 @@ recorded verbatim per `principles/AGENTS.md` § "Pressure-test protocol".
   read-only' is a different axis (writes can be non-destructive, e.g., `create`)." Resolved: Definition sentence 2
   rewritten to "Commands MUST make the read-vs-write distinction visible from name and `--help` alone, and destructive
   writes MUST require explicit confirmation." The two axes are now stated separately.
-- **[later]** *Internal inconsistency.* "`--force`/`--yes` MUST + P1 `--no-interactive` MUST should compose (agent path
-  is `--force --no-interactive`); composition isn't called out, leaving the 'without it, the tool refuses or enters
-  dry-run' clause ambiguous when stdin is non-TTY." Deferred: tightening the MUST to specify error-vs-dry-run behavior
-  under `--no-interactive` modifies the bullet's contract semantics. Bundled with other MUST-content cleanups for a
-  v0.4.0 PR.
-- **[later]** *Must-vs-should.* "`read-write-distinction` MUST hinges on 'clear from command name and help text alone' —
+- **[later]** *Internal inconsistency.* "`--force`/`--yes` MUST and P1 `--no-interactive` MUST need to compose
+  explicitly (agent path is `--force --no-interactive`); composition isn't called out, leaving the 'without it, the tool
+  refuses or enters dry-run' clause ambiguous when stdin is non-TTY." Deferred: tightening the MUST to specify
+  error-vs-dry-run behavior under `--no-interactive` modifies the bullet's contract semantics. Bundled with other
+  MUST-content cleanups for a v0.4.0 PR.
+- **[later]** *MUST-vs-SHOULD.* "`read-write-distinction` MUST hinges on 'clear from command name and help text alone' —
   subjective and unverifiable by `anc`. The `sync` anti-pattern proves the bar is taste, not a checkable property."
   Deferred: rewriting to a verifiable form ("Help text for every write command MUST contain an explicit mutation
   statement; command names SHOULD signal intent") creates a new SHOULD-shape claim, which is a `requirements[]` change.
@@ -108,7 +108,7 @@ recorded verbatim per `principles/AGENTS.md` § "Pressure-test protocol".
   satisfy the contract under different surfaces." Deferred: worth revisiting whether to add a
   'name-or-contract-equivalent' clause that names the contract first and treats canonical flag spelling as one
   realization. Hold for v0.4.0 alongside the verifiability rewrite above.
-- **[wontfix]** *Must-vs-should.* "'Why Agents Need It' leans on retry-safety, then idempotency lands as SHOULD. If
+- **[wontfix]** *MUST-vs-SHOULD.* "'Why Agents Need It' leans on retry-safety, then idempotency lands as SHOULD. If
   retries are the framing, idempotency-where-domain-allows is the load-bearing property; `--dry-run` is mitigation, not
   cure." Rationale: domain-gated idempotency genuinely cannot be a universal MUST (some domains forbid it: append-only
   logs, payment capture). The current SHOULD is correct; the prose framing in "Why Agents Need It" is fine because it

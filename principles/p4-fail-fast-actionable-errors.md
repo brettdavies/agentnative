@@ -101,13 +101,13 @@ OAuth or asks the user to check their config file. Getting that wrong wastes ent
 ## Anti-Patterns
 
 - `Cli::parse()` anywhere in the codebase — it silently prevents JSON error output.
-- `process::exit()` in library code or command handlers. Only `main()` may call it, after all error handling.
+- `process::exit()` in library code or command handlers. Only `main()` MAY call it, after all error handling.
 - A single catch-all error variant that maps everything to exit code 1.
 - Error messages that state the symptom without the cause or fix ("Error: request failed").
 - Panics (`unwrap()`, `expect()`) on recoverable errors in production code paths.
 
 Measured by check IDs `p4-bad-args`, `p4-process-exit`, `p4-unwrap`, `p4-exit-codes`. Run `agentnative check --principle
-4 .` against your CLI to see each.
+4 .` against the CLI under test to see each.
 
 ## Pressure test notes
 
@@ -122,7 +122,7 @@ recorded verbatim per `principles/AGENTS.md` § "Pressure-test protocol".
   now focuses on the network-call ordering consequence and points to P6 as the canonical home of the structural
   three-tier definition. Frontmatter summary tightened to match. Requirement ID is unchanged so CLI registry pinning is
   unaffected.
-- **[edit]** *Must-vs-should.* "`p4-must-exit-code-mapping` is `applicability: universal` and the prose says 'At
+- **[edit]** *MUST-vs-SHOULD.* "`p4-must-exit-code-mapping` is `applicability: universal` and the prose says 'At
   minimum' 0/1/2/77/78 — but a CLI with no auth surface and no config file legitimately has nothing to assign to either
   77 or 78, and the MUST forces empty-by-construction error variants. Same shape as P6, which correctly gates
   `p6-must-timeout-network` behind `if: CLI makes network calls`." Resolved: prose now reads "Use 77 when the CLI has an
@@ -134,7 +134,7 @@ recorded verbatim per `principles/AGENTS.md` § "Pressure-test protocol".
   but neither P2 nor P4 cites BSD sysexits, leaving an HN commenter to 'discover' it as a gotcha." Resolved: added a
   one-liner under the P4 exit-code table acknowledging the `sysexits.h` alignment. Same sentence added to P2's exit-code
   table for consistency.
-- **[later]** *Must-vs-should.* "`p4-must-try-parse` names a clap-specific Rust API in a `applicability: universal`
+- **[later]** *MUST-vs-SHOULD.* "`p4-must-try-parse` names a clap-specific Rust API in a `applicability: universal`
   MUST. A Go/Python/Node CLI has no `try_parse()`. The underlying requirement — 'argument-parse failures route through
   the same error/output formatter as runtime errors, not a library-internal `process::exit()`' — is universal; the API
   name is not." Deferred: language-neutralizing the bullet ("Argument parsing returns a structured error rather than

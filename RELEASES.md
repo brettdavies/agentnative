@@ -137,7 +137,7 @@ on both sides with different content. Always branch from `origin/main` and cherr
 
 ## PRs and changelog generation
 
-Every PR **must** follow `.github/pull_request_template.md`. The template has a `## Changelog` section with these
+Every PR **MUST** follow `.github/pull_request_template.md`. The template has a `## Changelog` section with these
 subsections:
 
 - `### Added` — new user-visible features or capabilities
@@ -188,16 +188,16 @@ re-amend the cherry-pick subject before re-running. See "Prefer `feat`/`fix` ove
 prevention.
 
 **Tag-exists guard.** Once a CHANGELOG entry is present, `publish.yml` refuses to run if `v$VERSION` already exists on
-origin. VERSION must be bumped to cut a new release — the workflow will never re-tag a published version.
+origin. VERSION MUST be bumped to cut a new release — the workflow will never re-tag a published version.
 
 **Pre-push semver check on `release/*` branches.** `scripts/check-release-version.sh` runs as a stage of the pre-push
 hook and no-ops on any non-release branch. On a `release/*` push it enforces:
 
 - `VERSION` is `X.Y.Z` (three non-negative integers).
-- If `principles/p*-*.md` changed relative to `origin/main`, `VERSION` must differ from `origin/main`'s `VERSION`.
+- If `principles/p*-*.md` changed relative to `origin/main`, `VERSION` MUST differ from `origin/main`'s `VERSION`.
 - If `VERSION` changed, the new value is **strictly greater than** `origin/main`'s `VERSION` (no downgrades, no re-
   uses). Numeric major.minor.patch comparison.
-- Tag `v$VERSION` must not already exist on origin.
+- Tag `v$VERSION` MUST NOT already exist on origin.
 
 The author bumps `VERSION` manually; the hook only verifies the bump is coherent. No auto-increment.
 
@@ -206,15 +206,15 @@ change visible on `main`, just merge it without a tag. The history shows the mer
 content.
 
 **Manual re-run.** `publish.yml` also accepts `workflow_dispatch` with a `version` input if a tag needs to be re-created
-without a content change (e.g., the prior run failed partway through). The input must match the `VERSION` file on
+without a content change (e.g., the prior run failed partway through). The input MUST match the `VERSION` file on
 `main`.
 
 ## Branch protection
 
 Two rulesets are committed under `.github/rulesets/` and applied to the repo via the GitHub API:
 
-- `protect-main.json` — required signatures, linear history, squash-only merges via PR, required status checks
-  (typically: `ci`, `guard-docs`, `guard-release`), creation/deletion blocked, non-fast-forward blocked.
+- `protect-main.json` — required signatures, linear history, squash-only merges via PR, required status checks (common:
+  `ci`, `guard-docs`, `guard-release`), creation/deletion blocked, non-fast-forward blocked.
 - `protect-dev.json` — required signatures, deletion blocked, non-fast-forward blocked. No PR-requirement at the ruleset
   level; the PR-only norm is enforced by convention + `guard-release-branch` on the main side.
 
@@ -235,7 +235,7 @@ Committing the JSON alongside code means ruleset changes land via the same revie
 
 ### Status-check context pitfall
 
-The `required_status_checks[].context` strings in `protect-main.json` must match exactly what GitHub publishes for each
+The `required_status_checks[].context` strings in `protect-main.json` MUST match exactly what GitHub publishes for each
 check:
 
 - **Inline job** (with `name:` field): published as just `<job-name>` (no workflow-name prefix).
@@ -251,5 +251,5 @@ gh api repos/<owner>/<repo>/commits/<sha>/check-runs --jq '.check_runs[].name'
 ## Related docs
 
 - [`.github/pull_request_template.md`](.github/pull_request_template.md) — PR body structure with changelog sections
-- Project-specific release details (versioning, publishing, deploy targets) — typically in `README.md` or a `DEPLOY.md`
+- Project-specific release details (versioning, publishing, deploy targets) — commonly in `README.md` or a `DEPLOY.md`
   next to this file

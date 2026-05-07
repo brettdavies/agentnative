@@ -104,7 +104,7 @@ catastrophically later.
 - Human-formatted tables as the only output mode with no JSON alternative.
 
 Measured by check IDs `p2-output-json`, `p2-output-format`, `p2-stderr-diagnostics`. Run `agentnative check --principle
-2 .` against your CLI to see each.
+2 .` against the CLI under test to see each.
 
 ## Pressure test notes
 
@@ -119,8 +119,8 @@ recorded verbatim per `principles/AGENTS.md` § "Pressure-test protocol".
   note the principle straddles two conventions (bash 0/1/2 + sysexits 77/78) without naming the hybrid." Resolved: added
   one sentence under the exit-code table acknowledging the bash + `sysexits.h` blend. The same citation now appears in
   P4's exit-code table (per Row #13 of the same review pass) so both files agree.
-- **[later]** *Must-vs-should.* "A single-number-emitting CLI (e.g., `epoch`, `uuidgen`) plausibly violates the
+- **[later]** *MUST-vs-SHOULD.* "A single-number-emitting CLI (e.g., `epoch`, `uuidgen`) plausibly violates the
   `--output text|json|jsonl` MUST for a defensible reason. Universal applicability is a strong claim." Deferred: revisit
-  whether `applicability` should soften when the launch landscape clarifies actual single-number agent-facing CLIs. The
+  whether `applicability` SHOULD soften when the launch landscape clarifies actual single-number agent-facing CLIs. The
   applicability change would fire coupled-release (CLI registry impact), so it is held for a v0.4.0 cleanup PR rather
   than churned during launch week.

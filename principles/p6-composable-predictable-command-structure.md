@@ -138,7 +138,7 @@ tool a building block rather than a dead end.
 - No stdin support on commands where piped input is a natural use case.
 
 Measured by check IDs `p6-sigpipe`, `p6-no-color`, `p6-completions`, `p6-timeout`, `p6-agents-md`. Run `agentnative
-check --principle 6 .` against your CLI to see each.
+check --principle 6 .` against the CLI under test to see each.
 
 ## Pressure test notes
 
@@ -155,7 +155,7 @@ recorded verbatim per `principles/AGENTS.md` § "Pressure-test protocol".
   that piping to `head`, `tail`, or any tool that closes the pipe early does not crash the process"); the Rust snippet
   stays as the canonical example; per-language one-liners cover Python, Go, and Node. Frontmatter summary updated to
   match.
-- **[edit]** *Must-vs-should.* "The `global = true` MUST is a clap-API artifact — the behavioral requirement is 'agentic
+- **[edit]** *MUST-vs-SHOULD.* "The `global = true` MUST is a clap-API artifact — the behavioral requirement is 'agentic
   flags propagate to every subcommand,' which is what the prose actually says. The frontmatter summary baking `global =
   true` into a universal contract overfits to one library." Resolved: frontmatter summary and prose bullet now lead with
   the behavioral requirement ("propagate to every subcommand"), with `global = true` cited as the clap-specific example.
