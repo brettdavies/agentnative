@@ -42,8 +42,12 @@ Snapshot from 2026-05-06; for current state, read pool directly:
 | - | - | - |
 | Image | `meyay/languagetool@sha256:f7f6f4ed05fe3c42ddc7c5f398572832765f40f846ed91869cf05026b0fdca5f` | LT 6.7-7, resolved 2026-05-06; digest pin per supply-chain policy |
 | Compose project | `/boot/config/plugins/compose.manager/projects/languagetool/` on pool | Unraid Compose Manager convention |
+| Service identity | `container_name: languagetool`, `hostname: languagetool` | Stable name for `docker inspect`/`docker logs` and inter-container DNS |
 | Network | `bridge` | Default, no need for host networking |
 | Port | `8081:8081` | Image exposes 8081/tcp natively; no remap |
+| Process limit | `pids_limit: 512` | Caps fork bombs and runaway thread spawning; LT in single-user mode uses ~50 threads |
+| Timezone | `TZ=America/Chicago` | Aligns container log timestamps with host local time |
+| Host metadata env | `HOST_OS=Unraid`, `HOST_HOSTNAME=pool`, `HOST_CONTAINERNAME=languagetool` | Informational; mirrors OpenClaw convention so `docker exec` shells display Unraid-aware prompts |
 | User mapping | `MAP_UID=99`, `MAP_GID=100` (`nobody:users`) | meyay entrypoint drops privileges via `gosu`; do not use compose `user:` — bypasses entrypoint and breaks startup |
 | Heap | `JAVA_XMS=512m`, `JAVA_XMX=2g` | English-only, no n-grams; XMX is a ceiling, not consumption |
 | Healthcheck | `wget --spider -q http://localhost:8081/v2/languages` every 30s, 60s start_period | Real HTTP probe verifies dictionary load completed, not just process binding |
@@ -62,13 +66,14 @@ UI labels (in `docker-compose.override.yml`, written by the Compose Manager UI's
 
 ## Healthcheck contract
 
-`/v2/languages` returns the list of supported language codes once the JVM has finished dictionary load. Cold-start takes
-30-60s on the ZFS pool; `start_period: 60s` swallows that. Steady-state warm probe is sub-second.
+`/v2/languages` returns the list of supported language codes once the JVM has finished dictionary load. Measured
+cold-start on this pool is ~2.6s (post `docker restart`, time-to-first-200); `start_period: 60s` provides generous
+headroom for slow-disk edge cases. Steady-state warm probe is sub-50ms.
 
 A successful warm probe looks like:
 
 ```bash
-$ curl -sS -w "%{http_code}\n" -o /dev/null http://pool:8081/v2/languages
+$ curl -sS -w "%{http_code}\n" -o /dev/null http://pool.tail42ba87.ts.net:8081/v2/languages
 200
 ```
 
@@ -84,7 +89,7 @@ docker inspect languagetool --format '{{.State.Health.Status}}'
 When the prose-check orchestrator reports the service unreachable, walk this chain on the dev Mac:
 
 1. `tailscale status | grep pool` — confirm pool is reachable on the tailnet.
-2. `curl -sS http://pool:8081/v2/languages` — confirm HTTP layer.
+2. `curl -sS http://pool.tail42ba87.ts.net:8081/v2/languages` — confirm HTTP layer (use FQDN, not short name).
 3. If the curl times out: SSH to pool, `docker ps | grep languagetool`, `docker inspect languagetool --format
    '{{.State.Health.Status}}'`.
 4. If unhealthy: `docker logs --tail 50 languagetool` and grep for `OutOfMemoryError` (bump `JAVA_XMX`), dictionary
@@ -159,10 +164,11 @@ narrative version.
 
 | Date | Test | Result |
 | - | - | - |
-| 2026-05-06 | Warm probe via FQDN (3 attempts) | 200 in 12-23ms each; namelookup ~1.5ms |
-| 2026-05-06 | Warm probe via bare short name `pool` | DNS resolution times out at 5s — short name unreliable on macOS+Tailscale; clients should use FQDN |
-| 2026-05-06 | Cold-start probe (post `docker restart`, time-to-first-200) | 2.6s (5 polls @ 0.5s) — well under the 60s `start_period` |
+| 2026-05-06 | Initial deploy: `docker compose up -d` via Compose Manager UI | container reaches `healthy`, image pulled fresh |
 | 2026-05-06 | `POST /v2/check` with seeded prose | 200, 3 rules-only matches (HE_VERB_AGR, THIS_NNS, PLURAL_VERB_AFTER_THIS) |
-| 2026-05-06 | TS-off probe (TS disabled on dev Mac, FQDN unresolvable) | curl exit 6 in 0.06s — failure path correct |
-| 2026-05-06 | `docker inspect languagetool --format {{.State.Health.Status}}` | `healthy` |
 | 2026-05-06 | `tailscale serve status` / `tailscale funnel status` on pool | empty — no public exposure |
+| 2026-05-07 | Warm probe via FQDN (3 attempts) | 200 in 12-23ms each; namelookup ~1.5ms |
+| 2026-05-07 | Warm probe via bare short name `pool` | DNS resolution times out at 5s — short name unreliable on macOS+Tailscale; clients should use FQDN |
+| 2026-05-07 | Cold-start probe (post `docker restart`, time-to-first-200) | 2.6s (5 polls @ 0.5s) — well under the 60s `start_period` |
+| 2026-05-07 | TS-off probe (TS disabled on dev Mac, FQDN unresolvable) | curl exit 6 in 0.06s — failure path correct |
+| 2026-05-07 | `docker inspect languagetool --format {{.State.Health.Status}}` | `healthy` |
