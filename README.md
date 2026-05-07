@@ -1,6 +1,6 @@
 # The Agent-Native CLI Standard
 
-Seven principles for CLI tools operated by AI agents.
+Eight principles for CLI tools operated by AI agents.
 
 AI agents operate CLIs differently than humans do. They can't answer interactive prompts, can't parse vague output, and
 can't recover from errors that don't say what to do next. The principles below define what *agent-native* means in RFC
@@ -13,7 +13,7 @@ locked. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for how to file each type.
 
 ## The four artifacts
 
-- **Spec**: this repo. Seven RFC 2119 principles plus machine-readable `requirements[]` in YAML frontmatter. Currently
+- **Spec**: this repo. Eight RFC 2119 principles plus machine-readable `requirements[]` in YAML frontmatter. Currently
   v0.3.1; all principles ship as `status: active`.
 - **Linter**: [`anc`](https://github.com/brettdavies/agentnative-cli). Scores any CLI repo against the spec. Pins
   against requirement IDs, not prose.
@@ -102,10 +102,11 @@ scoring is reproducible from the linter source.
 | P5  | Safe Retries and Explicit Mutation Boundaries | Idempotent reads, explicit mutation, dry-run support          |
 | P6  | Composable and Predictable Command Structure  | Consistent grammar, composable subcommands                    |
 | P7  | Bounded, High-Signal Responses                | Predictable output size, pagination, filtering                |
+| P8  | Discoverable Through Agent Skill Bundles      | Ship a skill bundle and an install path so agents find it     |
 
 ## Status
 
-All seven principles are `status: active`. Published as part of the standard, not drafts. This is a working spec
+All eight principles are `status: active`. Published as part of the standard, not drafts. This is a working spec
 accepting pressure-tests, not a manifesto. File substantive critique via the
 [pressure-test issue template](https://github.com/brettdavies/agentnative/issues/new?template=pressure-test.yml); a
 principle moves to `under-review` when a finding might change MUST/SHOULD/MAY tiers, then back to `active` once

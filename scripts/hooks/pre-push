@@ -43,6 +43,12 @@
 # this, so the new stages 7 and 8 redirect their child stdin to /dev/null
 # so they don't fight for protocol bytes.
 #
+# Working-tree clean precondition: the pipeline below scans the working
+# tree, but only committed changes are pushed. A dirty tree could pass
+# the gate while pushing different (unsanitized) commits. The hook
+# refuses to run if `git diff-index --quiet HEAD --` reports tracked
+# changes; untracked files (e.g. vale-synced rule packs) are fine.
+#
 # js-yaml is installed on demand into the repo's node_modules/ (gitignored).
 # If it is already present, install is skipped — subsequent pushes are fast.
 
@@ -62,6 +68,24 @@ if $deleting_only; then
 fi
 
 cd "$(git rev-parse --show-toplevel)"
+
+# Refuse to run if the working tree has uncommitted changes to tracked
+# files. The downstream stages (md-wrap, markdownlint, prose-check, etc.)
+# scan the working tree, but only committed changes are pushed — so a
+# passing gate against a dirty tree does not imply the pushed commits
+# pass. Better to fail loudly here than to ship unsanitized commits
+# under a green gate. Untracked files are OK (vale-synced packs and the
+# like).
+if ! git diff-index --quiet HEAD --; then
+  echo "FAILED: working tree has uncommitted changes to tracked files." >&2
+  echo "        pre-push checks scan the working tree; only committed" >&2
+  echo "        changes are pushed. A green gate against a dirty tree" >&2
+  echo "        does not mean the pushed commits pass." >&2
+  echo "" >&2
+  echo "        commit, stash, or revert before pushing:" >&2
+  echo "          git status" >&2
+  exit 1
+fi
 
 # Collect markdown files once. Excludes node_modules and .git by path,
 # the intentionally-malformed validator fixtures (test data, not authored

@@ -6,6 +6,7 @@ Composability
 Composable
 Config
 ESR
+Firecrawl
 Frontmatter
 Hostname
 Karpathy
@@ -35,6 +36,9 @@ allowlist
 booleans
 brettdavies
 brightgreen
+canonicalization
+canonicalize
+canonicalizes
 clap_complete
 cli
 codegens
@@ -51,10 +55,12 @@ epilog
 frontmatter
 gatekept
 gitignored
+gws
 hardcoded
 healthcheck
 idempotency
 kubectl
+larksuite
 leaderboard
 maintainer
 markdownlint
@@ -73,6 +79,7 @@ rsync
 ruleset
 rulesets
 runtime
+runtimes
 semver
 softenings
 start_period
