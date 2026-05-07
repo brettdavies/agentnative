@@ -40,6 +40,22 @@ PROSE_CHECK_BASE="${PROSE_CHECK_BASE:-origin/dev}"
 # a per-rule allowlist lands.
 LT_BLOCKING_CATEGORIES='^(TYPOS|GRAMMAR|CONFUSED_WORDS)$'
 
+# Per-rule denylist within the blocking categories — specific LT rule
+# IDs that misfire on RFC 2119 keyword conventions or on technical-prose
+# patterns the rule pack does not cover. Override via LT_DENY_RULES env.
+#
+#   MD_BASEFORM            "MUST <verb>" / "MAY <verb>" — LT does not
+#                          recognize RFC 2119 keywords; treats them as
+#                          modal-verb usage and demands base form.
+#   MUST_HAVE_TO           Same root cause for "must" usage.
+#   HAVE_PART_AGREEMENT    Misfires on "if: CLI has X" YAML-prose.
+#   PREPOSITION_VERB       Misfires on workflow names ("deploy / publish").
+#   THIS_NNS               Misfires on "all of these hold" technical claims.
+#   NON_STANDARD_WORD      Misfires on identifier strings inside code spans.
+#   POSSESSIVE_APOSTROPHE  Misfires on code-comment-style prose.
+LT_DENY_RULES_DEFAULT='^(MD_BASEFORM|MUST_HAVE_TO|HAVE_PART_AGREEMENT|PREPOSITION_VERB|THIS_NNS|NON_STANDARD_WORD|POSSESSIVE_APOSTROPHE)$'
+LT_DENY_RULES="${LT_DENY_RULES:-$LT_DENY_RULES_DEFAULT}"
+
 CHANGED_ONLY=0
 SHOW_WARNINGS=0
 RUN_VALE=1
@@ -136,7 +152,7 @@ if (( RUN_LT )); then
         # Approximate line from byte offset (no exact column conversion at v1).
         line=$(awk -v off="$offset" 'BEGIN{cur=0} {cur+=length($0)+1; if (cur>off) {print NR; exit}}' "$f" 2>/dev/null)
         line="${line:-?}"
-        if [[ "$category" =~ $LT_BLOCKING_CATEGORIES ]]; then
+        if [[ "$category" =~ $LT_BLOCKING_CATEGORIES ]] && ! [[ "$rule_id" =~ $LT_DENY_RULES ]]; then
           BLOCKING=$((BLOCKING + 1))
           printf '%s:%s:LT.%s (%s): %s\n' "$f" "$line" "$rule_id" "$category" "$message" >> "$OUT_FILE"
         else
