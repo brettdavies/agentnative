@@ -31,38 +31,62 @@ anc check .
 Also installable via `cargo install agentnative` or platform-specific archives on
 [GitHub Releases](https://github.com/brettdavies/agentnative-cli/releases).
 
-Example output:
-
-<!-- TODO: replace with actual `anc check` output before PR to main -->
+Example output (from running `anc` against its own source):
 
 ```text
-agentnative v0.3.0 — checking ./
+$ anc check .
+P1 — Non-Interactive by Default
+  [PASS] Non-interactive by default (p1-non-interactive)
+  [PASS] Flags advertise env-var bindings in --help (p1-env-hints)
 
-P1 Non-Interactive by Default          PASS
-P2 Structured, Parseable Output        PASS
-P3 Progressive Help Discovery          FAIL  p3-must-subcommand-examples
-P4 Fail Fast with Actionable Errors    PASS
-P5 Safe Retries / Mutation Boundaries  PASS
-P6 Composable Command Structure        PASS
-P7 Bounded High-Signal Responses       WARN  p7-should-limit (recommended)
+P2 — Structured Output
+  [WARN] Structured output support (p2-json-output)
+         --output/--format flag detected but could not validate JSON via safe probes
+  [PASS] Centralized output module exists (p2-output-module)
 
-Score: 78/100
-Run `anc check . --output json` for machine-readable output, or
-`anc explain p3-must-subcommand-examples` for a remediation note.
+P3 — Progressive Help
+  [PASS] Help flag produces useful output (p3-help)
+  [PASS] Version flag works (p3-version)
+
+P4 — Actionable Errors
+  [PASS] Structured error types (p4-error-types)
+  [PASS] Exit codes use named constants (p4-exit-codes)
+
+P5 — Safe Retries
+  [PASS] Dry-run flag for write operations (p5-dry-run)
+
+P6 — Composable Structure
+  [PASS] Handles SIGPIPE gracefully (p6-sigpipe)
+  [PASS] Respects NO_COLOR (p6-no-color)
+  [PASS] Timeout flag for network ops (p6-timeout)
+
+P7 — Bounded Responses
+  [PASS] Quiet mode available (p7-quiet)
+  [WARN] No naked println!/print! outside output modules (p7-naked-println)
+
+Code Quality
+  [FAIL] No .unwrap() in source (code-unwrap)
+
+33 checks: 26 pass, 2 warn, 1 fail, 4 skip, 0 error
 ```
+
+Run `anc check . --output json` for machine-readable output. Per-principle filtering via `anc check . --principle
+<1-7>`.
 
 ## Live leaderboard
 
-<!-- TODO: replace with actual anc100 scores before PR to main; preserve format -->
-
-| Rank | CLI       | Score  |
-| ---: | --------- | ------ |
-|    1 | `gh`      | 89/100 |
-|    2 | `git`     | 82/100 |
-|    3 | `ripgrep` | 78/100 |
-|    4 | `jq`      | 71/100 |
-|    5 | `kubectl` | 67/100 |
-|    6 | `aws`     | 54/100 |
+| Rank | CLI         | Score  |
+| ---: | ----------- | ------ |
+|    1 | `navi`      | 82/100 |
+|    2 | `anc`       | 73/100 |
+|    2 | `fzf`       | 73/100 |
+|    3 | `fd`        | 64/100 |
+|    3 | `jq`        | 64/100 |
+|    4 | `gh`        | 55/100 |
+|    4 | `git`       | 55/100 |
+|    5 | `lazygit`   | 45/100 |
+|    5 | `aws-cli`   | 45/100 |
+|    6 | `shell-gpt` | 36/100 |
 
 Full board (anc100) at [anc.dev/scorecards](https://anc.dev/scorecards). Submit a PR to grade an additional tool;
 scoring is reproducible from the linter source.
