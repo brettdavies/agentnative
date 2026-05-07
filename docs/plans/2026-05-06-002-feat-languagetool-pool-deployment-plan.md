@@ -1,7 +1,7 @@
 ---
 title: "feat: Deploy LanguageTool docker container on pool for prose-check stack"
 type: feat
-status: active
+status: shipped
 date: 2026-05-06
 related:
   - docs/plans/2026-05-06-001-feat-prose-check-stack-plan.md
