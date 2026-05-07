@@ -1,4 +1,4 @@
-# BRAND.md — agentnative voice and identity
+# BRAND.md: agentnative voice and identity
 
 Source of truth for the voice and identity of the agentnative standard. Shared across the spec, the website, the linter,
 the skill bundle, and any future channel. Each channel inherits from this document and adds channel-specific register
@@ -19,8 +19,8 @@ and artifacts in its own `.impeccable.md`.
 
 ## Voice anchor
 
-Concrete before abstract. Show then tell. No filler adjectives. The standard speaks as a standard, not a person —
-first-person singular is out — but every channel inherits the same sequence: state the contract, show the failure mode,
+Concrete before abstract. Show then tell. No filler adjectives. The standard speaks as a standard, not a person (
+first-person singular is out), but every channel inherits the same sequence: state the contract, show the failure mode,
 name the canonical fix.
 
 ## Audiences
@@ -30,10 +30,10 @@ Two first-class consumers across all channels:
 - **Humans** evaluating, adopting, implementing, or extending the standard. Spec-channel readers are technically deep
   and arrive with skepticism; site-channel readers are time-pressured and decide in 60 seconds whether to take the
   standard seriously; linter users invoke at the terminal. Each channel narrows further in its own `.impeccable.md`.
-- **AI agents** consuming the standard programmatically — markdown via `Accept: text/markdown`, requirement IDs via
+- **AI agents** consuming the standard programmatically: markdown via `Accept: text/markdown`, requirement IDs via
   frontmatter parsing, skill bundles via `SKILL.md`/`AGENTS.md` discovery, linter findings via JSON. Their UX is "do
   anchors stay stable, do IDs survive reorganizations, does the channel render cleanly across versions." This is not a
-  nice-to-have — the agent audience is first-class. Decisions that improve a channel for humans at the cost of agent
+  nice-to-have. The agent audience is first-class. Decisions that improve a channel for humans at the cost of agent
   legibility are regressions.
 
 ## Universal anti-patterns
@@ -50,11 +50,11 @@ pack at `styles/brand/*.yml`.
   sounds like triangulation, not citation. Lineage belongs in the README's `Acknowledgements` section, not in the
   contract.
 
-## Voice anchors — concrete examples
+## Voice anchors: concrete examples
 
 The ✓ column shows the contract voice. The ✗ column names the category of failure rather than reproducing literal banned
-phrases — those live in [`styles/brand/README.md`](styles/brand/README.md). The category labels describe the shape of
-the failure each ✓ phrasing replaces.
+phrases. Those live in [`styles/brand/README.md`](styles/brand/README.md). The category labels describe the shape of the
+failure each ✓ phrasing replaces.
 
 | ✓                                                                                                                         | ✗                                                                                      |
 | ------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
@@ -67,12 +67,12 @@ the failure each ✓ phrasing replaces.
 The shared identity above applies to every channel. Each channel adds register and artifacts in its own
 `.impeccable.md`:
 
-- **Spec** (`agentnative-spec/.impeccable.md`) — RFC 2119 register, third-person standards voice, present tense, no
+- **Spec** (`agentnative-spec/.impeccable.md`): RFC 2119 register, third-person standards voice, present tense, no
   first-person plural, no implementation leakage in MUSTs.
-- **Site** (`agentnative-site/.impeccable.md`) — visual system (palette, typography, code-block treatment, OG image),
+- **Site** (`agentnative-site/.impeccable.md`): visual system (palette, typography, code-block treatment, OG image),
   tech-stack decisions (SSG, Worker, content negotiation), JS budget, dark-mode design.
-- **Skill bundle** — instructional voice, second-person imperative is allowed, agent-loadable.
-- **Linter (`anc`)** — terse error messages, ≤80-column help text, four-part error rubric (offending value, constraint,
+- **Skill bundle**: instructional voice, second-person imperative is allowed, agent-loadable.
+- **Linter (`anc`)**: terse error messages, ≤80-column help text, four-part error rubric (offending value, constraint,
   valid example, remediation).
 
 Skill-bundle and linter channels add their own `.impeccable.md` only when channel-specific decisions accumulate enough
