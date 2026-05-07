@@ -45,9 +45,9 @@ recognizes the tool's idioms across every subsequent invocation.
 **MUST:**
 
 - When a CLI ships a skill bundle, the CLI MUST provide an install path that registers the bundle with installed agent
-  runtimes — typically a `tool skill install [<host>]` subcommand that writes into the runtime's filesystem cascade
-  (e.g., `~/.claude/skills/`, `~/.cursor/skills/`). A bundle without an install path sits unread until a human manually
-  copies it; the install path is what turns the bundle from documentation into discoverable runtime knowledge.
+  runtimes. The canonical form is a `tool skill install [<host>]` subcommand that writes into the runtime's filesystem
+  cascade (e.g., `~/.claude/skills/`, `~/.cursor/skills/`). A bundle without an install path sits unread until a human
+  manually copies it; the install path is what turns the bundle from documentation into discoverable runtime knowledge.
 
 **SHOULD:**
 
@@ -77,8 +77,8 @@ recognizes the tool's idioms across every subsequent invocation.
 ## Anti-Patterns
 
 - A CLI shipping a skill bundle with no install path — the bundle sits unread until a human manually copies it.
-- An install path that requires the agent runtime to be running — `tool skill install` should write to the runtime's
-  filesystem cascade (e.g., `~/.claude/skills/`), not require an active session.
+- An install path that requires the agent runtime to be running — `tool skill install` writes to the runtime's
+  filesystem cascade (e.g., `~/.claude/skills/`) rather than requiring an active session.
 - A bundle whose contents drift from the CLI's actual surface — the bundle is part of the CLI's release artifact, not a
   separate doc tree.
 
