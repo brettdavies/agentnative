@@ -12,6 +12,37 @@
 # notice and the push proceeds on Vale's verdict alone (R9 graceful
 # skip).
 #
+# Downstream LLM-judgment step: `unslop`.
+#
+# This script covers the deterministic floor (Vale + LT). The unslop
+# skill (~/.claude/skills/unslop/SKILL.md) is the LLM-judgment ceiling
+# that runs *after* Vale + LT pass — it catches AI-unique structural
+# patterns (em-dash density, "It's not X, it's Y", forced enthusiasm,
+# AI self-references) that no deterministic rule pack covers.
+#
+# CRITICAL when invoking unslop on this repo's prose:
+#   - Always run `score.py --json` and read the `findings[]` array
+#     per-occurrence (line, column, contextual snippet, rule_id).
+#     The bare invocation only prints the aggregate score line, which
+#     is enough to gate but not enough to recast well.
+#   - Recasting is per-occurrence judgment, NOT bucket substitution.
+#     Do not reduce em-dashes to {colon, parens, period} based on the
+#     surrounding construction shape — the recasting.md table lists
+#     six different em-dash jobs (aside, explanation, contrast,
+#     because-substitute, list-separator, stylistic pause) with six
+#     different right moves. If a pass touching N>5 findings used only
+#     2-3 distinct moves, it almost certainly bucketed.
+#
+# This warning exists because of a 2026-05-07 incident: a v0.4.0 unslop
+# pass on 9 principle files in this repo produced clean scores via
+# three mechanical substitutions; a 10-agent per-occurrence re-pass
+# found 16 cases where a different move was more faithful, including
+# 4 because-substitutes the original pass missed.
+#
+# Canonical references:
+#   ~/.claude/skills/unslop/SKILL.md
+#   ~/.claude/skills/unslop/references/recasting.md
+#
 # Usage:
 #   scripts/prose-check.sh                 full scope, errors only (pre-push default)
 #   scripts/prose-check.sh --changed-only  only files changed vs $PROSE_CHECK_BASE (default origin/dev)
@@ -53,7 +84,22 @@ LT_BLOCKING_CATEGORIES='^(TYPOS|GRAMMAR|CONFUSED_WORDS)$'
 #   THIS_NNS               Misfires on "all of these hold" technical claims.
 #   NON_STANDARD_WORD      Misfires on identifier strings inside code spans.
 #   POSSESSIVE_APOSTROPHE  Misfires on code-comment-style prose.
-LT_DENY_RULES_DEFAULT='^(MD_BASEFORM|MUST_HAVE_TO|HAVE_PART_AGREEMENT|PREPOSITION_VERB|THIS_NNS|NON_STANDARD_WORD|POSSESSIVE_APOSTROPHE)$'
+#   A_INSTALL              Misfires on "an install path" / "a full reinstall"
+#                          — CLI-domain noun usage of install/reinstall that
+#                          LT's noun lexicon does not cover.
+#   IS_AND_ARE             Misfires on parenthetical-clause subjects, e.g.
+#                          "runtimes (Claude Code, Cursor, ... and others as
+#                          the ecosystem evolves)" — LT picks the wrong head
+#                          noun when a parenthetical sits between subject and
+#                          verb.
+#   SINGULAR_NOUN_ADV_AGREEMENT
+#                          Same class of misfire on subordinate-clause
+#                          subjects, e.g. "Agents consuming JSON output still
+#                          receive interleaved diagnostic text" — LT parses
+#                          "JSON output" as the head noun and demands a
+#                          singular verb when the actual subject ("Agents")
+#                          is plural.
+LT_DENY_RULES_DEFAULT='^(MD_BASEFORM|MUST_HAVE_TO|HAVE_PART_AGREEMENT|PREPOSITION_VERB|THIS_NNS|NON_STANDARD_WORD|POSSESSIVE_APOSTROPHE|A_INSTALL|IS_AND_ARE|SINGULAR_NOUN_ADV_AGREEMENT)$'
 LT_DENY_RULES="${LT_DENY_RULES:-$LT_DENY_RULES_DEFAULT}"
 
 CHANGED_ONLY=0
@@ -74,10 +120,16 @@ while (( $# )); do
 done
 
 # --- File enumeration ---
+# Exclusion regex has two anchored alternatives:
+#   - path-prefix group: matches paths under docs/{brainstorms,plans,research,solutions},
+#     styles/{proselint,write-good,.vale-config}, scripts/__fixtures__/
+#   - basename group: matches AGENTS.md / CHANGELOG.md anywhere in the tree
+#     (line start OR after a slash), to keep parity with full-scan mode's
+#     `find -not -name 'AGENTS.md'` which matches basename anywhere.
 if (( CHANGED_ONLY )); then
   mapfile -t MD_FILES < <(
     git diff --name-only --diff-filter=ACM "$PROSE_CHECK_BASE"...HEAD -- '*.md' \
-      | grep -v -E '^(docs/(brainstorms|plans|research)/|AGENTS\.md$|CHANGELOG\.md$|docs/solutions/|styles/(proselint|write-good|\.vale-config)/|scripts/__fixtures__/)' \
+      | grep -v -E '^(docs/(brainstorms|plans|research|solutions)/|styles/(proselint|write-good|\.vale-config)/|scripts/__fixtures__/)|(^|/)(AGENTS|CHANGELOG)\.md$' \
       | sort -u
   )
 else

@@ -5,10 +5,10 @@ standard. This file is for any agent (Claude Code or otherwise) opening this rep
 
 ## Project
 
-Source of truth for the 7 principles that define agent-native CLIs. Downstream consumers:
+Source of truth for the 8 principles that define agent-native CLIs. Downstream consumers:
 
-- [`brettdavies/agentnative-cli`](https://github.com/brettdavies/agentnative-cli) (`~/dev/agentnative`) — the Rust `anc`
-  linter. Pins a `SPEC_VERSION` const at compile time; coupled-release norm requires a companion PR when principle
+- [`brettdavies/agentnative-cli`](https://github.com/brettdavies/agentnative-cli) (`~/dev/agentnative-cli`) — the Rust
+  `anc` linter. Pins a `SPEC_VERSION` const at compile time; coupled-release norm requires a companion PR when principle
   MUST/SHOULD/MAY tiers change.
 - [`brettdavies/agentnative-site`](https://github.com/brettdavies/agentnative-site) (`~/dev/agentnative-site`) — the
   anc.dev site. Syncs `principles/*.md`, `VERSION`, and `CHANGELOG.md` into `content/` via `scripts/sync-spec.sh`
@@ -24,7 +24,7 @@ frontmatter are the machine-readable contract with downstream repos.
 
 ## Authoritative content
 
-- `principles/p1-*.md` through `p7-*.md` — each principle, with YAML frontmatter (`id`, `title`, `last-revised`,
+- `principles/p1-*.md` through `p8-*.md` — each principle, with YAML frontmatter (`id`, `title`, `last-revised`,
   `status`, `requirements[]`) and MUST/SHOULD/MAY prose in RFC 2119 language. `requirements[]` is the machine-readable
   contract: each entry carries a stable `id`, a `level` (must/should/may), an `applicability` (`universal` or `{if:
   <reason>}`), and a one-sentence `summary`. Downstream consumers (the `anc` CLI, the site) read the frontmatter; the
@@ -116,7 +116,7 @@ symlink is missing, recreate it: `ln -s ~/dev/solutions-docs docs/solutions`.
 
 | Location                                                    | What lives there                                                                                                                                    | Why it matters here                                                                                                                                                                                              |
 | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `~/dev/agentnative` (`brettdavies/agentnative-cli`)         | Rust `anc` linter, 46-entry principle registry, scorecard emitter                                                                                   | Consumes this repo's `VERSION` + principle IDs. Coupled-release norm links spec PRs to checker PRs.                                                                                                              |
+| `~/dev/agentnative-cli` (`brettdavies/agentnative-cli`)     | Rust `anc` linter, principle registry mirroring spec requirements, scorecard emitter                                                                | Consumes this repo's `VERSION` + principle IDs. Coupled-release norm links spec PRs to checker PRs.                                                                                                              |
 | `~/dev/agentnative-site` (`brettdavies/agentnative-site`)   | anc.dev website, markdown-first SSG, `/scorecards` leaderboard                                                                                      | Syncs `principles/*.md`, `VERSION`, `CHANGELOG.md` into `content/` via commit-a-copy script. Site copy is written manually from this repo, not build-time imported.                                              |
 | `~/dev/solutions-docs` (`brettdavies/solutions-docs`)       | Shared cross-repo solutions archive                                                                                                                 | Reachable via `docs/solutions/` symlink. Search before researching from scratch.                                                                                                                                 |
 | `~/dev/agentnative-skill` (`brettdavies/agentnative-skill`) | Agent-facing skill bundle: vendored spec at `bundle/spec/`, framework idioms (Rust/clap + Python/Go/Node), starter templates, getting-started loops | Vendors this repo's `principles/*.md`, `VERSION`, `CHANGELOG.md` into `bundle/spec/` via commit-a-copy. Teaches agents (Claude Code, Cursor, Codex) how to invoke `anc` and remediate findings against the spec. |
@@ -137,6 +137,6 @@ symlink is missing, recreate it: `ln -s ~/dev/solutions-docs docs/solutions`.
 1. Read `CONTRIBUTING.md` for the graduated AI-disclosure gate and coupled-release protocol — these are governance
    constraints, not optional conventions.
 2. Read `RELEASES.md` for the `dev` → `release/*` → `main` cherry-pick flow and the guard workflows.
-3. Skim the 7 `principles/p<n>-*.md` files to understand what's in-scope for this repo (vs. the CLI or site).
+3. Skim the 8 `principles/p<n>-*.md` files to understand what's in-scope for this repo (vs. the CLI or site).
 4. Before proposing changes that affect cross-repo surfaces, `qmd query "<topic>" --collection solutions` to check for
    prior art and documented decisions.
