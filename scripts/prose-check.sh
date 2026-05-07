@@ -82,10 +82,16 @@ while (( $# )); do
 done
 
 # --- File enumeration ---
+# Exclusion regex has two anchored alternatives:
+#   - path-prefix group: matches paths under docs/{brainstorms,plans,research,solutions},
+#     styles/{proselint,write-good,.vale-config}, scripts/__fixtures__/
+#   - basename group: matches AGENTS.md / CHANGELOG.md anywhere in the tree
+#     (line start OR after a slash), to keep parity with full-scan mode's
+#     `find -not -name 'AGENTS.md'` which matches basename anywhere.
 if (( CHANGED_ONLY )); then
   mapfile -t MD_FILES < <(
     git diff --name-only --diff-filter=ACM "$PROSE_CHECK_BASE"...HEAD -- '*.md' \
-      | grep -v -E '^(docs/(brainstorms|plans|research)/|AGENTS\.md$|CHANGELOG\.md$|docs/solutions/|styles/(proselint|write-good|\.vale-config)/|scripts/__fixtures__/)' \
+      | grep -v -E '^(docs/(brainstorms|plans|research|solutions)/|styles/(proselint|write-good|\.vale-config)/|scripts/__fixtures__/)|(^|/)(AGENTS|CHANGELOG)\.md$' \
       | sort -u
   )
 else
