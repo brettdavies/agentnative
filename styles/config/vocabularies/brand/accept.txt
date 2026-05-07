@@ -36,6 +36,9 @@ allowlist
 booleans
 brettdavies
 brightgreen
+canonicalization
+canonicalize
+canonicalizes
 clap_complete
 cli
 codegens

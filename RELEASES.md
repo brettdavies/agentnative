@@ -117,7 +117,7 @@ git cherry HEAD origin/dev | grep '^+' || echo "(none — release is patch-equiv
 # If B lists any non-docs path you didn't expect, fetch dev, identify the
 # commit (`git log dev --not origin/main`), cherry-pick it, re-run the
 # triple-diff. Missed cherry-picks have shipped to main on this and sibling
-# repos before — this step is the cheap way to catch them.
+# repos before — this step is a cheap way to catch them.
 
 # 5. (Language-specific: bump version, regenerate changelog, etc.)
 
