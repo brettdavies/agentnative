@@ -11,7 +11,7 @@ requirements:
   - id: p1-must-no-interactive
     level: must
     applicability: universal
-    summary: "`--no-interactive` flag gates every prompt library call; when set or stdin is not a TTY, use defaults/stdin or exit with an actionable error."
+    summary: "When stdin is not a TTY or `--no-interactive` is set, every blocking-input surface (prompt libraries, read-line, TUI init) resolves from defaults/stdin or exits with an actionable error."
   - id: p1-must-no-browser
     level: must
     applicability:
@@ -63,26 +63,26 @@ agent-tool deadlock.
   quiet: bool,
   ```
 
-- A `--no-interactive` flag gating every prompt library call (`dialoguer`, `inquire`, `read_line`, `TTY::Prompt`,
-  `inquirer`, equivalents in other frameworks, or any TUI event loop that takes over the terminal). When the flag is
-  set, or when stdin is not a TTY, the tool uses defaults, reads from stdin, or exits with an actionable error. It never
-  blocks.
+- When stdin is not a terminal, or when `--no-interactive` is set, every blocking-input surface — prompt libraries,
+  read-line calls, TUI session initialization — MUST resolve from defaults, read from stdin, or exit non-zero with an
+  actionable error. The CLI MUST NOT block waiting for input that cannot arrive.
 - A headless authentication path if the CLI authenticates. The canonical flag is `--no-browser`, which triggers the
   OAuth 2.0 Device Authorization Grant ([RFC 8628](https://www.rfc-editor.org/rfc/rfc8628)): the CLI prints a URL and a
   code; the user authorizes on another device. Agents cannot open browsers. Non-canonical alternatives (`--device-code`,
-  `--remote`, `--headless`) are acceptable but should migrate toward `--no-browser`.
+  `--remote`, `--headless`) are acceptable but SHOULD migrate toward `--no-browser`.
 
 **SHOULD:**
 
-- Auto-detect non-interactive context via TTY detection (`std::io::IsTerminal` in Rust 1.70+, `process.stdin.isTTY` in
-  Node, `sys.stdout.isatty()` in Python) and suppress prompts when stderr is not a terminal, even without an explicit
-  `--no-interactive` flag.
+- Auto-detect non-interactive context via TTY detection on stdin (and stderr, where prompts target it) and suppress
+  prompts when no terminal is present, even without an explicit `--no-interactive` flag. Language-specific entry points
+  (`std::io::IsTerminal` in Rust 1.70+, `process.stdin.isTTY` in Node, `sys.stdout.isatty()` in Python) appear in the
+  Evidence section.
 - Document default values for prompted inputs in `--help` output so agents can pass them explicitly instead of accepting
   whatever default ships.
 
 **MAY:**
 
-- Offer rich interactive experiences — spinners, progress bars, multi-select menus — when a TTY is detected and
+- Rich interactive experiences (spinners, progress bars, multi-select menus) MAY render when a TTY is detected and
   `--no-interactive` is not set, provided the non-interactive path remains fully functional.
 
 ## Evidence
@@ -104,7 +104,7 @@ agent-tool deadlock.
 - OAuth flow that unconditionally opens a browser with no headless escape hatch.
 
 Measured by check IDs `p1-non-interactive` (behavioral) and `p1-non-interactive-source` (source). Run `agentnative check
---principle 1 .` against your CLI to see both.
+--principle 1 .` against the CLI under test to see both.
 
 ## Pressure test notes
 

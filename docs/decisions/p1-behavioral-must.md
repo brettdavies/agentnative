@@ -11,8 +11,8 @@ affects: [p1-non-interactive-by-default]
 ## Context
 
 P1 (Non-Interactive by Default) has one MUST about gating interactive surfaces. The open question was whether that MUST
-should treat TTY-driving agents — tmux panes, `ssh -t` sandbox shells, `expect` automation, computer-use desktop agents
-— as a first-class audience, or whether the canonical agent shape is "subprocess with piped stdin" only.
+extends to TTY-driving agents — tmux panes, `ssh -t` sandbox shells, `expect` automation, computer-use desktop agents —
+as a first-class audience, or whether the canonical agent shape is "subprocess with piped stdin" only.
 
 Three framings were on the table:
 

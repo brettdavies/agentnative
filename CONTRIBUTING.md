@@ -94,12 +94,34 @@ when changes land on `main` without a tag.
 
 ## Contributor setup
 
-The repo ships a pre-push hook that validates principle frontmatter before each push (schema check, ID uniqueness,
-bullet-count parity, plus regression fixtures for the validator itself). Activate it once after clone:
+The repo ships a pre-push hook that runs eight stages before each push: markdown wrap, markdownlint, link check,
+principle-frontmatter validation, validator regression fixtures, release-version semver check, pack-README drift check,
+and the prose-check stack (Vale rule packs + LanguageTool). Activate the hook once after clone:
 
 ```bash
+brew install vale jaq bun
 git config core.hooksPath scripts/hooks
+mkdir -p styles && vale sync
 ```
 
-First run installs `js-yaml@4.1.0` into a gitignored `node_modules/`; subsequent runs are fast. No remote CI replaces
-this — a failing hook is the gate.
+First push installs `js-yaml@4.1.0` into a gitignored `node_modules/`; `vale sync` pulls the gitignored baseline packs
+(`write-good`, `proselint`) from the URLs pinned in `.vale.ini`. Subsequent runs are fast. No remote CI replaces this —
+a failing hook is the gate.
+
+### Voice enforcement
+
+The pre-push prose-check stage covers Vale (custom Brand + Spec rule packs, plus `write-good` and `proselint`) and
+LanguageTool grammar checks. LanguageTool runs on `pool` over Tailscale; when unreachable, the orchestrator skips it
+with a notice and the push proceeds on Vale's verdict alone.
+
+Manual invocation during authoring:
+
+```bash
+scripts/prose-check.sh --changed-only       # fast iteration
+scripts/prose-check.sh --warnings           # surface advisory findings
+scripts/prose-check.sh --vale-only          # offline (skip LT)
+```
+
+Authoritative narrative: [`BRAND.md`](BRAND.md) (universal voice) and [`.impeccable.md`](.impeccable.md) (spec channel
+register). The Vale rule pack at `styles/brand/` is the executable contract for universal anti-patterns; `styles/spec/`
+covers the spec channel.

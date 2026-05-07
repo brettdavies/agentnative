@@ -75,14 +75,14 @@ scored. The message text is the live score read from the tool's most recent scor
 at badge size. `91/100` and `6/7 principles met` were the alternatives considered.
 
 **Color thresholds:** `≥80%` brightgreen, `60–79%` yellow, `<60%` red. The color and the score reflect the same
-underlying data; the badge should not paint a tool greener than its scorecard page does. Below-floor scorecards still
-get a rendered SVG so a tool watching its own regression sees the visual color drop.
+underlying data; the badge MUST NOT paint a tool greener than its scorecard page does. Below-floor scorecards still get
+a rendered SVG so a tool watching its own regression sees the visual color drop.
 
 ## Version pinning
 
 The badge URL is `/badge/<tool>.svg` — always-latest. The badge tracks the tool's current score against the spec version
 the scorecard was last graded under, and that spec version surfaces in the badge label text (`agent-native
-vMAJOR.MINOR`), not in the URL path. Trust-and-verify means the URL must reflect current state, not a snapshot; pinning
+vMAJOR.MINOR`), not in the URL path. Trust-and-verify means the URL MUST reflect current state, not a snapshot; pinning
 the spec version into the path would invert that posture.
 
 The scorecard page (`anc.dev/scorecards/<tool>`) also names the spec version explicitly in the page header for any
@@ -94,7 +94,7 @@ Self-grading is acceptable. The badge URL is the trust mechanism: any reader can
 see the per-requirement pass/warn/fail breakdown, and re-run the linter locally with `anc check .` against the cited
 spec version.
 
-A maintainer who embeds the badge must not modify the scorecard JSON to inflate the score. The scorecard contents are
+A maintainer who embeds the badge MUST NOT modify the scorecard JSON to inflate the score. The scorecard contents are
 reproducible from the linter source — anyone who suspects tampering can verify in seconds, and the badge claim collapses
 on first inspection.
 

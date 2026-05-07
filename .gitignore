@@ -1,3 +1,8 @@
 # Ephemeral install target for the pre-push validator's js-yaml dep.
 # See scripts/hooks/pre-push.
 node_modules/
+
+# Vale-synced packs (downloaded by `vale sync` from URLs pinned in .vale.ini).
+styles/proselint/
+styles/write-good/
+styles/.vale-config/
