@@ -123,5 +123,5 @@ scripts/prose-check.sh --vale-only          # offline (skip LT)
 ```
 
 Authoritative narrative: [`BRAND.md`](BRAND.md) (universal voice) and [`.impeccable.md`](.impeccable.md) (spec channel
-register). Architecture and contributor flow:
-[`docs/architecture/voice-enforcement.md`](docs/architecture/voice-enforcement.md).
+register). The Vale rule pack at `styles/brand/` is the executable contract for universal anti-patterns; `styles/spec/`
+covers the spec channel.

@@ -58,9 +58,8 @@ then show the fix.
 
 The voice contract has an executable enforcement layer: `styles/brand/` and `styles/spec/` are Vale rule packs (this
 file's voice contract, in code form). `BRAND.md` and `.impeccable.md` carry the narrative identity; the rule packs
-encode the literal phrases that fire on push. See
-[`docs/architecture/voice-enforcement.md`](docs/architecture/voice-enforcement.md) for the layered architecture and
-contributor flow.
+encode the literal phrases that fire on push. The pre-push hook runs Vale against the rule packs and LanguageTool over
+the Tailnet, gracefully skipping LT when the service is unreachable.
 
 ## Editing principles
 
