@@ -1,0 +1,16 @@
+# SPDX-License-Identifier: MIT OR Apache-2.0
+# Source: .impeccable.md § Register — RFC 2119 throughout (case-sensitive).
+extends: existence
+message: "Lowercase RFC keyword '%s' — use UPPERCASE for normative force (MUST/SHOULD/MAY/SHALL) or rephrase if not normative."
+link: https://github.com/brettdavies/agentnative/blob/main/.impeccable.md#register
+level: warning
+ignorecase: false
+tokens:
+  - 'must'
+  - 'must not'
+  - 'shall'
+  - 'shall not'
+  - 'should'
+  - 'should not'
+  - 'may'
+  - 'may not'

@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: MIT OR Apache-2.0
+# Source: .impeccable.md § Register — No first-person plural.
+extends: existence
+message: "First-person plural '%s' — the spec speaks in third person about contracts, not first person about beliefs."
+link: https://github.com/brettdavies/agentnative/blob/main/.impeccable.md#register
+level: warning
+ignorecase: true
+tokens:
+  - "we"
+  - "our"
+  - "us"
+  - "ours"
