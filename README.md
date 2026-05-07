@@ -2,17 +2,24 @@
 
 Seven principles for CLI tools operated by AI agents.
 
-AI agents operate CLIs differently than humans do — they can't answer interactive prompts, can't parse vague output, and
+AI agents operate CLIs differently than humans do. They can't answer interactive prompts, can't parse vague output, and
 can't recover from errors that don't say what to do next. The principles below define what *agent-native* means in RFC
 2119 language, with machine-readable `requirements[]` so a checker (and graders) can pin against the standard.
 
-## The trifecta
+**Early-stage spec.** Ideas, debate, and contributions are welcome: pressure-tests against any principle, real-CLI
+grading submissions, counter-examples that argue a tier sits wrong, or new principles that the genre is missing. The
+spec is published as `status: active` because the contracts are stable enough to cite, not because anything here is
+locked. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for how to file each type.
 
-- **Spec** — this repo. Seven RFC 2119 principles plus machine-readable `requirements[]` in YAML frontmatter. Currently
-  v0.3.0; all principles ship as `status: active`.
-- **Linter** — [`anc`](https://github.com/brettdavies/agentnative-cli). Scores any CLI repo against the spec. Pins
+## The four artifacts
+
+- **Spec**: this repo. Seven RFC 2119 principles plus machine-readable `requirements[]` in YAML frontmatter. Currently
+  v0.3.1; all principles ship as `status: active`.
+- **Linter**: [`anc`](https://github.com/brettdavies/agentnative-cli). Scores any CLI repo against the spec. Pins
   against requirement IDs, not prose.
-- **Leaderboard** — [anc.dev/scorecards](https://anc.dev/scorecards). Top CLIs graded live; submit a PR to add yours.
+- **Skill bundle**: [`agentnative-skill`](https://github.com/brettdavies/agentnative-skill). Agent-facing guide that
+  teaches agents how to invoke `anc` and remediate findings against the spec; vendors the principles for offline use.
+- **Leaderboard**: [anc.dev/scorecards](https://anc.dev/scorecards). Top CLIs graded live; submit a PR to add yours.
 
 ## Quick start
 
@@ -74,18 +81,18 @@ scoring is reproducible from the linter source.
 
 ## Status
 
-All seven principles are `status: active` — published as part of the standard, not drafts. This is a working spec
+All seven principles are `status: active`. Published as part of the standard, not drafts. This is a working spec
 accepting pressure-tests, not a manifesto. File substantive critique via the
 [pressure-test issue template](https://github.com/brettdavies/agentnative/issues/new?template=pressure-test.yml); a
-principle moves to `under-review` when a finding may change MUST/SHOULD/MAY tiers, then back to `active` once resolved.
-See [`principles/AGENTS.md`](principles/AGENTS.md) for the full status lifecycle and pressure-test protocol.
+principle moves to `under-review` when a finding might change MUST/SHOULD/MAY tiers, then back to `active` once
+resolved. See [`principles/AGENTS.md`](principles/AGENTS.md) for the full status lifecycle and pressure-test protocol.
 
 ## Versioning
 
 The spec uses semver-adjacent versioning:
 
-- **MINOR** — new or changed MUSTs
-- **PATCH** — SHOULD/MAY changes, prose edits
+- **MINOR**: new or changed MUSTs
+- **PATCH**: SHOULD/MAY changes, prose edits
 
 Each principle carries an independent `last-revised` date in frontmatter. The date updates when any MUST/SHOULD/MAY in
 that principle changes tier, is added, or is removed. Prose-only edits do not update the date.
@@ -101,19 +108,49 @@ CLI tools whose scorecards meet the agent-native floor can embed a live-score ba
 ```
 
 The badge text reflects the tool's current score from the live scorecard; clicking through shows the per-requirement
-breakdown. See [`docs/badge.md`](docs/badge.md) for the claim convention — eligibility, embed URL, version pinning,
+breakdown. See [`docs/badge.md`](docs/badge.md) for the claim convention: eligibility, embed URL, version pinning,
 honesty expectation, regression behavior.
 
 ## Decision records
 
-- [P1 — behavioral MUST wording](docs/decisions/p1-behavioral-must.md) — why the MUST describes observable behavior
+- [P1: behavioral MUST wording](docs/decisions/p1-behavioral-must.md): why the MUST describes observable behavior
   instead of enumerating prompt and TUI APIs, and what the automated-check verification boundary is.
 
 ## Related
 
-- [anc.dev](https://anc.dev) — the rendered spec site and live leaderboard
-- [agentnative-cli](https://github.com/brettdavies/agentnative-cli) — the `anc` linter
-- [agentnative-site](https://github.com/brettdavies/agentnative-site) — the website source
+- [anc.dev](https://anc.dev): the rendered spec site and live leaderboard
+- [agentnative-cli](https://github.com/brettdavies/agentnative-cli): the `anc` linter
+- [agentnative-site](https://github.com/brettdavies/agentnative-site): the website source
+
+## Acknowledgements
+
+The principles in this spec descend from multiple streams of agent-CLI thinking that converged in late 2025 and 2026,
+not from a single source.
+
+- **Foundational CLI doctrine**: Adam Wiggins' [12-factor methodology](https://12factor.net/) (the env-var contract in
+  P1 inherits Factor III; the stdout-as-event-stream framing in P2 inherits Factor XI), the
+  [POSIX Utility Conventions](https://pubs.opengroup.org/onlinepubs/9699919799/) (argument grammar, env-var naming), the
+  [Command Line Interface Guidelines](https://clig.dev/) (load-bearing for P3, P5, and P6), Eric S. Raymond's
+  [The Art of Unix Programming](http://www.catb.org/esr/writings/taoup/html/), the [NO_COLOR](https://no-color.org/)
+  standard, and the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/).
+- **Agent-CLI synthesis (parallel work, 2025–2026)**: Anthropic's
+  [Writing tools for agents](https://www.anthropic.com/engineering/writing-tools-for-agents), Sriram Madapusi
+  Vasudevan's [InfoQ pieces on AI-agent CLIs](https://www.infoq.com/articles/ai-agent-cli/) (2025-08), Cloudflare's
+  [The CLI for all of Cloudflare](https://blog.cloudflare.com/cf-cli-local-explorer/) (2026-04), Andrej Karpathy on
+  terminal-as-legacy-tech, the Speakeasy and AppleBOY/Wu three-layer (API/CLI/skills) architecture, Michael Yuan's
+  compound-failure framing, and other contemporaneous voices on dev.to and Medium.
+- **Trevin's [7 Principles for Agent-Friendly CLIs](https://x.com/trevin/status/2037250000821059933) (2026-03-26) and
+  follow-up [10 Principles for Agent-Native CLIs](https://x.com/trevin/status/2051316002730991795) (2026-05-04)** named
+  the genre and gave it momentum. Trevin's seven-axis decomposition is the proximate ancestor of this spec's initial
+  draft.
+- **What this project adds is mechanism**: the [`anc`](https://github.com/brettdavies/agentnative-cli) linter (with
+  auto-fix runway), the [`agentnative-skill`](https://github.com/brettdavies/agentnative-skill) bundle that teaches
+  agents how to invoke `anc` and remediate findings, the [live leaderboard](https://anc.dev/scorecards), the
+  [score badge](docs/badge.md), and the cross-repo coupled-release norm. The principles above name the contract; this
+  tooling makes conformance verifiable so a CLI can claim agent-native and a reader can check.
+
+Voice and identity decisions for the spec live in [`BRAND.md`](BRAND.md) and the spec-channel
+[`.impeccable.md`](.impeccable.md).
 
 ## Contributing
 

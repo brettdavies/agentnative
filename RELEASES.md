@@ -1,7 +1,7 @@
 # Releasing `the agent-native CLI standard`
 
-Every change reaches production via this pipeline. Direct commits to `dev` or `main` are not permitted — every change
-has a PR number in its squash commit message, which keeps the history scannable, attributable, and changelog-ready.
+Every change reaches production via this pipeline. Direct commits to `dev` or `main` are not permitted. Every change has
+a PR number in its squash commit message, which keeps the history scannable, attributable, and changelog-ready.
 
 ```text
 feature branch → PR to dev (squash merge)
@@ -16,12 +16,12 @@ feature branch → PR to dev (squash merge)
 | -------------------------------------- | --------------------------------------- | ------------------------------------------- | ------------------------------------ |
 | `main`                                 | Production. Only release commits.       | Forever.                                    | `.github/rulesets/protect-main.json` |
 | `dev`                                  | Integration. All feature PRs land here. | Forever. Never delete.                      | `.github/rulesets/protect-dev.json`  |
-| `feat/*`, `fix/*`, `chore/*`, `docs/*` | Feature work.                           | One PR's worth. Auto-deleted on merge.      | None — squash into dev freely.       |
+| `feat/*`, `fix/*`, `chore/*`, `docs/*` | Feature work.                           | One PR's worth. Auto-deleted on merge.      | None. Squash into dev freely.        |
 | `release/*`                            | Head of a dev → main PR.                | One release's worth. Auto-deleted on merge. | None.                                |
 
 `dev` is a **forever branch**. Never delete it locally or remotely, even after a `release/* → main` merge. The next
 release cycle reuses the same `dev`. The repo's `deleteBranchOnMerge: true` setting doesn't touch `dev` as long as `dev`
-is never the head of a PR — using a short-lived `release/*` head is what keeps the setting compatible with a forever
+is never the head of a PR. Using a short-lived `release/*` head is what keeps the setting compatible with a forever
 integration branch.
 
 ## Daily development (feature → dev)
@@ -37,9 +37,12 @@ gh pr create --base dev --title "feat(scope): what changed"
 
 - **Commit style**: [Conventional Commits](https://www.conventionalcommits.org/).
 - **PR body**: follow `.github/pull_request_template.md`. The `## Changelog` section is the source of truth for
-  user-facing release notes — `scripts/generate-changelog.sh` fetches each PR body from the GitHub API at release time
+  user-facing release notes. `scripts/generate-changelog.sh` fetches each PR body from the GitHub API at release time
   and expands the `### Added / Changed / Fixed / Removed / Security` bullets verbatim. PR bodies remain editable
   post-merge, so typos can be fixed by editing the PR on GitHub and re-running the script.
+- **PR body prose scrub**: `gh pr create` and `gh pr edit` send body text directly to GitHub; pre-push never sees it.
+  Save the body to `/tmp/`, run Vale + LanguageTool + unslop, fix findings, then submit via `--body-file`. See
+  [§ Prose scrubbing](#prose-scrubbing).
 
 ## Releasing dev to main
 
@@ -119,7 +122,11 @@ git cherry HEAD origin/dev | grep '^+' || echo "(none — release is patch-equiv
 # 5. (Language-specific: bump version, regenerate changelog, etc.)
 
 # 6. Review CHANGELOG.md. See "PRs and changelog generation" below for the
-#    cliff.toml chore-skip footgun and how to recover.
+#    cliff.toml chore-skip footgun and how to recover. Then scrub the
+#    generated content through Vale + LanguageTool + unslop — CHANGELOG.md is
+#    excluded from pre-push by design (generated artifact). See "Prose
+#    scrubbing" below for the procedure. Fix findings on the upstream PR body
+#    and re-run scripts/generate-changelog.sh, not by hand-editing CHANGELOG.md.
 
 # 7. Push and open the PR:
 git push -u origin release/<slug>
@@ -137,18 +144,18 @@ on both sides with different content. Always branch from `origin/main` and cherr
 
 ## PRs and changelog generation
 
-Every PR **must** follow `.github/pull_request_template.md`. The template has a `## Changelog` section with these
+Every PR **MUST** follow `.github/pull_request_template.md`. The template has a `## Changelog` section with these
 subsections:
 
-- `### Added` — new user-visible features or capabilities
-- `### Changed` — changes to existing behavior
-- `### Fixed` — bug fixes
-- `### Removed` — removed features or APIs
-- `### Security` — security-relevant changes
+- `### Added`: new user-visible features or capabilities
+- `### Changed`: changes to existing behavior
+- `### Fixed`: bug fixes
+- `### Removed`: removed features or APIs
+- `### Security`: security-relevant changes
 
 `scripts/generate-changelog.sh` (which wraps `git-cliff` per `cliff.toml`, then fetches PR bodies via the GitHub API to
 expand entries) pulls these subsections verbatim into `CHANGELOG.md` at release time. A PR that lands with an empty or
-missing `## Changelog` section silently drops its user-facing notes from the next release changelog — fix it by editing
+missing `## Changelog` section silently drops its user-facing notes from the next release changelog. Fix it by editing
 the PR body on GitHub and re-running the script.
 
 ## Release gating
@@ -165,7 +172,7 @@ governance/tooling pushes that bump VERSION cut a release without needing a prin
 **CHANGELOG.md is the release signal.** When the trigger fires, `publish.yml` reads `VERSION` and looks for a matching
 `## [$VERSION] - YYYY-MM-DD` section in `CHANGELOG.md` (Keep-a-Changelog shape, produced by `cliff.toml` +
 `scripts/generate-changelog.sh`). If that section is missing, the workflow logs `::notice::No '## [$VERSION]' section …
-skipping release cut` and exits cleanly — no tag, no Release, no dispatch. A principle push without a CHANGELOG bump is
+skipping release cut` and exits cleanly. No tag, no Release, no dispatch. A principle push without a CHANGELOG bump is
 treated as a no-op, not an error. The release author opts in by committing the CHANGELOG entry on the release branch.
 
 **CHANGELOG is generated locally, PR-body-driven.** The release author runs `scripts/generate-changelog.sh` on the
@@ -176,7 +183,7 @@ repos/.../pulls/N`, extracts its `## Changelog` → `### Added / Changed / Fixed
 rewrites the skeleton bullets with the richer PR-body content plus `by @user in [#N]` attribution and a `**Full
 Changelog**: v<prev>...v<this>` compare link.
 
-**PR body is the source of truth.** If a bullet is wrong — typo, missed detail, wrong category — edit the PR body on
+**PR body is the source of truth.** If a bullet is wrong (typo, missed detail, wrong category), edit the PR body on
 GitHub (PR bodies remain editable after merge) and re-run `scripts/generate-changelog.sh`. It re-fetches from the API
 every run. Never hand-write `CHANGELOG.md`; `CI reads CHANGELOG, the script writes it, the PR body governs it.`
 
@@ -187,35 +194,77 @@ against `gh pr view <num> --json body` for each cherry-picked PR; correct mistyp
 re-amend the cherry-pick subject before re-running. See "Prefer `feat`/`fix` over `chore`" in global CLAUDE.md for
 prevention.
 
+## Prose scrubbing
+
+Pre-push covers `*.md` files in the repo via the Vale + LanguageTool stack documented at
+[`docs/architecture/voice-enforcement.md`](docs/architecture/voice-enforcement.md). Three release-flow artifacts live
+outside that net and need a manual scrub before they ship:
+
+- **PR bodies.** `gh pr create` and `gh pr edit` send body text directly to GitHub; pre-push has no reach there.
+- **`CHANGELOG.md`.** Excluded from pre-push by `.vale.ini` because it is a generated artifact built from upstream PR
+  bodies. Findings inherit whatever prose those PR bodies carry.
+- **Release-PR bodies.** The `release/*` PR to `main` gets wrap-up text contributors edit after `CHANGELOG.md` has been
+  generated, and the same out-of-repo gap applies.
+
+The scrub procedure:
+
+```bash
+# 1. Save the artifact to /tmp/. The auto-format hook skips /tmp paths, so the
+#    body keeps its authored shape and no soft-wrapping is injected.
+gh pr view <num> --json body --jq .body > /tmp/body.md         # for PR body edits
+# cp CHANGELOG.md /tmp/body.md                                 # for changelog scrub
+
+# 2. Vale (custom Brand + Spec packs at error tier).
+vale --no-global --output=line --minAlertLevel=error /tmp/body.md
+
+# 3. LanguageTool (blocking categories, mirrors the orchestrator's whitelist).
+curl -sS -X POST "${LANGUAGETOOL_URL:-http://pool.tail42ba87.ts.net:8081}/v2/check" \
+  --data-urlencode "language=en-US" --data-urlencode "text@/tmp/body.md" \
+  | jaq '.matches[] | select(.rule.category.id | test("^(TYPOS|GRAMMAR|CONFUSED_WORDS)$"))'
+
+# 4. unslop (em-dash density and AI-unique structural patterns Vale + LT do not catch).
+~/.claude/skills/unslop/scripts/score.py /tmp/body.md
+
+# 5. Apply fixes per finding. Re-run until 0 blocking and unslop score is 0.
+
+# 6. Apply the cleaned version:
+gh pr edit <num> --body-file /tmp/body.md     # for PR body edits
+# scripts/generate-changelog.sh                # for CHANGELOG.md (re-runs the
+#                                              # PR-body fetch from GitHub)
+```
+
+For a `CHANGELOG.md` finding, fix the upstream PR body (which `generate-changelog.sh` re-fetches every run) and
+regenerate. Hand-editing `CHANGELOG.md` directly produces drift the next regeneration overwrites.
+
 **Tag-exists guard.** Once a CHANGELOG entry is present, `publish.yml` refuses to run if `v$VERSION` already exists on
-origin. VERSION must be bumped to cut a new release — the workflow will never re-tag a published version.
+origin. VERSION MUST be bumped to cut a new release. The workflow will never re-tag a published version.
 
 **Pre-push semver check on `release/*` branches.** `scripts/check-release-version.sh` runs as a stage of the pre-push
 hook and no-ops on any non-release branch. On a `release/*` push it enforces:
 
 - `VERSION` is `X.Y.Z` (three non-negative integers).
-- If `principles/p*-*.md` changed relative to `origin/main`, `VERSION` must differ from `origin/main`'s `VERSION`.
+- If `principles/p*-*.md` changed relative to `origin/main`, `VERSION` MUST differ from `origin/main`'s `VERSION`.
 - If `VERSION` changed, the new value is **strictly greater than** `origin/main`'s `VERSION` (no downgrades, no re-
   uses). Numeric major.minor.patch comparison.
-- Tag `v$VERSION` must not already exist on origin.
+- Tag `v$VERSION` MUST NOT already exist on origin.
 
 The author bumps `VERSION` manually; the hook only verifies the bump is coherent. No auto-increment.
 
-**Tag scheme is pure semver.** `v0.2.0`, `v0.2.1`, etc. No separate spec-vs-repo tag namespace — if you want a non-spec
+**Tag scheme is pure semver.** `v0.2.0`, `v0.2.1`, etc. No separate spec-vs-repo tag namespace. If you want a non-spec
 change visible on `main`, just merge it without a tag. The history shows the merge; downstream consumers pin to spec
 content.
 
 **Manual re-run.** `publish.yml` also accepts `workflow_dispatch` with a `version` input if a tag needs to be re-created
-without a content change (e.g., the prior run failed partway through). The input must match the `VERSION` file on
+without a content change (e.g., the prior run failed partway through). The input MUST match the `VERSION` file on
 `main`.
 
 ## Branch protection
 
 Two rulesets are committed under `.github/rulesets/` and applied to the repo via the GitHub API:
 
-- `protect-main.json` — required signatures, linear history, squash-only merges via PR, required status checks
-  (typically: `ci`, `guard-docs`, `guard-release`), creation/deletion blocked, non-fast-forward blocked.
-- `protect-dev.json` — required signatures, deletion blocked, non-fast-forward blocked. No PR-requirement at the ruleset
+- `protect-main.json`: required signatures, linear history, squash-only merges via PR, required status checks (common:
+  `ci`, `guard-docs`, `guard-release`), creation/deletion blocked, non-fast-forward blocked.
+- `protect-dev.json`: required signatures, deletion blocked, non-fast-forward blocked. No PR-requirement at the ruleset
   level; the PR-only norm is enforced by convention + `guard-release-branch` on the main side.
 
 ### Applying changes
@@ -230,12 +279,12 @@ gh api -X POST repos/<owner>/<repo>/rulesets --input .github/rulesets/protect-de
 gh api -X PUT repos/<owner>/<repo>/rulesets/<id> --input .github/rulesets/protect-main.json
 ```
 
-Committing the JSON alongside code means ruleset changes land via the same review process as workflow changes — a
+Committing the JSON alongside code means ruleset changes land via the same review process as workflow changes. A
 `chore(ci): tighten protect-main` release goes through dev → release/* → main like anything else.
 
 ### Status-check context pitfall
 
-The `required_status_checks[].context` strings in `protect-main.json` must match exactly what GitHub publishes for each
+The `required_status_checks[].context` strings in `protect-main.json` MUST match exactly what GitHub publishes for each
 check:
 
 - **Inline job** (with `name:` field): published as just `<job-name>` (no workflow-name prefix).
@@ -250,6 +299,6 @@ gh api repos/<owner>/<repo>/commits/<sha>/check-runs --jq '.check_runs[].name'
 
 ## Related docs
 
-- [`.github/pull_request_template.md`](.github/pull_request_template.md) — PR body structure with changelog sections
-- Project-specific release details (versioning, publishing, deploy targets) — typically in `README.md` or a `DEPLOY.md`
+- [`.github/pull_request_template.md`](.github/pull_request_template.md): PR body structure with changelog sections
+- Project-specific release details (versioning, publishing, deploy targets): commonly in `README.md` or a `DEPLOY.md`
   next to this file

@@ -7,7 +7,7 @@ requirements:
   - id: p2-must-output-flag
     level: must
     applicability: universal
-    summary: "`--output text|json|jsonl` flag selects output format; `OutputFormat` enum threaded through output paths."
+    summary: "`--output` flag selects format with `json` and `jsonl` as canonical machine-readable values; `text` is the default human-facing form."
   - id: p2-must-stdout-stderr-split
     level: must
     applicability: universal
@@ -53,11 +53,12 @@ catastrophically later.
 
 **MUST:**
 
-- A `--output text|json|jsonl` flag selects the output format. Text is the default for humans; JSON and JSONL are the
-  agent-facing formats. Implementation surfaces an `OutputFormat` enum and an `OutputConfig` struct threaded through
-  every function that produces output.
-- Data goes to stdout. Diagnostics, progress indicators, and warnings go to stderr. An agent consuming JSON from stdout
-  must never encounter an interleaved progress message.
+- Structured-output CLIs MUST offer at least one machine-readable format selectable via `--output`, with `json` and
+  `jsonl` as canonical values; `text` is the default human-facing form. The format selection threads through every
+  output path, so a single invocation never mixes formats.
+- Data goes to stdout. Diagnostics, progress indicators, and warnings go to stderr. The split is decades-old Unix
+  practice (POSIX, ESR's Rule of Repair, clig.dev's "Output" rules); for an agent it is load-bearing — a JSON consumer
+  reading stdout MUST NOT encounter an interleaved progress line.
 - Exit codes are structured and documented:
 
 | Code | Meaning                           |
@@ -71,8 +72,8 @@ catastrophically later.
   These codes blend the bash 0/1/2 convention with BSD `sysexits.h` 77/78 (`EX_NOPERM`, `EX_CONFIG`); the result is the
   de-facto agent-facing dialect, not strict `sysexits.h` compliance.
 
-- When `--output json` is active, errors are emitted as JSON (to stderr) with at least `error`, `kind`, and `message`
-  fields. Plain-text errors in a JSON run break the agent's parser on the only output it was told to expect.
+- When `--output json` is active, errors MUST be emitted as JSON to stderr with at least `error`, `kind`, and `message`
+  fields. A plain-text error inside a JSON run breaks the consumer's parser on the only shape it was told to expect.
 
 **SHOULD:**
 
@@ -81,7 +82,8 @@ catastrophically later.
 
 **MAY:**
 
-- Additional output formats (CSV, TSV, YAML) beyond the core three. The core three remain mandatory.
+- Additional `--output` values (CSV, TSV, YAML) MAY be offered beyond the canonical text/json/jsonl. The canonical three
+  remain mandatory.
 - A `--raw` flag for unformatted output suitable for piping to other tools.
 
 ## Evidence
@@ -102,7 +104,7 @@ catastrophically later.
 - Human-formatted tables as the only output mode with no JSON alternative.
 
 Measured by check IDs `p2-output-json`, `p2-output-format`, `p2-stderr-diagnostics`. Run `agentnative check --principle
-2 .` against your CLI to see each.
+2 .` against the CLI under test to see each.
 
 ## Pressure test notes
 
@@ -117,8 +119,8 @@ recorded verbatim per `principles/AGENTS.md` § "Pressure-test protocol".
   note the principle straddles two conventions (bash 0/1/2 + sysexits 77/78) without naming the hybrid." Resolved: added
   one sentence under the exit-code table acknowledging the bash + `sysexits.h` blend. The same citation now appears in
   P4's exit-code table (per Row #13 of the same review pass) so both files agree.
-- **[later]** *Must-vs-should.* "A single-number-emitting CLI (e.g., `epoch`, `uuidgen`) plausibly violates the
+- **[later]** *MUST-vs-SHOULD.* "A single-number-emitting CLI (e.g., `epoch`, `uuidgen`) plausibly violates the
   `--output text|json|jsonl` MUST for a defensible reason. Universal applicability is a strong claim." Deferred: revisit
-  whether `applicability` should soften when the launch landscape clarifies actual single-number agent-facing CLIs. The
+  whether `applicability` SHOULD soften when the launch landscape clarifies actual single-number agent-facing CLIs. The
   applicability change would fire coupled-release (CLI registry impact), so it is held for a v0.4.0 cleanup PR rather
   than churned during launch week.
