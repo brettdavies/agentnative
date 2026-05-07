@@ -3,7 +3,6 @@
 node_modules/
 
 # Vale-synced packs (downloaded by `vale sync` from URLs pinned in .vale.ini).
-# See docs/architecture/voice-enforcement.md.
 styles/proselint/
 styles/write-good/
 styles/.vale-config/

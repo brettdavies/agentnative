@@ -196,9 +196,8 @@ prevention.
 
 ## Prose scrubbing
 
-Pre-push covers `*.md` files in the repo via the Vale + LanguageTool stack documented at
-[`docs/architecture/voice-enforcement.md`](docs/architecture/voice-enforcement.md). Three release-flow artifacts live
-outside that net and need a manual scrub before they ship:
+Pre-push covers `*.md` files in the repo via Vale + LanguageTool. Three release-flow artifacts live outside that net and
+need a manual scrub before they ship:
 
 - **PR bodies.** `gh pr create` and `gh pr edit` send body text directly to GitHub; pre-push has no reach there.
 - **`CHANGELOG.md`.** Excluded from pre-push by `.vale.ini` because it is a generated artifact built from upstream PR
@@ -206,13 +205,15 @@ outside that net and need a manual scrub before they ship:
 - **Release-PR bodies.** The `release/*` PR to `main` gets wrap-up text contributors edit after `CHANGELOG.md` has been
   generated, and the same out-of-repo gap applies.
 
-The scrub procedure:
+**Scrub before submit.** Author and clean PR bodies in `/tmp/` first, then submit via `--body-file` once. This avoids
+the round-trip of "submit, scrub, edit, scrub again" — every fix lands locally and the public PR sees only clean text.
+The auto-format hook skips `/tmp/` paths so the body keeps its authored shape and no soft-wrapping is injected.
 
 ```bash
-# 1. Save the artifact to /tmp/. The auto-format hook skips /tmp paths, so the
-#    body keeps its authored shape and no soft-wrapping is injected.
-gh pr view <num> --json body --jq .body > /tmp/body.md         # for PR body edits
-# cp CHANGELOG.md /tmp/body.md                                 # for changelog scrub
+# 1. Author or fetch the artifact in /tmp/.
+$EDITOR /tmp/body.md                                           # author from scratch (gh pr create)
+gh pr view <num> --json body --jq .body > /tmp/body.md         # fetch existing (gh pr edit)
+cp CHANGELOG.md /tmp/body.md                                   # changelog scrub
 
 # 2. Vale (custom Brand + Spec packs at error tier).
 vale --no-global --output=line --minAlertLevel=error /tmp/body.md
@@ -225,12 +226,12 @@ curl -sS -X POST "${LANGUAGETOOL_URL:-http://pool.tail42ba87.ts.net:8081}/v2/che
 # 4. unslop (em-dash density and AI-unique structural patterns Vale + LT do not catch).
 ~/.claude/skills/unslop/scripts/score.py /tmp/body.md
 
-# 5. Apply fixes per finding. Re-run until 0 blocking and unslop score is 0.
+# 5. Apply fixes in /tmp/body.md. Re-run 2-4 until 0 blocking and unslop score is 0.
 
-# 6. Apply the cleaned version:
-gh pr edit <num> --body-file /tmp/body.md     # for PR body edits
-# scripts/generate-changelog.sh                # for CHANGELOG.md (re-runs the
-#                                              # PR-body fetch from GitHub)
+# 6. Submit the cleaned version once.
+gh pr create --base <base> --title "..." --body-file /tmp/body.md      # new PR
+gh pr edit <num> --body-file /tmp/body.md                              # existing PR
+# scripts/generate-changelog.sh                                        # CHANGELOG.md (re-fetches PR bodies from GitHub)
 ```
 
 For a `CHANGELOG.md` finding, fix the upstream PR body (which `generate-changelog.sh` re-fetches every run) and
