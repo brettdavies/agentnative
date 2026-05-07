@@ -86,6 +86,7 @@ sysexits
 tmux
 truthy
 unformatted
+unslop
 validator
 vendored
 vendoring

@@ -40,6 +40,9 @@ gh pr create --base dev --title "feat(scope): what changed"
   user-facing release notes — `scripts/generate-changelog.sh` fetches each PR body from the GitHub API at release time
   and expands the `### Added / Changed / Fixed / Removed / Security` bullets verbatim. PR bodies remain editable
   post-merge, so typos can be fixed by editing the PR on GitHub and re-running the script.
+- **PR body prose scrub**: `gh pr create` and `gh pr edit` send body text directly to GitHub; pre-push never sees it.
+  Save the body to `/tmp/`, run Vale + LanguageTool + unslop, fix findings, then submit via `--body-file`. See
+  [§ Prose scrubbing](#prose-scrubbing).
 
 ## Releasing dev to main
 
@@ -119,7 +122,11 @@ git cherry HEAD origin/dev | grep '^+' || echo "(none — release is patch-equiv
 # 5. (Language-specific: bump version, regenerate changelog, etc.)
 
 # 6. Review CHANGELOG.md. See "PRs and changelog generation" below for the
-#    cliff.toml chore-skip footgun and how to recover.
+#    cliff.toml chore-skip footgun and how to recover. Then scrub the
+#    generated content through Vale + LanguageTool + unslop — CHANGELOG.md is
+#    excluded from pre-push by design (generated artifact). See "Prose
+#    scrubbing" below for the procedure. Fix findings on the upstream PR body
+#    and re-run scripts/generate-changelog.sh, not by hand-editing CHANGELOG.md.
 
 # 7. Push and open the PR:
 git push -u origin release/<slug>
@@ -186,6 +193,48 @@ sees its PR number and the bullets get silently dropped. After running the scrip
 against `gh pr view <num> --json body` for each cherry-picked PR; correct mistyped PR titles (e.g. `chore` → `feat`) and
 re-amend the cherry-pick subject before re-running. See "Prefer `feat`/`fix` over `chore`" in global CLAUDE.md for
 prevention.
+
+## Prose scrubbing
+
+Pre-push covers `*.md` files in the repo via the Vale + LanguageTool stack documented at
+[`docs/architecture/voice-enforcement.md`](docs/architecture/voice-enforcement.md). Three release-flow artifacts live
+outside that net and need a manual scrub before they ship:
+
+- **PR bodies.** `gh pr create` and `gh pr edit` send body text directly to GitHub; pre-push has no reach there.
+- **`CHANGELOG.md`.** Excluded from pre-push by `.vale.ini` because it is a generated artifact built from upstream PR
+  bodies. Findings inherit whatever prose those PR bodies carry.
+- **Release-PR bodies.** The `release/*` PR to `main` gets wrap-up text contributors edit after `CHANGELOG.md` has been
+  generated, and the same out-of-repo gap applies.
+
+The scrub procedure:
+
+```bash
+# 1. Save the artifact to /tmp/. The auto-format hook skips /tmp paths, so the
+#    body keeps its authored shape and no soft-wrapping is injected.
+gh pr view <num> --json body --jq .body > /tmp/body.md         # for PR body edits
+# cp CHANGELOG.md /tmp/body.md                                 # for changelog scrub
+
+# 2. Vale (custom Brand + Spec packs at error tier).
+vale --no-global --output=line --minAlertLevel=error /tmp/body.md
+
+# 3. LanguageTool (blocking categories, mirrors the orchestrator's whitelist).
+curl -sS -X POST "${LANGUAGETOOL_URL:-http://pool.tail42ba87.ts.net:8081}/v2/check" \
+  --data-urlencode "language=en-US" --data-urlencode "text@/tmp/body.md" \
+  | jaq '.matches[] | select(.rule.category.id | test("^(TYPOS|GRAMMAR|CONFUSED_WORDS)$"))'
+
+# 4. unslop (em-dash density and AI-unique structural patterns Vale + LT do not catch).
+~/.claude/skills/unslop/scripts/score.py /tmp/body.md
+
+# 5. Apply fixes per finding. Re-run until 0 blocking and unslop score is 0.
+
+# 6. Apply the cleaned version:
+gh pr edit <num> --body-file /tmp/body.md     # for PR body edits
+# scripts/generate-changelog.sh                # for CHANGELOG.md (re-runs the
+#                                              # PR-body fetch from GitHub)
+```
+
+For a `CHANGELOG.md` finding, fix the upstream PR body (which `generate-changelog.sh` re-fetches every run) and
+regenerate. Hand-editing `CHANGELOG.md` directly produces drift the next regeneration overwrites.
 
 **Tag-exists guard.** Once a CHANGELOG entry is present, `publish.yml` refuses to run if `v$VERSION` already exists on
 origin. VERSION MUST be bumped to cut a new release — the workflow will never re-tag a published version.
