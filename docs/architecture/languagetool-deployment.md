@@ -145,8 +145,9 @@ To enable, on pool:
 3. Edit `docker-compose.yml` to add the bind mount (`volumes: ["/mnt/pool/appdata/languagetool/ngrams:/ngrams:ro"]`),
    set `langtool_languageModel: /ngrams` in the `environment:` block, and bump `JAVA_XMX` from `2g` to `4g`.
 4. `docker compose up -d --force-recreate`
-5. Warm probe and verify a confusion-class match: `curl -sS -X POST http://pool:8081/v2/check --data-urlencode
-   "language=en-US" --data-urlencode "text=Their is no problem with there work."` — expect a CONFUSION_RULE_* match.
+5. Warm probe and verify a confusion-class match. Send `POST /v2/check` with `language=en-US` and `text=<a sentence
+   containing a deliberate confusable, e.g. their/there or affect/effect>`; the response includes a `CONFUSION_RULE_*`
+   match the rules-only ruleset would not have caught.
 
 The compose file already carries this checklist as inline comments — that's the durable copy; this section is the
 narrative version.
@@ -168,7 +169,7 @@ narrative version.
 | 2026-05-06 | `POST /v2/check` with seeded prose | 200, 3 rules-only matches (HE_VERB_AGR, THIS_NNS, PLURAL_VERB_AFTER_THIS) |
 | 2026-05-06 | `tailscale serve status` / `tailscale funnel status` on pool | empty — no public exposure |
 | 2026-05-07 | Warm probe via FQDN (3 attempts) | 200 in 12-23ms each; namelookup ~1.5ms |
-| 2026-05-07 | Warm probe via bare short name `pool` | DNS resolution times out at 5s — short name unreliable on macOS+Tailscale; clients should use FQDN |
+| 2026-05-07 | Warm probe via bare short name `pool` | DNS resolution times out at 5s — short name unreliable on macOS+Tailscale; clients SHOULD use FQDN |
 | 2026-05-07 | Cold-start probe (post `docker restart`, time-to-first-200) | 2.6s (5 polls @ 0.5s) — well under the 60s `start_period` |
 | 2026-05-07 | TS-off probe (TS disabled on dev Mac, FQDN unresolvable) | curl exit 6 in 0.06s — failure path correct |
 | 2026-05-07 | `docker inspect languagetool --format {{.State.Health.Status}}` | `healthy` |

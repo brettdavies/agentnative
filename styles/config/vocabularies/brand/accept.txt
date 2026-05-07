@@ -26,11 +26,14 @@ TUIs
 Tailnet
 Tailscale
 Trevin
+UI
+Unraid
 Vasudevan
 agentic
 agentnative
 allowlist
 booleans
+brettdavies
 brightgreen
 clap_complete
 cli
@@ -38,6 +41,7 @@ codegens
 composable
 config
 conformant
+confusables
 dev
 docopt
 enablement
@@ -54,12 +58,15 @@ kubectl
 leaderboard
 maintainer
 markdownlint
+meyay
+namelookup
 namespace
 npm
 orchestrator
 overfits
 preprocessor
 reachability
+regenerable
 repo
 repos
 rsync
@@ -68,6 +75,7 @@ rulesets
 runtime
 semver
 softenings
+start_period
 stderr
 stdin
 stdout
