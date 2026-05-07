@@ -1,11 +1,13 @@
 ---
-title: "feat: Add Vale + LanguageTool pre-push prose-check stack"
+title: "feat: Add Vale + LanguageTool pre-push prose-check stack (spec-side)"
 type: feat
-status: active
+status: completed
 date: 2026-05-06
 origin: docs/brainstorms/2026-05-06-prose-check-stack-requirements.md
 related:
   - docs/plans/2026-05-06-002-feat-languagetool-pool-deployment-plan.md
+  - ../../../agentnative-site/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md
+  - docs/architecture/voice-enforcement.md
 ---
 
 # feat: Add Vale + LanguageTool pre-push prose-check stack
@@ -19,11 +21,16 @@ related:
 
 ## Summary
 
-Add a pre-push deterministic prose-check stack to `agentnative-spec` and `agentnative-site`: Vale runs custom rule packs
-(universal `Brand`, per-channel `Spec` / `Site`) plus `write-good` + `proselint` baseline; LanguageTool runs grammar
-over the same files when `pool` is reachable over Tailscale, gracefully skipped when not. Rule packs are committed in
-spec, owned as source-of-truth for enforceable voice; BRAND.md and `.impeccable.md` shed their literal phrase lists in
-favor of an auto-generated per-pack `README.md` companion that progressively discloses what each pack enforces.
+Add a pre-push deterministic prose-check stack to `agentnative-spec`: Vale runs custom rule packs (universal `Brand`,
+spec-channel `Spec`) plus `write-good` + `proselint` baseline; LanguageTool runs grammar over the same files when `pool`
+is reachable over Tailscale, gracefully skipped when not. Rule packs are committed in spec, owned as source-of-truth for
+enforceable voice; BRAND.md and `.impeccable.md` shed their literal phrase lists in favor of an auto-generated per-pack
+`README.md` companion that progressively discloses what each pack enforces.
+
+> **Site-side scope split:** Site enforcement (the parallel work originally scoped here as U9 + U10) lives in the
+> companion plan
+> [`agentnative-site/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md`](../../../agentnative-site/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md).
+> Splitting let the spec stack ship independently on `docs/v0.3.1`; the site plan picks up after.
 
 ---
 
@@ -44,8 +51,9 @@ See origin: `docs/brainstorms/2026-05-06-prose-check-stack-requirements.md`.
 - R2. Invocation surfaces are the pre-push git hook and a developer-invoked script — no CI workflow.
 - R3. Scope: all `*.md` except `docs/brainstorms/`, `docs/plans/`, `docs/research/`, `AGENTS.md`, `CHANGELOG.md`
   (generated artifact, never hand-edited per the existing release flow), and `docs/solutions/` symlink-target.
-- R4. v1 enforces in `agentnative-spec` and `agentnative-site`. Architecture supports `agentnative-cli` and
-  `agentnative-skill` but they do not enforce until they earn channel `.impeccable.md` files.
+- R4. v1 spec-side enforcement lands in `agentnative-spec`. Site-side enforcement lives in the companion plan at
+  `agentnative-site/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md`. Architecture supports `agentnative-cli`
+  and `agentnative-skill` but they do not enforce until they earn channel `.impeccable.md` files.
 - R5. Rule packs are SoT for enforceable voice; BRAND.md sections that mirror enforceable rules become derivative.
 - R6. Non-enforceable identity content in BRAND.md (voice anchors, audience descriptions, channel definitions, rationale
   for anti-patterns) remains SoT in BRAND.md.
@@ -942,6 +950,20 @@ contributor-facing docs.
 
 ---
 
+### Site-side units (split out)
+
+The site-side parallel work (originally numbered U9 + U10) lives in the companion plan at
+[`agentnative-site/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md`](../../../agentnative-site/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md).
+That plan covers the brand-pack copy from spec, the fresh Site channel pack authored from
+`agentnative-site/.impeccable.md`, the orchestrator copy, and the pre-push wiring on the site repo's existing hook.
+
+The site plan reuses the orchestrator and rule-pack design decisions captured here without re-litigating them; the spec
+voice-enforcement architecture doc ([`docs/architecture/voice-enforcement.md`](../architecture/voice-enforcement.md)) is
+the canonical reference both plans cite.
+
+<details>
+<summary>Original U9 / U10 / AE3 cross-repo footnote (preserved for traceability)</summary>
+
 - U9. **Site repo: copy Brand pack manually + author Site channel pack + `.vale.ini`** *(target repo:
   `agentnative-site`)*
 
@@ -1085,6 +1107,12 @@ output in the PR descriptions for U7 (spec) and U10 (site). U7's verification li
 zero matches"; U10's verification list includes "AE3: site-side `rg` returns zero matches". No separate unit because the
 work is a single grep with no behavioral artifact. **Covers AE3.**
 
+</details>
+
+**AE3 (spec-side, retained):** the implementer runs `rg -i 'vale|prose-check|languagetool' .github/workflows/` in this
+repo as part of U7's verification and includes the empty output in the PR description. Site-side AE3 is the same check
+re-run in the site plan's pre-push wiring unit.
+
 ---
 
 ## System-Wide Impact
@@ -1146,14 +1174,15 @@ work is a single grep with no behavioral artifact. **Covers AE3.**
 
 ### Phase 1 — Spec-side enforcement (U1 → U8)
 
-Land `styles/Brand/`, `styles/Spec/`, `.vale.ini`, the orchestrator, the README generator, the BRAND.md/`.impeccable.md`
+Land `styles/brand/`, `styles/spec/`, `.vale.ini`, the orchestrator, the README generator, the BRAND.md/`.impeccable.md`
 restructure, the pre-push wiring, and the documentation. Spec repo enforces immediately at push time. AE1, AE2, AE3,
 AE4, AE6 verified spec-side.
 
-### Phase 2 — Site-side enforcement (U9 → U10)
+### Phase 2 — Site-side enforcement (companion plan)
 
-Land the site repo's parallel Vale config, manually-copied Brand pack, fresh Site channel pack, prose-check
-orchestrator, and pre-push wiring. AE1, AE2, AE3, AE4 verified site-side. AE5 verified at the manual-copy level for v1.
+Tracked in
+[`agentnative-site/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md`](../../../agentnative-site/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md).
+AE1, AE2, AE3, AE4 verified site-side once that plan ships; AE5 verified at the manual-copy level for v1.
 
 ### Deferred — Consumer sync-spec.sh extension (separate PRs per consumer)
 
@@ -1194,9 +1223,11 @@ equivalent to U9 and U10 locally.
   vale sync
   ```
 
-- **Roll-out cadence:** Spec U1-U8 lands first (one PR or a 2-3-PR sequence depending on review preference). Site U9-U10
-  lands second (one PR in the site repo after spec lands and tags v0.4.x or whatever the next spec release is). U11 AE3
-  verification is a one-paragraph PR-description checkbox, not a separate PR.
+- **Roll-out cadence:** Spec U1-U8 ships on `agentnative-spec/docs/v0.3.1`. Site-side enforcement is queued in the
+  companion plan
+  [`agentnative-site/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md`](../../../agentnative-site/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md);
+  it lands as a separate PR in the site repo after v0.3.1 cuts over to dev. AE3 verification is a one-paragraph
+  PR-description checkbox, not a separate PR.
 - **Rollback posture:** If prose-check creates more friction than value (e.g., LT false-positive rate is unsustainable),
   the path back is a single `.vale.ini` `MinAlertLevel = warning` change to demote everything to advisory, OR removing
   the prose-check stage from the pre-push hook. The rule packs themselves stay (they are still SoT for enforceable
@@ -1215,6 +1246,12 @@ equivalent to U9 and U10 locally.
 - **Sibling plan (operational counterpart):**
   [`2026-05-06-002-feat-languagetool-pool-deployment-plan.md`](2026-05-06-002-feat-languagetool-pool-deployment-plan.md)
   — provisions the LanguageTool docker container on `pool`. Lands in parallel; neither plan blocks the other.
+- **Companion plan (site-side enforcement):**
+  [`agentnative-site/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md`](../../../agentnative-site/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md)
+  — site-repo parallel to this stack (originally U9 + U10 here). Inherits all design decisions captured in this plan
+  plus the voice-enforcement architecture doc.
+- **Architecture (shipped):** [`docs/architecture/voice-enforcement.md`](../architecture/voice-enforcement.md) — layered
+  SoT, orchestrator, pre-push integration, deferred follow-ups.
 - **Origin document:**
   [docs/brainstorms/2026-05-06-prose-check-stack-requirements.md](../brainstorms/2026-05-06-prose-check-stack-requirements.md)
 - **Existing pre-push hook (spec):** `scripts/hooks/pre-push`
