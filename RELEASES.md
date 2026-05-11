@@ -147,11 +147,11 @@ on both sides with different content. Always branch from `origin/main` and cherr
 Every PR — feature, fix, docs, release — uses `.github/pull_request_template.md` verbatim. Five sections, no inventions:
 `## Summary`, `## Changelog`, `## Linked check review`, `## Human reviewer`, `## AI disclosure`.
 
-- **Summary** is the NEW user-facing substance the PR ships. What is changing for the consumer that was not already
-  there. One short paragraph fits. Do NOT recap the workflow (cherry-pick / regenerate / dispatch / pre-push gate / CI
-  behavior is documented in this file and `.github/`). Do NOT paste triple-diff output, pre-push gate results, or CI
-  check status into the body. Those are author verification artifacts that stay local; anomalies get fixed before push,
-  not audit-trailed in the body.
+- **No explainer prose anywhere in the body.** Every section is user-facing substance only — what is changing for the
+  consumer that was not already there. `## Summary` is one short paragraph. Do NOT recap the workflow (cherry-pick /
+  regenerate / pre-push gate / CI behavior is documented in this file and `.github/`). Do NOT paste triple-diff output,
+  pre-push gate results, CI check status, exclusion rationale, or other verification artifacts into the body. Those stay
+  local; anomalies get fixed before push, not audit-trailed in the body.
 - **Changelog** subsections (`### Added` / `### Changed` / `### Fixed` / `### Removed` / `### Security`) hold the
   user-facing entries. The template's RULES (in the HTML comment at the top of the section) are literal: 1-5 bullets,
   delete empty subsections entirely, each bullet starts with a verb. Prose-only edits leave the section empty or omit
@@ -164,6 +164,12 @@ Every PR — feature, fix, docs, release — uses `.github/pull_request_template
 - **Release PRs** repeat the entries from the upstream feature PRs they cherry-pick. The repetition is intentional and
   harmless: `cliff.toml`'s `^release` skip prevents the release-PR squash commit from being double-counted in any future
   regeneration.
+- **No hard line wraps.** Author each paragraph and each bullet as one logical line, however long. GitHub soft-wraps for
+  display; hard wraps within prose produce visible mid-sentence breaks in some renderers and interfere with the
+  prose-check pipeline (Vale's line-anchored output reports findings against split lines, LanguageTool's input handling
+  can choke on certain control-char interactions). The auto-format hook skips `/tmp/` paths so the body keeps its
+  authored shape — don't undo that with manual wrapping during composition. The same rule applies to commit messages
+  composed via heredoc and to any markdown that ships verbatim to GitHub.
 
 The PR body is read by humans reviewing what shipped. Workflow mechanics, verification output, and tool-fix provenance
 are noise from that perspective; they belong in this file (`RELEASES.md`), the script outputs, and the commit history
