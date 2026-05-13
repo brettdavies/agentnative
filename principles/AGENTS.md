@@ -11,7 +11,7 @@ expansion.
 
 Principle prose is enforced by the Vale rule packs at `styles/brand/` (universal anti-patterns) and `styles/spec/`
 (spec-channel register). The pre-push hook runs the orchestrator at `scripts/prose-check.sh` against these files.
-`BRAND.md` and `.impeccable.md` carry the narrative identity the rule packs encode.
+`BRAND.md` and `PRODUCT.md` carry the narrative identity the rule packs encode.
 
 ## What belongs here
 

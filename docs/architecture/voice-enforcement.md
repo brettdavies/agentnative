@@ -8,21 +8,21 @@ related:
   - docs/plans/2026-05-06-002-feat-languagetool-pool-deployment-plan.md
   - docs/architecture/languagetool-deployment.md
   - BRAND.md
-  - .impeccable.md
+  - PRODUCT.md
 ---
 
 # Voice enforcement: rule packs, generator, pre-push integration
 
 Operational reference for the agentnative spec repo's deterministic prose-check stack — how rule packs, the per-pack
 README generator, the orchestrator, the pre-push hook, and the LanguageTool service compose to enforce the voice
-contracts that BRAND.md and `.impeccable.md` describe in narrative form.
+contracts that BRAND.md and `PRODUCT.md` describe in narrative form.
 
 ## Layered source of truth
 
 ```text
 LAYER 1 — Identity (narrative SoT, human-authored)
   BRAND.md                     universal voice anchors, channels, anti-pattern categories with rationale
-  .impeccable.md               spec channel register, anti-pattern categories with rationale
+  PRODUCT.md                   spec channel register, anti-pattern categories with rationale
 
 LAYER 2 — Reference companion (derivative, generated)
   styles/brand/README.md       auto-generated from styles/brand/*.yml; lists enforced literals + rationale
@@ -36,7 +36,7 @@ LAYER 3 — Enforcement (executable SoT for literals)
 ```
 
 The split inverts the usual "doc describes the rule" convention: the YAML pack IS the rule, the README is its
-human-readable companion, and BRAND.md plus `.impeccable.md` describe categories and rationale without literal lists. A
+human-readable companion, and BRAND.md plus `PRODUCT.md` describe categories and rationale without literal lists. A
 contributor reads BRAND.md to understand the rationale for a category, then references the pack README to see exactly
 which strings fire.
 
@@ -47,7 +47,7 @@ Custom packs, committed and owned:
 | Pack | Rules | Narrative source |
 | - | - | - |
 | `styles/brand/` | `MarketingRegister`, `HedgeWords`, `FillerAdjectives` | BRAND.md § Universal anti-patterns |
-| `styles/spec/` | `RFCKeywords`, `FirstPersonPlural`, `SecondPersonImperative` | `.impeccable.md` § Register |
+| `styles/spec/` | `RFCKeywords`, `FirstPersonPlural`, `SecondPersonImperative` | `PRODUCT.md` § Register |
 
 Each rule sets `level: warning` in its YAML; `.vale.ini` promotes brand and spec rules to `error` for the spec channel.
 Channel-specific opt-up or opt-down lives in the per-channel `.vale.ini`, not in the pack itself, so the pack stays
@@ -60,7 +60,7 @@ while leaving the legitimate uppercase RFC keywords alone.
 
 `scripts/generate-pack-readme.mjs` (bun) reads each pack's `*.yml` and emits `styles/<Pack>/README.md`. The generated
 file lists the literal phrases or regex enforced by each rule, the source narrative, and a link to BRAND.md or
-`.impeccable.md` for rationale.
+`PRODUCT.md` for rationale.
 
 ```bash
 bun scripts/generate-pack-readme.mjs            # writes both brand and spec READMEs
@@ -214,10 +214,10 @@ Each consumer repo (`agentnative-site`, `agentnative-cli`, `agentnative-skill`, 
 `scripts/sync-spec.sh` to also pull `styles/brand/` from the spec at vendoring time. v1 consumers do a one-time manual
 copy. Extension is one PR per consumer; AE5 is re-verified at the automated-sync level once it lands.
 
-### Channel `.impeccable.md` for cli and skill repos
+### Channel `PRODUCT.md` for cli and skill repos
 
 `agentnative-cli` and `agentnative-skill` enforce the Brand pack universally but carry no channel-specific rules yet. A
-repo earns its `.impeccable.md` when channel-specific decisions accumulate — terse error message rubric for the linter
+repo earns its `PRODUCT.md` when channel-specific decisions accumulate — terse error message rubric for the linter
 channel, skill-bundle imperative voice for the skill channel. Each repo then runs work equivalent to U9 and U10 of
 `docs/plans/2026-05-06-001-feat-prose-check-stack-plan.md`.
 
