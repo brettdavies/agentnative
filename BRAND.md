@@ -5,7 +5,7 @@ the skill bundle, and any future channel. Each channel inherits from this docume
 and artifacts in its own `PRODUCT.md`.
 
 > **Source of truth: `agentnative-spec/BRAND.md`.** This file is vendored into each channel repo (`agentnative-site`,
-> `agentnative-cli`, `agentnative-skill`) via [`scripts/sync-prose-tooling.sh`](scripts/sync-prose-tooling.sh). Edits in
+> `agentnative-cli`, `agentnative-skill`) via `scripts/sync-prose-tooling.sh`. Edits in
 > a consumer repo will be overwritten on the next sync. File issues and PRs against this repo.
 
 ## Brand identity
