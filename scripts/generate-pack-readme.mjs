@@ -107,7 +107,7 @@ function renderReadme(packName, rules) {
   lines.push(`# ${packName} Vale rule pack`, "");
   lines.push(
     wrapParagraph(
-      `Auto-generated reference for the rules enforced by \`styles/${packName}/*.yml\`. Each rule's narrative rationale lives in \`BRAND.md\` (universal) or \`.impeccable.md\` (channel). The rule pack is the executable contract for the literal phrases / regex; this README is the human-readable companion.`,
+      `Auto-generated reference for the rules enforced by \`styles/${packName}/*.yml\`. Each rule's narrative rationale lives in \`BRAND.md\` (universal) or \`PRODUCT.md\` (channel). The rule pack is the executable contract for the literal phrases / regex; this README is the human-readable companion.`,
     ),
     "",
   );
