@@ -1,4 +1,4 @@
-# .impeccable.md
+# PRODUCT.md: spec channel design context
 
 Channel-specific design context for the **spec channel** of agentnative. Inherits the shared identity, voice anchor,
 audiences, and universal anti-patterns from [`BRAND.md`](BRAND.md). Read that first.
@@ -68,7 +68,6 @@ The pattern in [`BRAND.md`](BRAND.md), specialized for the spec channel:
 
 ## Status
 
-This file is the spec channel's `.impeccable.md`. The site channel's equivalent at
-`~/dev/agentnative-site/.impeccable.md` covers visual-system decisions; cross-channel content is in
-[`BRAND.md`](BRAND.md). Future skill-bundle and linter channels add their own files when channel-specific decisions
-accumulate enough to earn one.
+This file is the spec channel's `PRODUCT.md`. The site channel's equivalent at `~/dev/agentnative-site/PRODUCT.md`
+covers visual-system decisions; cross-channel content is in [`BRAND.md`](BRAND.md). Future skill-bundle and linter
+channels add their own files when channel-specific decisions accumulate enough to earn one.

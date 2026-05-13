@@ -1,17 +1,17 @@
 # spec Vale rule pack
 
 Auto-generated reference for the rules enforced by `styles/spec/*.yml`. Each rule's narrative rationale lives in
-`BRAND.md` (universal) or `.impeccable.md` (channel). The rule pack is the executable contract for the literal phrases /
+`BRAND.md` (universal) or `PRODUCT.md` (channel). The rule pack is the executable contract for the literal phrases /
 regex; this README is the human-readable companion.
 
 ## spec.FirstPersonPlural
 
-*Source: .impeccable.md § Register — No first-person plural.*
+*Source: PRODUCT.md § Register — No first-person plural.*
 
 **Message:** First-person plural `<matched text>` — the spec speaks in third person about contracts, not first person
 about beliefs.
 
-**Rationale:** <https://github.com/brettdavies/agentnative/blob/main/.impeccable.md#register>
+**Rationale:** <https://github.com/brettdavies/agentnative/blob/main/PRODUCT.md#register>
 
 **Pack default severity:** `warning` (overridden per-channel via `.vale.ini`).
 
@@ -24,12 +24,12 @@ about beliefs.
 
 ## spec.RFCKeywords
 
-*Source: .impeccable.md § Register — RFC 2119 throughout (case-sensitive).*
+*Source: PRODUCT.md § Register — RFC 2119 throughout (case-sensitive).*
 
 **Message:** Lowercase RFC keyword `<matched text>` — use UPPERCASE for normative force (MUST/SHOULD/MAY/SHALL) or
 rephrase if not normative.
 
-**Rationale:** <https://github.com/brettdavies/agentnative/blob/main/.impeccable.md#register>
+**Rationale:** <https://github.com/brettdavies/agentnative/blob/main/PRODUCT.md#register>
 
 **Pack default severity:** `warning` (overridden per-channel via `.vale.ini`).
 
@@ -46,12 +46,12 @@ rephrase if not normative.
 
 ## spec.SecondPersonImperative
 
-*Source: .impeccable.md § Register — No second-person imperative.*
+*Source: PRODUCT.md § Register — No second-person imperative.*
 
 **Message:** Second-person imperative `<matched text>` — the spec describes contracts in third person; the skill bundle
 uses second person.
 
-**Rationale:** <https://github.com/brettdavies/agentnative/blob/main/.impeccable.md#register>
+**Rationale:** <https://github.com/brettdavies/agentnative/blob/main/PRODUCT.md#register>
 
 **Pack default severity:** `warning` (overridden per-channel via `.vale.ini`).
 

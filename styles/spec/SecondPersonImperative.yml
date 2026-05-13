@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: MIT OR Apache-2.0
-# Source: .impeccable.md § Register — No second-person imperative.
+# Source: PRODUCT.md § Register — No second-person imperative.
 extends: existence
 message: "Second-person imperative '%s' — the spec describes contracts in third person; the skill bundle uses second person."
-link: https://github.com/brettdavies/agentnative/blob/main/.impeccable.md#register
+link: https://github.com/brettdavies/agentnative/blob/main/PRODUCT.md#register
 level: warning
 ignorecase: true
 tokens:
