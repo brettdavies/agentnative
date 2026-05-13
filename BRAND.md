@@ -4,6 +4,10 @@ Source of truth for the voice and identity of the agentnative standard. Shared a
 the skill bundle, and any future channel. Each channel inherits from this document and adds channel-specific register
 and artifacts in its own `PRODUCT.md`.
 
+> **Source of truth: `agentnative-spec/BRAND.md`.** This file is vendored into each channel repo (`agentnative-site`,
+> `agentnative-cli`, `agentnative-skill`) via [`scripts/sync-prose-tooling.sh`](scripts/sync-prose-tooling.sh). Edits in
+> a consumer repo will be overwritten on the next sync. File issues and PRs against this repo.
+
 ## Brand identity
 
 **Three words: opinionated, precise, inviting.**
@@ -64,8 +68,7 @@ failure each ✓ phrasing replaces.
 
 ## Channels
 
-The shared identity above applies to every channel. Each channel adds register and artifacts in its own
-`PRODUCT.md`:
+The shared identity above applies to every channel. Each channel adds register and artifacts in its own `PRODUCT.md`:
 
 - **Spec** (`agentnative-spec/PRODUCT.md`): RFC 2119 register, third-person standards voice, present tense, no
   first-person plural, no implementation leakage in MUSTs.
@@ -75,8 +78,25 @@ The shared identity above applies to every channel. Each channel adds register a
 - **Linter (`anc`)**: terse error messages, ≤80-column help text, four-part error rubric (offending value, constraint,
   valid example, remediation).
 
-Skill-bundle and linter channels add their own `PRODUCT.md` only when channel-specific decisions accumulate enough
-to earn one. Today, the spec and site channels do.
+## Channel artifacts
+
+Each channel's repo carries its own narrow stack on top of this universal `BRAND.md`. The canonical layout:
+
+| Channel      | `PRODUCT.md` location                           | Deep tier-3                                            | Vale rule pack | How `BRAND.md` arrives          |
+| ------------ | ----------------------------------------------- | ------------------------------------------------------ | -------------- | ------------------------------- |
+| Spec         | `agentnative-spec/PRODUCT.md`                   | `principles/`, `docs/architecture/`, `docs/decisions/` | `styles/spec/` | (origin — this repo)            |
+| Site         | `agentnative-site/PRODUCT.md`                   | `DESIGN.md` (root)                                     | (none yet)     | `scripts/sync-prose-tooling.sh` |
+| CLI (`anc`)  | `agentnative-cli/PRODUCT.md` (when warranted)   | `src/` (Rust source IS the artifact)                   | (planned)      | `scripts/sync-prose-tooling.sh` |
+| Skill bundle | `agentnative-skill/PRODUCT.md` (when warranted) | `bundle/`                                              | (planned)      | `scripts/sync-prose-tooling.sh` |
+
+A channel earns its `PRODUCT.md` when channel-specific decisions (visual system, error rubric, instructional voice,
+etc.) accumulate enough that the universal `BRAND.md` cannot carry them. The spec and site channels have crossed that
+threshold today.
+
+**Convention: deep tier-3 artifacts live at the repo root, not in `docs/`.** The site channel's `DESIGN.md` sits at
+`agentnative-site/DESIGN.md` (not `docs/DESIGN.md`) so the `/impeccable` skill loader and human readers find it without
+traversal. Future deep companions (e.g., a hypothetical `GOVERNANCE.md`) follow the same pattern. Only research
+artifacts and historical plans live under `docs/`.
 
 ## Sync
 

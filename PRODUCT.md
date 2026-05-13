@@ -3,6 +3,19 @@
 Channel-specific design context for the **spec channel** of agentnative. Inherits the shared identity, voice anchor,
 audiences, and universal anti-patterns from [`BRAND.md`](BRAND.md). Read that first.
 
+## Inheritance
+
+The spec channel sits in a three-tier waterfall. Each tier owns a different concern; nothing duplicates.
+
+1. **Universal — [`BRAND.md`](BRAND.md).** Shared identity, voice anchor, audiences, universal anti-patterns. Read that
+   first.
+2. **Channel delta — this file (`PRODUCT.md`).** RFC 2119 register, third-person standards voice, present tense, no
+   first-person plural, no implementation leakage in MUSTs. The narrative companion to the executable Vale rule pack at
+   [`styles/spec/`](styles/spec/).
+3. **Authoritative content — [`principles/p*-*.md`](principles/) (the contract itself),
+   [`docs/architecture/`](docs/architecture/), and [`docs/decisions/`](docs/decisions/).** The principles are the
+   canonical artifact this channel exists to publish; architecture and decisions are the deep-rationale tier.
+
 ## Channel: spec
 
 The spec is pure prose in RFC 2119 register. It has no visual system: no palette, no typography stack, no code-block
@@ -68,6 +81,6 @@ The pattern in [`BRAND.md`](BRAND.md), specialized for the spec channel:
 
 ## Status
 
-This file is the spec channel's `PRODUCT.md`. The site channel's equivalent at `~/dev/agentnative-site/PRODUCT.md`
-covers visual-system decisions; cross-channel content is in [`BRAND.md`](BRAND.md). Future skill-bundle and linter
-channels add their own files when channel-specific decisions accumulate enough to earn one.
+This file is the spec channel's `PRODUCT.md`. The site channel's equivalent at `agentnative-site/PRODUCT.md` covers
+visual-system decisions; cross-channel content is in [`BRAND.md`](BRAND.md). Future skill-bundle and linter channels add
+their own files when channel-specific decisions accumulate enough to earn one.
