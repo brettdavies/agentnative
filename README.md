@@ -175,7 +175,7 @@ not from a single source.
   tooling makes conformance verifiable so a CLI can claim agent-native and a reader can check.
 
 Voice and identity decisions for the spec live in [`BRAND.md`](BRAND.md) and the spec-channel
-[`.impeccable.md`](.impeccable.md).
+[`PRODUCT.md`](PRODUCT.md).
 
 ## Contributing
 
