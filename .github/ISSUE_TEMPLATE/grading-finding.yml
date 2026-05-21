@@ -1,6 +1,6 @@
-name: "Grade a CLI"
-description: "Report findings from scoring a real CLI against the standard."
-labels: ["cli-grading"]
+name: "Submit a grading finding"
+description: "Report a spec-feedback finding derived from scoring a real CLI against the standard."
+labels: ["grading-finding", "pressure-test"]
 body:
   - type: input
     id: tool

@@ -32,11 +32,10 @@
 #                             a pack YAML changed without rerunning the
 #                             generator).
 #   8. prose-check            — Vale (Brand + Spec + write-good +
-#                             proselint) plus LanguageTool over Tailscale
-#                             when reachable. Vale errors and
-#                             category-whitelisted LT matches block;
-#                             LT-unreachable falls back to Vale-only
-#                             with a notice.
+#                             proselint) plus LanguageTool when reachable.
+#                             Vale errors and category-whitelisted LT
+#                             matches block; LT-unreachable falls back to
+#                             Vale-only with a notice.
 #
 # Branch deletions (`git push origin --delete <branch>`) short-circuit
 # at the top — the hook reads the push protocol from stdin to detect
@@ -131,6 +130,9 @@ echo "==> Checking pack-README drift (would any styles/<Pack>/README.md regenera
 bun scripts/generate-pack-readme.mjs --check </dev/null
 
 echo "==> Running prose-check (Vale + LanguageTool)"
-scripts/prose-check.sh </dev/null
+# Scope to files changed vs PROSE_CHECK_BASE (default origin/dev) so untracked
+# or pre-existing prose drift outside the pushed branch's diff can't block the
+# push. Full-scope check remains available via `bash scripts/prose-check.sh`.
+scripts/prose-check.sh --changed-only </dev/null
 
 echo "==> All pre-push checks passed"
