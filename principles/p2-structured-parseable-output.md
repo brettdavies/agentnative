@@ -23,7 +23,9 @@ requirements:
   - id: p2-must-schema-print
     level: must
     applicability:
-      if: CLI emits structured output
+      kind: conditional
+      antecedent:
+        check_id: p2-json-output
     summary: "CLIs that emit structured output expose the output schema via a `schema` subcommand or `--schema` flag: runtime-discoverable, with a documented format identifier."
   - id: p2-should-consistent-envelope
     level: should
@@ -32,7 +34,9 @@ requirements:
   - id: p2-should-schema-file
     level: should
     applicability:
-      if: CLI emits structured output
+      kind: conditional
+      antecedent:
+        check_id: p2-json-output
     summary: "Output schemas are also exported to a stable file path (e.g., `schema/<command>.json`) so CI/static-analysis consumers pin without invoking the tool."
   - id: p2-should-json-aliases
     level: should
