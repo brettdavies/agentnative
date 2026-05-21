@@ -188,7 +188,7 @@ recipe). The `lt_check` helper owns the client side of the contract; consumer co
 `scripts/prose-check.sh`, ad-hoc CHANGELOG scrubs, the PR-body workflow in [`RELEASES.md`](../../RELEASES.md) § Prose
 scrubbing) talks to `lt_check`, not to the LT API directly.
 
-LT is **optional to install**. When installed, `lt_check` is the **only supported entry point** — consumer code must not
+LT is **optional to install**. When installed, `lt_check` is the **only supported entry point**; consumer code does not
 bypass the helper. The helper bakes in the category whitelist, the 10-rule baseline denylist, byte-offset → line
 approximation, and the graceful-skip semantics that every consumer relies on.
 
