@@ -167,9 +167,9 @@ For a `CHANGELOG.md` finding, fix the upstream PR body and regenerate. Hand-edit
 drift the next regeneration overwrites.
 
 → Rationale + which artifacts need this:
-[`RELEASES-RATIONALE.md` § Prose scrubbing scope](./RELEASES-RATIONALE.md#prose-scrubbing-scope). Deep technical reference for the
-rule packs and generator: [`docs/architecture/voice-enforcement.md`](./docs/architecture/voice-enforcement.md)
-(dev-only).
+[`RELEASES-RATIONALE.md` § Prose scrubbing scope](./RELEASES-RATIONALE.md#prose-scrubbing-scope). Deep technical
+reference for the rule packs and generator:
+[`docs/architecture/voice-enforcement.md`](./docs/architecture/voice-enforcement.md) (dev-only).
 
 ## Branch protection
 
@@ -195,7 +195,8 @@ gh api -X PUT repos/<owner>/<repo>/rulesets/<id> --input .github/rulesets/protec
 
 ## Related docs
 
-- [`RELEASES-RATIONALE.md`](./RELEASES-RATIONALE.md) (release flow rationale, CHANGELOG pipeline, branch-protection pitfalls)
+- [`RELEASES-RATIONALE.md`](./RELEASES-RATIONALE.md) (release flow rationale, CHANGELOG pipeline, branch-protection
+  pitfalls)
 - [`docs/architecture/voice-enforcement.md`](./docs/architecture/voice-enforcement.md) (prose-check stack, dev-only)
 - [`.github/pull_request_template.md`](.github/pull_request_template.md) (PR body structure with changelog sections)
 - Project-specific publishing details: commonly in `README.md` or a `DEPLOY.md` next to this file

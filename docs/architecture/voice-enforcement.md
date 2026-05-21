@@ -117,8 +117,9 @@ Flags:
 
 Environment:
 
-- `LANGUAGETOOL_URL` — LT base URL (default `http://languagetool:8081`). The default assumes a local install; override via the env var. The FQDN guidance avoids the resolver
-  short-name DNS timeout failure mode; see `docs/architecture/languagetool-deployment.md` § Hostname guidance.
+- `LANGUAGETOOL_URL` — LT base URL (default `http://languagetool:8081`). The default assumes a local install; override
+  via the env var. The FQDN guidance avoids the resolver short-name DNS timeout failure mode; see
+  `docs/architecture/languagetool-deployment.md` § Hostname guidance.
 - `PROSE_CHECK_BASE` — git ref to diff against in `--changed-only` (default `origin/dev`).
 
 ## Pre-push integration
@@ -172,7 +173,9 @@ per push; running fixtures via the orchestrator would double the work).
 
 ## LanguageTool integration
 
-LT runs as a self-hosted docker container on a private-network host (see the solution doc at `docs/solutions/architecture-patterns/self-hosted-languagetool-for-prose-check-stacks-2026-05-20.md` for the deployment recipe). The orchestrator's contract with the service:
+LT runs as a self-hosted docker container on a private-network host (see the solution doc at
+`docs/solutions/architecture-patterns/self-hosted-languagetool-for-prose-check-stacks-2026-05-20.md` for the deployment
+recipe). The orchestrator's contract with the service:
 
 - Probe endpoint: `GET /v2/languages` — returns 200 with the supported language list once dictionary load completes.
 - Check endpoint: `POST /v2/check` with form-encoded `language=en-US` and `text=<body>`.

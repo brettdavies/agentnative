@@ -29,7 +29,7 @@ standard takes positions because positions are useful; positions held without wi
 | I want to...                               | File on                                                                                                   |
 | ------------------------------------------ | --------------------------------------------------------------------------------------------------------- |
 | Propose a principle edit (pressure-test)   | [agentnative](https://github.com/brettdavies/agentnative/issues/new?template=pressure-test.yml)           |
-| Submit a grading finding (spec feedback from scoring a real CLI) | [agentnative](https://github.com/brettdavies/agentnative/issues/new?template=grading-finding.yml) |
+| Submit a grading finding                   | [agentnative](https://github.com/brettdavies/agentnative/issues/new?template=grading-finding.yml)         |
 | Ask a question about the spec              | [agentnative](https://github.com/brettdavies/agentnative/issues/new?template=spec-question.yml)           |
 | Report a false positive/negative in `anc`  | [agentnative-cli](https://github.com/brettdavies/agentnative-cli/issues/new?template=false-positive.yml)  |
 | Request a checker feature                  | [agentnative-cli](https://github.com/brettdavies/agentnative-cli/issues/new?template=feature-request.yml) |
