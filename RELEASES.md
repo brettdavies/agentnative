@@ -147,10 +147,10 @@ cp CHANGELOG.md /tmp/body.md                                   # changelog scrub
 # 2. Vale (local rule packs at error tier).
 vale --no-global --output=line --minAlertLevel=error /tmp/body.md
 
-# 3. LanguageTool (blocking categories: TYPOS|GRAMMAR|CONFUSED_WORDS).
-curl -sS -X POST "${LANGUAGETOOL_URL:-http://languagetool:8081}/v2/check" \
-  --data-urlencode "language=en-US" --data-urlencode "text@/tmp/body.md" \
-  | jaq '.matches[] | select(.rule.category.id | test("^(TYPOS|GRAMMAR|CONFUSED_WORDS)$"))'
+# 3. LanguageTool grammar check via lt_check (~/dotfiles/config/shell/languagetool.sh).
+#    Skips cleanly if LT is unreachable. Inspect: `lt_rules`, `lt_info`. See § Voice
+#    enforcement in CONTRIBUTING.md for the install-vs-required nuance.
+lt_check /tmp/body.md
 
 # 4. unslop (em-dash density + AI-unique structural patterns).
 ~/.claude/skills/unslop/scripts/score.py /tmp/body.md

@@ -133,8 +133,16 @@ failing hook is the gate.
 ### Voice enforcement
 
 The pre-push prose-check stage covers Vale (custom Brand + Spec rule packs, plus `write-good` and `proselint`) and
-LanguageTool grammar checks. LanguageTool is an optional install; recommended if installed. When unreachable, the
+LanguageTool grammar checks. LanguageTool is an **optional install**; recommended if installed. When unreachable, the
 orchestrator skips it with a notice and the push proceeds on Vale's verdict alone.
+
+**Entry point when LT is installed:** the `lt_check` shell function from
+[`brettdavies/dotfiles`](https://github.com/brettdavies/dotfiles) (`~/dotfiles/config/shell/languagetool.sh`) is the
+only supported invocation path — `scripts/prose-check.sh` sources it directly, and ad-hoc scrubs of PR bodies or
+`CHANGELOG.md` (see [`RELEASES.md`](./RELEASES.md) § Prose scrubbing) call it as `lt_check FILE`. Do not hit the LT API
+directly with `curl`; the helper bakes in the category whitelist, the 10-rule baseline denylist, byte-offset → line
+approximation, and graceful skip semantics that every consumer relies on. Discover the active override surface with
+`lt_rules`; probe the server with `lt_info`; list supported languages with `lt_languages`.
 
 Manual invocation during authoring:
 
