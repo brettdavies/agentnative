@@ -38,13 +38,15 @@ $ anc audit .
 P1 — Non-Interactive by Default
   [PASS] Non-interactive by default (p1-non-interactive)
   [PASS] Flags advertise env-var bindings in --help (p1-env-hints)
-  [PASS] TTY detection for color output (p1-tty-detection-source)
+  [PASS] Secret-bearing flags expose stdin or *-file companion (p1-secret-non-leaky-path)
   [PASS] No interactive prompt dependencies (p1-non-interactive-source)
 
 P2 — Structured Output
+  [PASS] Structured-output CLI exposes its schema at runtime (p2-schema-print)
+  [PASS] --json / --jsonl short aliases for --output (p2-json-aliases)
+  [PASS] Output schema exported to a stable file path (p2-schema-file)
   [WARN] Structured output support (p2-json-output)
          --output/--format flag detected but could not validate JSON via safe probes
-  [PASS] Centralized output module exists (p2-output-module)
 
 P3 — Progressive Help
   [PASS] Help flag produces useful output (p3-help)
@@ -60,24 +62,29 @@ P5 — Safe Retries
 
 P6 — Composable Structure
   [PASS] Handles SIGPIPE gracefully (p6-sigpipe)
-  [PASS] Respects NO_COLOR (p6-no-color)
-  [PASS] Timeout flag for network ops (p6-timeout)
+  [PASS] Subcommand verbs follow community-standard names (p6-standard-names)
+  [PASS] Long-running CLI handles SIGTERM (p6-sigterm)
+  [PASS] Shell completions support (p6-completions)
   [PASS] AGENTS.md exists (p6-agents-md)
 
 P7 — Bounded Responses
   [PASS] Quiet mode available (p7-quiet)
   [PASS] No naked println!/print! outside output modules (p7-naked-println)
 
+P8 — Discoverable Skill Bundles
+  [PASS] Skill bundle has install path (`tool skill install [<host>]`) (p8-bundle-install)
+  [PASS] Top-level AGENTS.md / SKILL.md bundle present (p8-bundle-exists)
+
 Code Quality
   [PASS] No .unwrap() in source (code-unwrap)
 
-33 audits: 28 pass, 1 warn, 0 fail, 4 skip, 0 error
+44 audits: 37 pass, 3 warn, 0 fail, 4 skip, 0 error
 
-🏆 Score: 97% — your tool qualifies for the agent-native badge.
+🏆 Score: 93% — your tool qualifies for the agent-native badge.
 ```
 
-Run `anc audit . --output json` for machine-readable output. Per-principle filtering via `anc audit . --principle
-<1-8>`.
+Run `anc audit . --output json` for machine-readable scorecards. Per-principle filtering via `anc audit . --principle
+<1-8>`. `anc emit schema` prints the scorecard JSON Schema (draft 2020-12) for downstream consumers.
 
 ## Live leaderboard
 
@@ -130,9 +137,33 @@ that principle changes tier, is added, or is removed. Prose-only edits do not up
 
 Current version: see [VERSION](VERSION).
 
+## Scoring
+
+Conformance is measured against the requirement IDs in `requirements[]`, not against prose. Each check emits one of five
+statuses:
+
+| Status  | Counts toward `pass` | Counts toward denominator | Meaning                                         |
+| ------- | -------------------- | ------------------------- | ----------------------------------------------- |
+| `pass`  | yes                  | yes                       | Requirement verified.                           |
+| `warn`  | no                   | yes                       | SHOULD- or MAY-tier requirement not satisfied.  |
+| `fail`  | no                   | yes                       | MUST-tier requirement not satisfied.            |
+| `skip`  | no                   | no                        | Check not applicable to this target.            |
+| `error` | no                   | no                        | Check itself raised an exception (probe panic). |
+
+`score_pct = round(pass / (pass + warn + fail) * 100)`. Skips and errors drop out of both sides of the ratio; only
+checks that actually verified something contribute to the score.
+
+Tier mapping: a missed requirement maps to a different status depending on its `level`. MUST → `fail`. SHOULD → `warn`.
+MAY → `warn`. Spec-level promotions or demotions (PATCH or MINOR per the policy above) move requirements across the
+`fail`/`warn` boundary by design.
+
+See [`docs/badge.md`](docs/badge.md) for the badge claim convention and the
+[`anc` linter README](https://github.com/brettdavies/agentnative-cli#scoring) for implementation-side detail (audit
+profiles, check-layer isolation, coverage-summary fields).
+
 ## Badge
 
-CLI tools whose scorecards meet the agent-native floor can embed a live-score badge in their READMEs:
+CLI tools whose scorecards meet the 80% floor (see [Scoring](#scoring)) can embed a live-score badge in their READMEs:
 
 ```markdown
 [![agent-native](https://anc.dev/badge/<tool>.svg)](https://anc.dev/scorecards/<tool>)
