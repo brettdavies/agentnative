@@ -61,13 +61,103 @@ Fields:
 - `requirements[]`: one entry per MUST/SHOULD/MAY bullet in the prose. Required fields per entry:
 - `id`: `p<n>-<level>-<slug>`, lowercase-kebab, unique across all eight files.
 - `level`: `must`, `should`, or `may` (lowercase). RFC 2119 semantics.
-- `applicability`: either the string `universal` or an object `{if: "<reason>"}`. `universal` applies to every CLI;
-  conditional applies only when the named surface exists.
+- `applicability`: one of three shapes. `universal` (bare string) applies to every CLI. `{if: "<reason>"}` is the
+  prose-only conditional: the verifier interprets the reason via heuristics. `{kind: conditional, antecedent: {check_id:
+  "<id>"}}` is the machine-checkable conditional: the named `check_id` resolves to a verifier whose status drives
+  whether the consequent applies. See [Conditional applicability](#conditional-applicability) below for the propagation
+  table and worked examples.
 - `summary`: one sentence. Duplicated between frontmatter and prose; the prose bullet can expand with examples, but the
   first-sentence meaning must match.
 
 The summary duplication is intentional. Machine consumers parse the frontmatter; humans read the prose. Keeping them in
 sync is a review responsibility (enforced by the CI validator, see below).
+
+### Conditional applicability
+
+A requirement is conditional when it binds only if some prerequisite feature is present. The frontmatter carries two
+shapes for this: `{if: "<reason>"}` for cases where no verifier yet probes the prerequisite, and `{kind: conditional,
+antecedent: {check_id: "<id>"}}` for cases where a verifier does. Both shapes coexist; an author chooses the
+machine-checkable form whenever a `check_id` for the prerequisite already exists in the CLI's verifier catalog. The
+`{if: "<reason>"}` form remains valid for prerequisites the CLI does not yet probe — verifier authors interpret the
+reason string via heuristics until a dedicated check lands.
+
+The `check_id` value is a verifier identifier, not a requirement `id`. A single verifier may underwrite several
+requirements (e.g., a probe that detects `--output json` underwrites both a tier-MUST output requirement and a tier-MUST
+schema-print requirement). The CLI's verifier catalog is the namespace of legal `check_id` values; the spec's validator
+checks shape only (lowercase kebab) and leaves existence checking to the matrix builder.
+
+#### Worked example: conditional MUST
+
+```yaml
+# Reads: "if a CLI ships --output json, it MUST also expose its JSON Schema."
+- id: p2-must-schema-print
+  level: must
+  applicability:
+    kind: conditional
+    antecedent:
+      check_id: p2-json-output
+  summary: "CLIs that emit structured output expose the output schema via a `schema` subcommand or `--schema` flag."
+```
+
+#### Worked example: conditional SHOULD
+
+```yaml
+# Reads: "if a CLI emits structured output, it SHOULD also export the schema to a stable file path."
+- id: p2-should-schema-file
+  level: should
+  applicability:
+    kind: conditional
+    antecedent:
+      check_id: p2-json-output
+  summary: "Output schemas are also exported to a stable file path so consumers pin without invoking the tool."
+```
+
+The two examples differ only in `level`. The antecedent-handling machinery is identical: the antecedent decides
+*whether* the consequent applies; the tier decides the penalty severity *when* it does.
+
+#### Antecedent-status propagation
+
+The verifier observes the antecedent's status and emits the consequent according to this table:
+
+| Antecedent status | Antecedent interpretation                | Consequent emits   |
+| ----------------- | ---------------------------------------- | ------------------ |
+| `pass`            | Feature present and working              | Evaluated normally |
+| `warn`            | Feature present, partially OK            | Evaluated normally |
+| `fail`            | Feature present, broken                  | Evaluated normally |
+| `opt_out`         | Feature deliberately absent              | `n_a`              |
+| `n_a`             | Feature itself was conditional and unmet | `n_a`              |
+| `skip`            | Probe could not measure                  | `skip` (inherits)  |
+| `error`           | Probe raised an exception                | `error` (inherits) |
+
+The propagation table assumes the 7-status taxonomy (`pass`, `warn`, `fail`, `opt_out`, `n_a`, `skip`, `error`) that the
+verifier emits per requirement row. Under the 5-status taxonomy that predates this work, `opt_out` and `n_a` map to
+`skip` for consumers that have not upgraded; the propagation logic is forward-compatible.
+
+The conditional asks "is the prerequisite feature present at all?" — not "is it fully compliant?" A tool with broken
+JSON output still has JSON output, so the schema requirement still applies (and may also fail). Indeterminate antecedent
+statuses (`skip`, `error`) propagate to the consequent because a dependent check cannot be meaningfully evaluated when
+its prerequisite is unmeasured.
+
+Rows that need stricter propagation than the default (for example, requiring the prerequisite to be fully working before
+the consequent applies) may opt in via an explicit `requires_status` field on the antecedent in a future schema
+revision. The v1 schema omits the field so the common case stays minimal; adding it later is backward compatible.
+
+#### Compound antecedents (deferred to v2)
+
+The v1 schema supports single-antecedent conditionals only. If a requirement reads "if X AND Y, then MUST Z," current
+modeling options are: split into two rows that depend on different single antecedents, or introduce a synthetic
+intermediate verifier that the CLI composes internally and reference the synthetic from the row.
+
+When real cases surface that cannot be modeled either way, v2 of the schema will gain an `antecedent` array with an `op:
+all_of | any_of` discriminator. The v1 validator rejects any extra keys on `antecedent` so v2 drift is caught loudly
+rather than silently coerced.
+
+#### One result per requirement row
+
+The verifier emits one result entry per requirement row (frontmatter `id`), not one per `check_id`. A single probe whose
+`check_id` is shared across multiple requirements produces a separate result for each row, carrying that row's `id` and
+`level` (as `tier`) in the result entry. The scorecard is self-contained: third-party consumers compute scores from the
+scorecard alone without joining against the coverage matrix.
 
 ### Prose sections (fixed order)
 
@@ -89,7 +179,8 @@ Every PR touching `principles/**` runs `.github/workflows/validate-principles.ym
 - `requirements[].id` values are unique across all eight files.
 - The number of MUST / SHOULD / MAY entries in `requirements[]` equals the number of MUST / SHOULD / MAY bullets in the
   prose.
-- `applicability` is either the string `universal` or an object with an `if:` key. No other shapes.
+- `applicability` is one of: the string `universal`, an object `{if: "<reason>"}`, or an object `{kind: conditional,
+  antecedent: {check_id: "<kebab>"}}`. Compound antecedents (`op`/`checks`) are rejected — they are deferred to v2.
 
 Drift in any of these fails the check with an actionable message naming the file and the specific mismatch.
 
