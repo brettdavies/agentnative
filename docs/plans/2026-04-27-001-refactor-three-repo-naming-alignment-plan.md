@@ -20,9 +20,9 @@ non-commit-units:
 # refactor: align local CLI dir, heal spec-repo name drift across docs, and manufacture GitHub redirect alias
 
 > **Close-out (2026-04-27).** All 9 implementation units shipped on 2026-04-27. Verified during the launch-readiness
-> audit ([`2026-04-28-001-feat-show-hn-launch-readiness-plan.md`](2026-04-28-001-feat-show-hn-launch-readiness-plan.md)
-> § U4) which discovered the plan was severely stale — every box `[ ]` even though work had landed across all four
-> downstream surfaces. Outcomes vs. the plan:
+> audit (v0.3.0-wave launch plan § U4, since moved to `.context/` as operational coordination) which discovered the
+> plan was severely stale — every box `[ ]` even though work had landed across all four downstream surfaces.
+> Outcomes vs. the plan:
 >
 > - **U1 — Spec repo drift fixes:** shipped via spec commit `07d89a4` (4 occurrences healed in
 >   `docs/decisions/naming-rationale.md`, `docs/plans/2026-04-22-002-post-frontmatter-roadmap.md`, and

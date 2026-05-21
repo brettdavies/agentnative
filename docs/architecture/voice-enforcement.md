@@ -96,12 +96,16 @@ orchestrator:
 1. Enumerates in-scope `*.md` via `find` (or `git diff` with `--changed-only`).
 2. Runs Vale once with `--output=JSON --minAlertLevel=warning`. Severity split happens orchestrator-side via `jaq`:
    error-tier findings block, warning-tier findings annotate when `--warnings` is set.
-3. Probes LanguageTool at `LT_URL/v2/languages` with `curl --max-time 2`. When reachable, sends one POST `/v2/check` per
-   file at concurrency 4 via `xargs -P4`. When unreachable, prints a skip notice annotated with the curl exit code (6 /
-   7 / 28, each diagnosable) and proceeds on Vale's verdict alone (R9 graceful skip).
-4. Filters LT matches by `rule.category.id` whitelist. v1 blocks on `TYPOS | GRAMMAR | CONFUSED_WORDS` only; the other
-   four categories from the original plan surface as warnings. See "Deferred follow-ups — Markdown preprocessor for
-   LanguageTool" for the re-promotion path.
+3. Delegates LanguageTool checks to the `lt_check` shell function from
+   [`brettdavies/dotfiles`](https://github.com/brettdavies/dotfiles) (`~/dotfiles/config/shell/languagetool.sh`),
+   sourced at script startup. `lt_check` probes `LT_URL/v2/languages` with `curl --max-time 2`; when reachable it sends
+   one POST `/v2/check` per file at concurrency 4 via `xargs -P4`. When unreachable, `lt_check` returns exit 2 with a
+   stderr notice annotated by curl exit code (6 / 7 / 28, each diagnosable) and the orchestrator proceeds on Vale's
+   verdict alone (R9 graceful skip). LT is optional to install; when installed, `lt_check` is the only supported entry
+   point — direct `/v2/check` invocations from consumer code are not permitted.
+4. `lt_check` filters LT matches by `rule.category.id` whitelist. v1 blocks on `TYPOS | GRAMMAR | CONFUSED_WORDS` only;
+   the other four categories from the original plan surface as warnings. See "Deferred follow-ups — Markdown
+   preprocessor for LanguageTool" for the re-promotion path.
 5. Sorts findings by `file:line`, prints a `prose-check: <N> blocking, <M> warning` summary, and exits 1 on any blocking
    finding.
 
@@ -115,11 +119,16 @@ Flags:
 | `--vale-only` | skip LT entirely (offline iteration) |
 | `--lt-only` | skip Vale entirely (LT debugging) |
 
-Environment:
+Environment (consumed by `lt_check`; see
+[`brettdavies/dotfiles`](https://github.com/brettdavies/dotfiles)/`config/shell/languagetool.sh` for the full env
+surface including `LT_BLOCKING_CATEGORIES`, `LT_PROBE_TIMEOUT`, `LT_CHECK_TIMEOUT`, `LT_JOBS`):
 
 - `LANGUAGETOOL_URL` — LT base URL (default `http://languagetool:8081`). The default assumes a local install; override
   via the env var. The FQDN guidance avoids the resolver short-name DNS timeout failure mode; see
   `docs/architecture/languagetool-deployment.md` § Hostname guidance.
+- `LT_DENY_RULES` — extend the baseline 10-rule denylist with repo-specific rule IDs, using the helper-exposed
+  `LT_DENY_RULES_BASELINE` for composition (e.g.
+  `LT_DENY_RULES="${LT_DENY_RULES_BASELINE}|IN_PRINCIPAL|CONTRACT_CONTACT"`). Inspect the active regex with `lt_rules`.
 - `PROSE_CHECK_BASE` — git ref to diff against in `--changed-only` (default `origin/dev`).
 
 ## Pre-push integration
@@ -175,16 +184,35 @@ per push; running fixtures via the orchestrator would double the work).
 
 LT runs as a self-hosted docker container on a private-network host (see the solution doc at
 `docs/solutions/architecture-patterns/self-hosted-languagetool-for-prose-check-stacks-2026-05-20.md` for the deployment
-recipe). The orchestrator's contract with the service:
+recipe). The `lt_check` helper owns the client side of the contract; consumer code (this repo's
+`scripts/prose-check.sh`, ad-hoc CHANGELOG scrubs, the PR-body workflow in [`RELEASES.md`](../../RELEASES.md) § Prose
+scrubbing) talks to `lt_check`, not to the LT API directly.
+
+LT is **optional to install**. When installed, `lt_check` is the **only supported entry point**; consumer code does not
+bypass the helper. The helper bakes in the category whitelist, the 10-rule baseline denylist, byte-offset → line
+approximation, and the graceful-skip semantics that every consumer relies on.
+
+The contract `lt_check` implements with the LT service:
 
 - Probe endpoint: `GET /v2/languages` — returns 200 with the supported language list once dictionary load completes.
 - Check endpoint: `POST /v2/check` with form-encoded `language=en-US` and `text=<body>`.
 - Trust boundary: private-network membership. The container does not expose to the public internet.
 
 The deployment side (image digest pin, healthcheck contract, recovery procedure, n-grams enablement path) lives in
-`docs/architecture/languagetool-deployment.md`. The two documents cover the two halves of the contract.
+`docs/architecture/languagetool-deployment.md`. The two documents cover the two halves of the contract; the helper's
+implementation in [`brettdavies/dotfiles`](https://github.com/brettdavies/dotfiles)/`config/shell/languagetool.sh` is
+the executable bridge.
 
-When LT is unreachable, the orchestrator prints a notice annotated with curl's exit code:
+`lt_check`'s exit codes (consumed by `scripts/prose-check.sh` to drive blocking vs graceful-skip behavior):
+
+| `lt_check` exit | Meaning | Orchestrator response |
+| - | - | - |
+| 0 | LT reachable; no blocking findings | continue; warnings annotated to summary |
+| 1 | LT reachable; blocking findings printed | accumulate blocking count; push fails |
+| 2 | LT unreachable; stderr notice already printed | R9 graceful skip; proceed on Vale's verdict |
+| 3 | usage error (no files, unknown flag) | orchestrator bug; abort |
+
+`lt_check` annotates exit 2 with curl's underlying exit code so the operator can diagnose:
 
 | curl exit | Cause | Recovery |
 | - | - | - |
@@ -194,6 +222,15 @@ When LT is unreachable, the orchestrator prints a notice annotated with curl's e
 
 Push proceeds on Vale's verdict alone; the LT-unreachable path does not block the push (R9 graceful skip). LT covers
 grammar and spelling drift; it does not own the voice contract.
+
+Operator-facing discovery commands the helper exposes:
+
+| Command | Returns |
+| - | - |
+| `lt_info` | Server URL, reachability, software version, language count |
+| `lt_languages` | Pretty-printed `/v2/languages` (code, longCode, name) |
+| `lt_rules` | Baseline 10-rule denylist with reasons + the active effective `LT_DENY_RULES` regex |
+| `lt_categories` | Static catalogue of LT category constants and which block by default |
 
 ## Vocabularies
 

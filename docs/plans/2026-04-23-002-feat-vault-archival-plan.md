@@ -44,7 +44,7 @@ GitHub URL. Site session decides whether to bundle into their in-flight PR or ex
   /home/brett/dev/solutions-docs/` → zero matches (all clean from the start).
 
 **Roadmap 002 item 3 struck as shipped 2026-04-29.** Central launch tracker gate 6 now closeable as `done` — disposition
-(a) retired, no Show HN visitor consequence (vault was always private).
+(a) retired, no public-visitor consequence (vault was always private).
 
 ---
 

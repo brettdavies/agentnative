@@ -47,6 +47,7 @@ composable
 config
 conformant
 confusables
+denylist
 dev
 docopt
 enablement
@@ -66,6 +67,7 @@ implementers
 kubectl
 larksuite
 leaderboard
+longCode
 maintainer
 markdownlint
 meyay

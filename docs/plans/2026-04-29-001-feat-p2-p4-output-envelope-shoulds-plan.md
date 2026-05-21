@@ -1,8 +1,10 @@
 ---
 title: "feat: P2 + P4 output-envelope SHOULDs — uniform success/error JSON on stdout, --output applies to every subcommand, typed reason field"
 type: feat
-status: active
+status: shipped
 date: 2026-04-29
+shipped: 2026-05-07
+shipped-via: v0.4.0 PR #25 (squash 14f4814) — P2/P4 envelope SHOULDs landed alongside P8 addition
 branch: feat/p2-p4-output-envelope-shoulds
 base: dev
 ---
