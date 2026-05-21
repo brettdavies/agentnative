@@ -38,6 +38,8 @@ $ anc audit .
 P1 — Non-Interactive by Default
   [PASS] Non-interactive by default (p1-non-interactive)
   [PASS] Flags advertise env-var bindings in --help (p1-env-hints)
+  [PASS] TTY detection for color output (p1-tty-detection-source)
+  [PASS] No interactive prompt dependencies (p1-non-interactive-source)
 
 P2 — Structured Output
   [WARN] Structured output support (p2-json-output)
@@ -51,6 +53,7 @@ P3 — Progressive Help
 P4 — Actionable Errors
   [PASS] Structured error types (p4-error-types)
   [PASS] Exit codes use named constants (p4-exit-codes)
+  [PASS] No process::exit outside main (p4-process-exit)
 
 P5 — Safe Retries
   [PASS] Dry-run flag for write operations (p5-dry-run)
@@ -59,34 +62,37 @@ P6 — Composable Structure
   [PASS] Handles SIGPIPE gracefully (p6-sigpipe)
   [PASS] Respects NO_COLOR (p6-no-color)
   [PASS] Timeout flag for network ops (p6-timeout)
+  [PASS] AGENTS.md exists (p6-agents-md)
 
 P7 — Bounded Responses
   [PASS] Quiet mode available (p7-quiet)
-  [WARN] No naked println!/print! outside output modules (p7-naked-println)
+  [PASS] No naked println!/print! outside output modules (p7-naked-println)
 
 Code Quality
-  [FAIL] No .unwrap() in source (code-unwrap)
+  [PASS] No .unwrap() in source (code-unwrap)
 
-33 audits: 26 pass, 2 warn, 1 fail, 4 skip, 0 error
+33 audits: 28 pass, 1 warn, 0 fail, 4 skip, 0 error
+
+🏆 Score: 97% — your tool qualifies for the agent-native badge.
 ```
 
 Run `anc audit . --output json` for machine-readable output. Per-principle filtering via `anc audit . --principle
-<1-7>`.
+<1-8>`.
 
 ## Live leaderboard
 
-| Rank | CLI         | Score  |
-| ---: | ----------- | ------ |
-|    1 | `navi`      | 82/100 |
-|    2 | `anc`       | 73/100 |
-|    2 | `fzf`       | 73/100 |
-|    3 | `fd`        | 64/100 |
-|    3 | `jq`        | 64/100 |
-|    4 | `gh`        | 55/100 |
-|    4 | `git`       | 55/100 |
-|    5 | `lazygit`   | 45/100 |
-|    5 | `aws-cli`   | 45/100 |
-|    6 | `shell-gpt` | 36/100 |
+| Rank | CLI            | Score   |
+| ---: | -------------- | ------- |
+|    1 | `navi`         | 100/100 |
+|    1 | `miniserve`    | 100/100 |
+|    1 | `eza`          | 100/100 |
+|    1 | `act`          | 100/100 |
+|    2 | `rg` (ripgrep) | 89/100  |
+|    2 | `just`         | 89/100  |
+|    2 | `jj`           | 89/100  |
+|    2 | `watchexec`    | 89/100  |
+|    2 | `anc`          | 89/100  |
+|    3 | `zoxide`       | 88/100  |
 
 Full board (anc100) at [anc.dev/scorecards](https://anc.dev/scorecards). Submit a PR to grade an additional tool;
 scoring is reproducible from the linter source.
@@ -145,6 +151,8 @@ honesty expectation, regression behavior.
 
 - [anc.dev](https://anc.dev): the rendered spec site and live leaderboard
 - [agentnative-cli](https://github.com/brettdavies/agentnative-cli): the `anc` linter
+- [agentnative-skill](https://github.com/brettdavies/agentnative-skill): the agent-facing skill bundle that vendors the
+  principles and teaches agents to invoke `anc` and remediate findings
 - [agentnative-site](https://github.com/brettdavies/agentnative-site): the website source
 
 ## Acknowledgements
@@ -179,8 +187,30 @@ Voice and identity decisions for the spec live in [`BRAND.md`](BRAND.md) and the
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for issue routing across spec/tool/site repos, AI disclosure requirements, the
-human co-sign policy for spec changes, and the coupled release protocol.
+Three shapes of contribution, in order of cost:
+
+1. **Signal** (pressure-test against a principle, grading-finding for the leaderboard, or a spec question): file an
+   issue with the matching template at
+   [github.com/brettdavies/agentnative/issues/new/choose](https://github.com/brettdavies/agentnative/issues/new/choose).
+2. **Proposal** (new principle, MUST/SHOULD/MAY tier change, applicability-clause change): open a design issue first;
+   the maintainer signs off before spec text lands.
+3. **Code**: PR against `dev` (per branch discipline). Spec edits, governance docs, release infrastructure, validator
+   tooling.
+
+Local setup:
+
+```bash
+git clone https://github.com/brettdavies/agentnative
+cd agentnative
+git config core.hooksPath scripts/hooks  # mirror CI locally on every push
+bun scripts/validate-principles.mjs
+```
+
+The full tier breakdown, AI disclosure requirements, the human co-sign policy for spec changes, and the coupled release
+protocol live in [`CONTRIBUTING.md`](./CONTRIBUTING.md). Cross-repo routing: linter bugs (false positives, scoring bugs)
+go to [brettdavies/agentnative-cli](https://github.com/brettdavies/agentnative-cli/issues/new/choose); site bugs
+(rendering, performance) to
+[brettdavies/agentnative-site](https://github.com/brettdavies/agentnative-site/issues/new/choose).
 
 ## License
 

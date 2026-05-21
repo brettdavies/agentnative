@@ -84,6 +84,7 @@ renderer
 renderers
 repo
 repos
+ripgrep
 rsync
 ruleset
 rulesets
