@@ -11,7 +11,7 @@ lives in [`docs/architecture/voice-enforcement.md`](./docs/architecture/voice-en
 Read this when:
 
 - A rule in RELEASES.md doesn't make sense and you're tempted to change it.
-- A new contributor asks "why do we do X this way".
+- A new contributor asks "why is X done this way".
 - You're adding a new release-flow rule and need to know where it fits the existing model.
 
 ## Branching model

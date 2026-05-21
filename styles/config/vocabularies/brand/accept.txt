@@ -33,6 +33,7 @@ Vasudevan
 agentic
 agentnative
 allowlist
+backports
 booleans
 brettdavies
 brightgreen
@@ -60,6 +61,8 @@ hardcoded
 healthcheck
 heredoc
 idempotency
+implementer
+implementers
 kubectl
 larksuite
 leaderboard
@@ -81,6 +84,8 @@ repos
 rsync
 ruleset
 rulesets
+runbook
+runbooks
 runtime
 runtimes
 semver
