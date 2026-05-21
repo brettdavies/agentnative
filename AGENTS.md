@@ -32,11 +32,11 @@ frontmatter are the machine-readable contract with downstream repos.
   and pressure-test protocol.
 - `VERSION` — single-line semver-adjacent version. MINOR bumps on MUST changes; PATCH on SHOULD/MAY changes.
 - `CHANGELOG.md` — spec evolution, grouped by principle.
-- `CONTRIBUTING.md` — canonical routing doc across the three-repo ecosystem; graduated AI-disclosure gate; coupled
+- `CONTRIBUTING.md` — canonical routing doc across the four-repo ecosystem; graduated AI-disclosure gate; coupled
   release protocol.
 - `LICENSE` — CC BY 4.0 for spec text. The `anc` checker tool is separately licensed (MIT / Apache-2.0) in its own repo.
-- `.github/ISSUE_TEMPLATE/` — pressure-test, grade-a-cli, spec-question. All require AI disclosure; pressure-tests and
-  PRs require human co-sign.
+- `.github/ISSUE_TEMPLATE/` — pressure-test, grading-finding, spec-question. All require AI disclosure; pressure-tests
+  and PRs require human co-sign.
 - `.github/rulesets/protect-main.json`, `protect-dev.json` — branch protection, applied via `gh api` (see
   `RELEASES.md`).
 - `docs/decisions/` — named decision records cited from principle prose and repo docs.

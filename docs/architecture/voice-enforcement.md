@@ -5,7 +5,7 @@ status: active
 date: 2026-05-07
 related:
   - docs/plans/2026-05-06-001-feat-prose-check-stack-plan.md
-  - docs/plans/2026-05-06-002-feat-languagetool-pool-deployment-plan.md
+  - docs/solutions/architecture-patterns/self-hosted-languagetool-for-prose-check-stacks-2026-05-20.md
   - docs/architecture/languagetool-deployment.md
   - BRAND.md
   - PRODUCT.md
@@ -117,7 +117,7 @@ Flags:
 
 Environment:
 
-- `LANGUAGETOOL_URL` — LT base URL (default `http://pool.tail42ba87.ts.net:8081`). The FQDN avoids the macOS+Tailscale
+- `LANGUAGETOOL_URL` — LT base URL (default `http://languagetool:8081`). The default assumes a local install; override via the env var. The FQDN guidance avoids the resolver
   short-name DNS timeout failure mode; see `docs/architecture/languagetool-deployment.md` § Hostname guidance.
 - `PROSE_CHECK_BASE` — git ref to diff against in `--changed-only` (default `origin/dev`).
 
@@ -172,11 +172,11 @@ per push; running fixtures via the orchestrator would double the work).
 
 ## LanguageTool integration
 
-LT runs as a docker container on `pool` over Tailscale. The orchestrator's contract with the service:
+LT runs as a self-hosted docker container on a private-network host (see the solution doc at `docs/solutions/architecture-patterns/self-hosted-languagetool-for-prose-check-stacks-2026-05-20.md` for the deployment recipe). The orchestrator's contract with the service:
 
 - Probe endpoint: `GET /v2/languages` — returns 200 with the supported language list once dictionary load completes.
 - Check endpoint: `POST /v2/check` with form-encoded `language=en-US` and `text=<body>`.
-- Trust boundary: Tailnet membership. The container does not expose to the public internet.
+- Trust boundary: private-network membership. The container does not expose to the public internet.
 
 The deployment side (image digest pin, healthcheck contract, recovery procedure, n-grams enablement path) lives in
 `docs/architecture/languagetool-deployment.md`. The two documents cover the two halves of the contract.
@@ -185,8 +185,8 @@ When LT is unreachable, the orchestrator prints a notice annotated with curl's e
 
 | curl exit | Cause | Recovery |
 | - | - | - |
-| 6 | DNS resolve failed | Tailscale likely off, or FQDN drift |
-| 7 | Connection refused | Host up, LT service down — check `docker ps` on `pool` |
+| 6 | DNS resolve failed | Service hostname not resolvable; check network, FQDN drift |
+| 7 | Connection refused | Host reachable but LT service down; check `docker ps` on the LT host |
 | 28 | Timed out | Network impaired, or service slow — check `docker inspect languagetool` |
 
 Push proceeds on Vale's verdict alone; the LT-unreachable path does not block the push (R9 graceful skip). LT covers
@@ -254,7 +254,7 @@ re-introducing whole categories' noise.
 Post-v1, capture three patterns to `docs/solutions/` via `/ce-compound`:
 
 - The Vale-vs-LT tradeoff and category-whitelist tuning loop.
-- The Tailscale-LT FQDN reachability probe shape (deployment doc plus client probe).
+- The LT FQDN reachability probe shape (deployment doc plus client probe).
 - The per-pack README progressive-disclosure decision (BRAND.md narrative + auto-generated companion + executable YAML).
 
 Captured after the stack runs against several real PRs, not before — the lessons need a contact-with-reality phase
