@@ -51,8 +51,10 @@ Fields:
 
 - `id`: lowercase principle code (`p1` through `p8`). Matches the filename prefix.
 - `title`: human-readable principle title; mirrors the H1.
-- `last-revised: YYYY-MM-DD`. Updates **only** when a MUST/SHOULD/MAY changes tier, is added, or is removed. Prose-only
-  edits do not bump the date.
+- `last-revised: YYYY-MM-DD`. Stamps **today's date** whenever any frontmatter field changes — `summary` rewrites,
+  `applicability` shape migrations, tier changes, requirement add/remove, `status` flips, even reordering. Prose-only
+  edits to the body below the closing `---` fence do not bump the date. Enforced by `scripts/check-last-revised.mjs` at
+  pre-push and in PR CI; rerun with `--fix` to auto-stamp today's date on every violating file.
 - `status`: lifecycle marker. `draft` when first extracted; `under-review` during a pressure-test cycle; `active` once
   the principle is published as part of the standard and accepting pressure-tests as normal-course feedback (default
   state for shipped principles); `locked` when edits are intentionally frozen for a defined review window. Routine
