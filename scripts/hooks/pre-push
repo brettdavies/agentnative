@@ -31,7 +31,13 @@
 #                             against the pack's *.yml (refuses push if
 #                             a pack YAML changed without rerunning the
 #                             generator).
-#   8. prose-check            — Vale (Brand + Spec + write-good +
+#   8. shellcheck             — lints every tracked `*.sh` plus everything
+#                             under scripts/hooks/ at --severity=warning.
+#                             Catches real bugs (unused vars, quoting,
+#                             missing exits) while ignoring info/style
+#                             noise. Skipped with a one-line note when the
+#                             linter is not installed.
+#   9. prose-check            — Vale (Brand + Spec + write-good +
 #                             proselint) plus LanguageTool when reachable.
 #                             Vale errors and category-whitelisted LT
 #                             matches block; LT-unreachable falls back to
@@ -39,7 +45,7 @@
 #
 # Branch deletions (`git push origin --delete <branch>`) short-circuit
 # at the top — the hook reads the push protocol from stdin to detect
-# this, so the new stages 7 and 8 redirect their child stdin to /dev/null
+# this, so stages 7 and 9 redirect their child stdin to /dev/null
 # so they don't fight for protocol bytes.
 #
 # Working-tree clean precondition: the pipeline below scans the working
@@ -128,6 +134,23 @@ scripts/check-release-version.sh
 
 echo "==> Checking pack-README drift (would any styles/<Pack>/README.md regenerate differently?)"
 bun scripts/generate-pack-readme.mjs --check </dev/null
+
+# Shell-script linting — severity threshold "warning" catches real bugs
+# (unused vars, quoting issues, missing exits) while ignoring info/style
+# noise. Skipped silently when the linter is not on PATH. Install via
+# Homebrew (`brew install shellcheck`) or apt (`apt install shellcheck`).
+if command -v shellcheck &>/dev/null; then
+  echo "==> Running shellcheck (--severity=warning) on tracked shell scripts"
+  mapfile -t SHELL_FILES < <({
+    git ls-files '*.sh' 2>/dev/null
+    git ls-files 'scripts/hooks/*' 2>/dev/null
+  } | sort -u)
+  if [ ${#SHELL_FILES[@]} -gt 0 ]; then
+    shellcheck --severity=warning "${SHELL_FILES[@]}"
+  fi
+else
+  echo "==> Shellcheck skipped (install via \`brew install shellcheck\` or \`apt install shellcheck\`)"
+fi
 
 echo "==> Running prose-check (Vale + LanguageTool)"
 # Scope to files changed vs PROSE_CHECK_BASE (default origin/dev) so untracked
