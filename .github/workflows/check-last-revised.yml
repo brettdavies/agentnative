@@ -1,0 +1,35 @@
+name: Check principle last-revised discipline
+
+# Enforces the `last-revised` rule documented in principles/AGENTS.md: any
+# frontmatter mutation (other than the date itself) in a principle file must
+# be accompanied by a `last-revised` bump in the same diff. Runs on every PR
+# touching principle content or the checker.
+
+on:
+  pull_request:
+    paths:
+      - 'principles/p*-*.md'
+      - 'principles/AGENTS.md'
+      - 'scripts/check-last-revised.mjs'
+      - 'scripts/test-check-last-revised.mjs'
+
+permissions:
+  contents: read
+
+jobs:
+  check-last-revised:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Install js-yaml
+        run: npm install --no-save --silent js-yaml@4.1.0
+
+      - name: Check last-revised vs PR base
+        run: node scripts/check-last-revised.mjs "origin/${{ github.base_ref }}"
+
+      - name: Run checker regression tests
+        run: node scripts/test-check-last-revised.mjs
