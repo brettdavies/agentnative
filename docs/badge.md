@@ -77,20 +77,21 @@ scored. The message text is the live score read from the tool's most recent scor
 at badge size. `91/100` and `6/7 principles met` were the alternatives considered.
 
 **Color bands.** The badge color reflects the tool's cohort band, defined in
-[`principles/scoring.md`](../principles/scoring.md#cohort-bands). The recommended ramp is below; exact hex is a
-rendering detail the site owns and refines under its design system:
+[`principles/scoring.md`](../principles/scoring.md#cohort-bands). The recommended ramp ascends warm to cool, anchored on
+the standard's own accent hues, with the brand navy crowning the top band; exact hex is a rendering detail the site owns
+and refines under its design system:
 
 | Band        | Score   | Recommended color   |
 | ----------- | ------- | ------------------- |
-| Exemplary   | `≥ 85`  | brightgreen         |
-| Strong      | `80–84` | green               |
-| Solid       | `75–79` | yellow-green        |
-| Qualified   | `70–74` | yellow              |
+| Exemplary   | `≥ 85`  | navy (brand accent) |
+| Strong      | `80–84` | teal                |
+| Solid       | `75–79` | green               |
+| Qualified   | `70–74` | ochre               |
 | below floor | `< 70`  | orange (red `< 50`) |
 
-The color and the score reflect the same underlying data; the badge MUST NOT paint a tool greener than its scorecard
-page does. Below-floor scorecards still get a rendered SVG so a tool watching its own regression sees the visual color
-drop.
+The color and the score reflect the same underlying data; the badge MUST NOT paint a tool higher up the color ramp than
+its scorecard page does. Below-floor scorecards still get a rendered SVG so a tool watching its own regression sees the
+visual color drop.
 
 ## Version pinning
 
