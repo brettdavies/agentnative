@@ -21,6 +21,16 @@
 #                             uniqueness, and bullet-count parity.
 #   5. test-validate-principles — fixture regression tests for the
 #                             validator itself.
+#   5b. check-last-revised   — enforces the `last-revised` discipline
+#                             documented in principles/AGENTS.md: any
+#                             frontmatter mutation (other than the date
+#                             itself) requires a `last-revised` bump.
+#                             Compares HEAD against $BASE_REF (default
+#                             origin/dev). Skipped silently when the
+#                             base ref is not available locally. Rerun
+#                             `node scripts/check-last-revised.mjs --fix`
+#                             to auto-stamp today's date on violators.
+#   5c. test-check-last-revised — regression tests for the date checker.
 #   6. check-release-version — semver check scoped to `release/*`
 #                             branches. No-ops on non-release branches.
 #                             Enforces X.Y.Z format, strict-monotonic
@@ -128,6 +138,19 @@ node scripts/validate-principles.mjs
 
 echo "==> Running validator regression fixtures"
 node scripts/test-validate-principles.mjs
+
+# `last-revised` discipline: bumps must accompany frontmatter changes.
+# Resolves the base ref locally; skips when it is not available (e.g.,
+# detached push without a fetched origin/dev).
+LR_BASE_REF="${BASE_REF:-origin/dev}"
+if git rev-parse --verify --quiet "${LR_BASE_REF}" >/dev/null; then
+  echo "==> Checking last-revised discipline vs ${LR_BASE_REF}"
+  node scripts/check-last-revised.mjs "${LR_BASE_REF}"
+  echo "==> Running last-revised checker regression tests"
+  node scripts/test-check-last-revised.mjs
+else
+  echo "==> last-revised check skipped (${LR_BASE_REF} not fetched locally)"
+fi
 
 echo "==> Checking release-branch semver (no-op on non-release branches)"
 scripts/check-release-version.sh
