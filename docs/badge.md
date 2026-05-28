@@ -31,12 +31,14 @@ A tool can embed the badge when all of these hold:
 
 - A scorecard for the tool exists on `agentnative-site` (`scorecards/<tool>-v<version>.json` under
   [`brettdavies/agentnative-site`](https://github.com/brettdavies/agentnative-site/tree/dev/scorecards)).
-- The tool's score (`pass / (pass + warn + fail)`) meets or exceeds the **eligibility floor**.
+- The tool's `score_pct` meets or exceeds the **eligibility floor**. The score reflects shipped-binary behavior and is
+  computed per [`principles/scoring.md`](../principles/scoring.md) — that document is the single source of truth for the
+  formula.
 
-**Eligibility floor: ≥80% pass-rate.** Single gate — no separate principle-count requirement, since 80% pass-rate
-already implies most principles are met. The floor was calibrated against the 96-tool launch-day leaderboard: it
-captures the top quartile (24 tools eligible at launch), sits above the 70% median so the badge means "upper segment",
-and below 90% so the embed snippet still appears on a meaningful portion of pages.
+**Eligibility floor: ≥70%.** The floor is deliberately low so the badge can spread the standard: a tool that clears a
+reasonable bar can display it and point readers at its scorecard. Exclusivity comes from the cohort bands below and the
+score shown on the badge, not from a high gate. See
+[`principles/scoring.md`](../principles/scoring.md#eligibility-floor) for the rationale.
 
 A tool whose score drops below the floor does not need to remove the badge — the badge URL renders below-floor colors
 automatically (see "Regression behavior" below).
@@ -74,9 +76,22 @@ scored. The message text is the live score read from the tool's most recent scor
 **Score-text format:** `XX%` (rounded percent — e.g., `91%`). Matches the leaderboard's score column and reads cleanest
 at badge size. `91/100` and `6/7 principles met` were the alternatives considered.
 
-**Color thresholds:** `≥80%` brightgreen, `60–79%` yellow, `<60%` red. The color and the score reflect the same
-underlying data; the badge MUST NOT paint a tool greener than its scorecard page does. Below-floor scorecards still get
-a rendered SVG so a tool watching its own regression sees the visual color drop.
+**Color bands.** The badge color reflects the tool's cohort band, defined in
+[`principles/scoring.md`](../principles/scoring.md#cohort-bands). The recommended ramp ascends warm to cool, anchored on
+the standard's own accent hues, with the brand navy crowning the top band; exact hex is a rendering detail the site owns
+and refines under its design system:
+
+| Band        | Score   | Recommended color   |
+| ----------- | ------- | ------------------- |
+| Exemplary   | `≥ 85`  | navy (brand accent) |
+| Strong      | `80–84` | teal                |
+| Solid       | `75–79` | green               |
+| Qualified   | `70–74` | ochre               |
+| below floor | `< 70`  | orange (red `< 50`) |
+
+The color and the score reflect the same underlying data; the badge MUST NOT paint a tool higher up the color ramp than
+its scorecard page does. Below-floor scorecards still get a rendered SVG so a tool watching its own regression sees the
+visual color drop.
 
 ## Version pinning
 
