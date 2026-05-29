@@ -9,8 +9,8 @@
 //   2. requirements[] entries have id (unique across all files),
 //      level (must|should|may), applicability (one of: string "universal",
 //      {if: "<reason>"} for prose-only conditionals, or
-//      {kind: "conditional", antecedent: {check_id: "<kebab>"}} for
-//      machine-checkable conditionals), summary (non-empty string).
+//      {kind: "conditional", antecedent: {audit_id: "<kebab>"}} for
+//      machine-auditable conditionals), summary (non-empty string).
 //   3. id matches the filename prefix (p<n>).
 //   4. The number of MUST/SHOULD/MAY bullets in prose equals the number of
 //      requirements[] entries with that level.
@@ -71,7 +71,7 @@ function countBulletsPerLevel(body) {
   return counts;
 }
 
-const CHECK_ID_RE = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/;
+const AUDIT_ID_RE = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/;
 
 function validateApplicabilityObject(app, id, file, errors) {
   const keys = Object.keys(app);
@@ -85,30 +85,30 @@ function validateApplicabilityObject(app, id, file, errors) {
       errors.push(`${file}: requirement '${id ?? "?"}' has unexpected applicability keys: ${extras.join(", ")}`);
     }
     if (!("antecedent" in app)) {
-      errors.push(`${file}: requirement '${id ?? "?"}' is {kind: "conditional"} but missing 'antecedent' (expected {antecedent: {check_id: "<kebab>"}})`);
+      errors.push(`${file}: requirement '${id ?? "?"}' is {kind: "conditional"} but missing 'antecedent' (expected {antecedent: {audit_id: "<kebab>"}})`);
       return;
     }
     const ant = app.antecedent;
     if (typeof ant !== "object" || ant === null || Array.isArray(ant)) {
-      errors.push(`${file}: requirement '${id ?? "?"}' antecedent must be an object {check_id: "<kebab>"}`);
+      errors.push(`${file}: requirement '${id ?? "?"}' antecedent must be an object {audit_id: "<kebab>"}`);
       return;
     }
     const antKeys = Object.keys(ant);
-    const antExtras = antKeys.filter((k) => k !== "check_id");
+    const antExtras = antKeys.filter((k) => k !== "audit_id");
     if (antExtras.length > 0) {
-      errors.push(`${file}: requirement '${id ?? "?"}' antecedent has unexpected keys: ${antExtras.join(", ")} (v1 supports only 'check_id'; compound antecedents deferred to v2)`);
+      errors.push(`${file}: requirement '${id ?? "?"}' antecedent has unexpected keys: ${antExtras.join(", ")} (v1 supports only 'audit_id'; compound antecedents deferred to v2)`);
     }
-    if (typeof ant.check_id !== "string" || !ant.check_id.trim()) {
-      errors.push(`${file}: requirement '${id ?? "?"}' antecedent.check_id must be a non-empty string`);
+    if (typeof ant.audit_id !== "string" || !ant.audit_id.trim()) {
+      errors.push(`${file}: requirement '${id ?? "?"}' antecedent.audit_id must be a non-empty string`);
       return;
     }
-    if (!CHECK_ID_RE.test(ant.check_id)) {
-      errors.push(`${file}: requirement '${id ?? "?"}' antecedent.check_id '${ant.check_id}' is not lowercase kebab-case`);
+    if (!AUDIT_ID_RE.test(ant.audit_id)) {
+      errors.push(`${file}: requirement '${id ?? "?"}' antecedent.audit_id '${ant.audit_id}' is not lowercase kebab-case`);
     }
     return;
   }
   if (keys.length !== 1 || keys[0] !== "if" || typeof app.if !== "string" || !app.if.trim()) {
-    errors.push(`${file}: requirement '${id ?? "?"}' has malformed applicability object (expected {if: "<reason>"} or {kind: "conditional", antecedent: {check_id: "<kebab>"}})`);
+    errors.push(`${file}: requirement '${id ?? "?"}' has malformed applicability object (expected {if: "<reason>"} or {kind: "conditional", antecedent: {audit_id: "<kebab>"}})`);
   }
 }
 
@@ -135,7 +135,7 @@ function validateRequirement(entry, file, seenIds, errors) {
   }
   if (typeof applicability === "string") {
     if (applicability !== "universal") {
-      errors.push(`${file}: requirement '${id ?? "?"}' has unknown applicability string '${applicability}' (expected "universal", {if: "<reason>"}, or {kind: "conditional", antecedent: {check_id: "<kebab>"}})`);
+      errors.push(`${file}: requirement '${id ?? "?"}' has unknown applicability string '${applicability}' (expected "universal", {if: "<reason>"}, or {kind: "conditional", antecedent: {audit_id: "<kebab>"}})`);
     }
   } else if (typeof applicability === "object" && applicability !== null && !Array.isArray(applicability)) {
     validateApplicabilityObject(applicability, id, file, errors);

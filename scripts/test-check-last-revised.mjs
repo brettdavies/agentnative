@@ -84,7 +84,7 @@ const CASES = [
     name: "applicability-shape-change-date-stale",
     headContent: BASE_FM.replace(
       "applicability: universal",
-      "applicability:\n      kind: conditional\n      antecedent:\n        check_id: p1-some-check",
+      "applicability:\n      kind: conditional\n      antecedent:\n        audit_id: p1-some-check",
     ),
     expectPass: false,
     expectMatch: /not today/,

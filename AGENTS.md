@@ -17,7 +17,7 @@ Source of truth for the 8 principles that define agent-native CLIs. Downstream c
   agent-facing skill bundle (Claude Code / Cursor / Codex / etc.). Vendors `principles/*.md`, `VERSION`, and
   `CHANGELOG.md` into `bundle/spec/` via `scripts/sync-spec.sh` (commit-a-copy, not submodule). The bundle teaches
   agents how to invoke `anc` and supplies surrounding context (templates, references, getting-started); it does not
-  check compliance itself.
+  audit compliance itself.
 
 This repo does **not** build anything. It publishes canonical markdown. `VERSION` + per-principle `last-revised:`
 frontmatter are the machine-readable contract with downstream repos.
@@ -34,14 +34,14 @@ frontmatter are the machine-readable contract with downstream repos.
 - `CHANGELOG.md` — spec evolution, grouped by principle.
 - `CONTRIBUTING.md` — canonical routing doc across the four-repo ecosystem; graduated AI-disclosure gate; coupled
   release protocol.
-- `LICENSE` — CC BY 4.0 for spec text. The `anc` checker tool is separately licensed (MIT / Apache-2.0) in its own repo.
+- `LICENSE` — CC BY 4.0 for spec text. The `anc` auditor tool is separately licensed (MIT / Apache-2.0) in its own repo.
 - `.github/ISSUE_TEMPLATE/` — pressure-test, grading-finding, spec-question. All require AI disclosure; pressure-tests
   and PRs require human co-sign.
 - `.github/rulesets/protect-main.json`, `protect-dev.json` — branch protection, applied via `gh api` (see
   `RELEASES.md`).
 - `docs/decisions/` — named decision records cited from principle prose and repo docs.
   [`p1-behavioral-must.md`](docs/decisions/p1-behavioral-must.md) records the reasoning behind P1's behavioral-MUST
-  wording and the verification boundary automated checks can claim.
+  wording and the verification boundary automated audits can claim.
 
 ## Voice
 
@@ -67,7 +67,7 @@ Tailnet, gracefully skipping LT when the service is unreachable.
   (clarity, examples, typos) do **not** bump the date.
 - Bump `VERSION` alongside the principle edit: MINOR for MUST changes, PATCH for SHOULD/MAY changes.
 - Every PR that touches a principle's requirement tiers MUST include either a link to a companion PR on
-  `agentnative-cli` OR the text "no check changes needed" with brief justification. Enforced by the PR template, not by
+  `agentnative-cli` OR the text "no audit changes needed" with brief justification. Enforced by the PR template, not by
   CI.
 - Do not introduce a formal RFC process, stage gating, or GitHub Discussions. The governance model is single-author spec
   authority with AI-native contribution — proportionate to current scale. See `CONTRIBUTING.md`.
@@ -116,7 +116,7 @@ symlink is missing, recreate it: `ln -s ~/dev/solutions-docs docs/solutions`.
 
 | Location                                                    | What lives there                                                                                                                                    | Why it matters here                                                                                                                                                                                              |
 | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `~/dev/agentnative-cli` (`brettdavies/agentnative-cli`)     | Rust `anc` linter, principle registry mirroring spec requirements, scorecard emitter                                                                | Consumes this repo's `VERSION` + principle IDs. Coupled-release norm links spec PRs to checker PRs.                                                                                                              |
+| `~/dev/agentnative-cli` (`brettdavies/agentnative-cli`)     | Rust `anc` linter, principle registry mirroring spec requirements, scorecard emitter                                                                | Consumes this repo's `VERSION` + principle IDs. Coupled-release norm links spec PRs to auditor PRs.                                                                                                              |
 | `~/dev/agentnative-site` (`brettdavies/agentnative-site`)   | anc.dev website, markdown-first SSG, `/scorecards` leaderboard                                                                                      | Syncs `principles/*.md`, `VERSION`, `CHANGELOG.md` into `content/` via commit-a-copy script. Site copy is written manually from this repo, not build-time imported.                                              |
 | `~/dev/solutions-docs` (`brettdavies/solutions-docs`)       | Shared cross-repo solutions archive                                                                                                                 | Reachable via `docs/solutions/` symlink. Search before researching from scratch.                                                                                                                                 |
 | `~/dev/agentnative-skill` (`brettdavies/agentnative-skill`) | Agent-facing skill bundle: vendored spec at `bundle/spec/`, framework idioms (Rust/clap + Python/Go/Node), starter templates, getting-started loops | Vendors this repo's `principles/*.md`, `VERSION`, `CHANGELOG.md` into `bundle/spec/` via commit-a-copy. Teaches agents (Claude Code, Cursor, Codex) how to invoke `anc` and remediate findings against the spec. |

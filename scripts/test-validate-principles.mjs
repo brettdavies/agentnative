@@ -42,7 +42,7 @@ const CASES = [
   {
     name: "conditional-compound-antecedent",
     dir: path.join(HERE, "__fixtures__/conditional-compound-antecedent"),
-    expect: /antecedent has unexpected keys: op, checks/,
+    expect: /antecedent has unexpected keys: op, audits/,
   },
 ];
 

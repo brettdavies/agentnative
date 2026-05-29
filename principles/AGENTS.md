@@ -18,7 +18,7 @@ Principle prose is enforced by the Vale rule packs at `styles/brand/` (universal
 - One file per principle: `p<n>-<slug>.md`, eight in total.
 - This file (`AGENTS.md`), documenting the per-file shape and pressure-test protocol.
 
-**Does not belong here:** website copy, CLI check implementations, research extracts, per-tool scorecards, or any
+**Does not belong here:** website copy, CLI audit implementations, research extracts, per-tool scorecards, or any
 document that is downstream of a principle rather than being one.
 
 ## Per-file structure
@@ -64,8 +64,8 @@ Fields:
 - `id`: `p<n>-<level>-<slug>`, lowercase-kebab, unique across all eight files.
 - `level`: `must`, `should`, or `may` (lowercase). RFC 2119 semantics.
 - `applicability`: one of three shapes. `universal` (bare string) applies to every CLI. `{if: "<reason>"}` is the
-  prose-only conditional: the verifier interprets the reason via heuristics. `{kind: conditional, antecedent: {check_id:
-  "<id>"}}` is the machine-checkable conditional: the named `check_id` resolves to a verifier whose status drives
+  prose-only conditional: the verifier interprets the reason via heuristics. `{kind: conditional, antecedent: {audit_id:
+  "<id>"}}` is the machine-auditable conditional: the named `audit_id` resolves to a verifier whose status drives
   whether the consequent applies. See [Conditional applicability](#conditional-applicability) below for the propagation
   table and worked examples.
 - `summary`: one sentence. Duplicated between frontmatter and prose; the prose bullet can expand with examples, but the
@@ -78,14 +78,14 @@ sync is a review responsibility (enforced by the CI validator, see below).
 
 A requirement is conditional when it binds only if some prerequisite feature is present. The frontmatter carries two
 shapes for this: `{if: "<reason>"}` for cases where no verifier yet probes the prerequisite, and `{kind: conditional,
-antecedent: {check_id: "<id>"}}` for cases where a verifier does. Both shapes coexist; an author chooses the
-machine-checkable form whenever a `check_id` for the prerequisite already exists in the CLI's verifier catalog. The
+antecedent: {audit_id: "<id>"}}` for cases where a verifier does. Both shapes coexist; an author chooses the
+machine-auditable form whenever an `audit_id` for the prerequisite already exists in the CLI's verifier catalog. The
 `{if: "<reason>"}` form remains valid for prerequisites the CLI does not yet probe — verifier authors interpret the
-reason string via heuristics until a dedicated check lands.
+reason string via heuristics until a dedicated audit lands.
 
-The `check_id` value is a verifier identifier, not a requirement `id`. A single verifier may underwrite several
+The `audit_id` value is a verifier identifier, not a requirement `id`. A single verifier may underwrite several
 requirements (e.g., a probe that detects `--output json` underwrites both a tier-MUST output requirement and a tier-MUST
-schema-print requirement). The CLI's verifier catalog is the namespace of legal `check_id` values; the spec's validator
+schema-print requirement). The CLI's verifier catalog is the namespace of legal `audit_id` values; the spec's validator
 checks shape only (lowercase kebab) and leaves existence checking to the matrix builder.
 
 #### Worked example: conditional MUST
@@ -97,7 +97,7 @@ checks shape only (lowercase kebab) and leaves existence checking to the matrix 
   applicability:
     kind: conditional
     antecedent:
-      check_id: p2-json-output
+      audit_id: p2-json-output
   summary: "CLIs that emit structured output expose the output schema via a `schema` subcommand or `--schema` flag."
 ```
 
@@ -110,7 +110,7 @@ checks shape only (lowercase kebab) and leaves existence checking to the matrix 
   applicability:
     kind: conditional
     antecedent:
-      check_id: p2-json-output
+      audit_id: p2-json-output
   summary: "Output schemas are also exported to a stable file path so consumers pin without invoking the tool."
 ```
 
@@ -137,7 +137,7 @@ verifier emits per requirement row. Under the 5-status taxonomy that predates th
 
 The conditional asks "is the prerequisite feature present at all?" — not "is it fully compliant?" A tool with broken
 JSON output still has JSON output, so the schema requirement still applies (and may also fail). Indeterminate antecedent
-statuses (`skip`, `error`) propagate to the consequent because a dependent check cannot be meaningfully evaluated when
+statuses (`skip`, `error`) propagate to the consequent because a dependent audit cannot be meaningfully evaluated when
 its prerequisite is unmeasured.
 
 Rows that need stricter propagation than the default (for example, requiring the prerequisite to be fully working before
@@ -156,8 +156,8 @@ rather than silently coerced.
 
 #### One result per requirement row
 
-The verifier emits one result entry per requirement row (frontmatter `id`), not one per `check_id`. A single probe whose
-`check_id` is shared across multiple requirements produces a separate result for each row, carrying that row's `id` and
+The verifier emits one result entry per requirement row (frontmatter `id`), not one per `audit_id`. A single probe whose
+`audit_id` is shared across multiple requirements produces a separate result for each row, carrying that row's `id` and
 `level` (as `tier`) in the result entry. The scorecard is self-contained: third-party consumers compute scores from the
 scorecard alone without joining against the coverage matrix.
 
@@ -182,7 +182,7 @@ Every PR touching `principles/**` runs `.github/workflows/validate-principles.ym
 - The number of MUST / SHOULD / MAY entries in `requirements[]` equals the number of MUST / SHOULD / MAY bullets in the
   prose.
 - `applicability` is one of: the string `universal`, an object `{if: "<reason>"}`, or an object `{kind: conditional,
-  antecedent: {check_id: "<kebab>"}}`. Compound antecedents (`op`/`checks`) are rejected — they are deferred to v2.
+  antecedent: {audit_id: "<kebab>"}}`. Compound antecedents (`op`/`audits`) are rejected — they are deferred to v2.
 
 Drift in any of these fails the check with an actionable message naming the file and the specific mismatch.
 
@@ -238,7 +238,7 @@ norm documented in [`CONTRIBUTING.md`](../CONTRIBUTING.md#coupled-release-protoc
 
 - A link to a companion PR on `brettdavies/agentnative-cli` (the CLI's frontmatter-derived registry must accept the
   change, or a drift test fires), or
-- The text "no check changes needed" with a brief justification.
+- The text "no audit changes needed" with a brief justification.
 
 This is a documented norm, not a CI gate. The PR template enforces the field; reviewers enforce the substance.
 
