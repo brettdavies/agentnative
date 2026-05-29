@@ -40,7 +40,7 @@ gh pr create --base dev --title "feat(scope): what changed"
 ## PR body
 
 Every PR (feature, fix, docs, release) uses `.github/pull_request_template.md` verbatim. Five sections, no inventions:
-`## Summary`, `## Changelog`, `## Linked check review`, `## Human reviewer`, `## AI disclosure`.
+`## Summary`, `## Changelog`, `## Linked audit review`, `## Human reviewer`, `## AI disclosure`.
 
 - **No explainer prose anywhere in the body.** User-facing substance only.
 - **Summary describes the net diff only** — what merged `main` looks like vs the base branch. Not commit history,
@@ -50,7 +50,7 @@ Every PR (feature, fix, docs, release) uses `.github/pull_request_template.md` v
   push, not audit-trailed.
 - **Changelog** subsections (`### Added` / `### Changed` / `### Fixed` / `### Removed` / `### Security`): 1-5 bullets
   each, delete empty subsections, each bullet starts with a verb.
-- **Linked check review** carries the companion-PR URL on `agentnative-cli` (or "no check changes needed" with
+- **Linked audit review** carries the companion-PR URL on `agentnative-cli` (or "no audit changes needed" with
   justification) per the coupled-release norm in `principles/AGENTS.md`. Required for any PR that adds, removes, or
   re-tiers a `requirements[]` entry.
 - **No AI attribution** in commits or PR bodies.

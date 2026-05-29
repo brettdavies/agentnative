@@ -17,11 +17,11 @@ bands defined here.
 ## Scope: shipped-binary behavior only
 
 A public score reflects how the **shipped binary behaves**, observed by running it (`anc audit --command <binary>`).
-Source-code and repository checks (static analysis of a project's source tree, manifest inspection, bundle presence) do
+Source-code and repository audits (static analysis of a project's source tree, manifest inspection, bundle presence) do
 **not** contribute to the public score. What a tool's source code looks like does not change how an agent experiences
 the installed binary. The binary is what agents run.
 
-Concretely, only behavioral-layer requirement rows enter the formula. Source-layer and project-layer checks are out of
+Concretely, only behavioral-layer requirement rows enter the formula. Source-layer and project-layer audits are out of
 scope for the leaderboard; they belong to a future advisory mode (`anc` run against a source tree to help authors
 improve before release), not to the published score. This holds uniformly: every tool on the leaderboard, including
 `anc` itself, is scored from binary behavior alone, so the comparison is like-for-like.
@@ -43,7 +43,7 @@ seven statuses in three groups:
 
 `opt_out` is in the denominator on purpose: a deliberate decision not to adopt a behavior is a real signal worth
 reflecting, distinct from a behavior that simply does not apply (`n_a`) or could not be measured (`skip`). The
-distinction is the whole point of the seven-status taxonomy: it lets the score exclude genuinely inapplicable checks
+distinction is the whole point of the seven-status taxonomy: it lets the score exclude genuinely inapplicable audits
 without letting deliberate non-adoption hide.
 
 ## Formula
@@ -69,7 +69,7 @@ between MUST/SHOULD/MAY without redefining the formula. The current published we
 w(must) = w(should) = w(may) = 1
 ```
 
-Flat weights keep the score legible (every behavioral check counts the same) and avoid over- or under-rewarding
+Flat weights keep the score legible (every behavioral audit counts the same) and avoid over- or under-rewarding
 optional-tier adoption relative to the mandatory baseline. Under flat weights the formula reduces to a simple
 credit-weighted ratio:
 

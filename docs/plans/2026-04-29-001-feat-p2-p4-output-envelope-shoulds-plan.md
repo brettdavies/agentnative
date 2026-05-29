@@ -19,7 +19,7 @@ CLI output envelope pattern" in `docs/solutions/architecture-patterns/anc-cli-ou
 Three changes:
 
 1. **Correct `p2-must-json-errors`** — current spec says JSON errors go to **stderr**; the implementation reality (`anc
-   check --output json` emits structured `error` status entries on stdout, and the project-wide envelope pattern doc
+   audit --output json` emits structured `error` status entries on stdout, and the project-wide envelope pattern doc
    puts the success/error envelope on stdout) is **stdout**. The MUST as written is behind the implementation. Fix the
    MUST to require stdout.
 2. **Add `p2-should-output-applies-to-every-subcommand`** — make explicit that `--output` is per-subcommand, not just a
@@ -41,7 +41,7 @@ The output convention has drifted between three artifacts:
 | Artifact                                                                                                    | What it says                                                                                                                                    | Conflict with the others                              |
 | ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
 | `principles/p2-structured-parseable-output.md` (`p2-must-json-errors`)                                      | "errors are emitted as JSON (to stderr)"                                                                                                        | Disagrees with implementation and pattern doc         |
-| `agentnative-cli` source (`anc check --output json`)                                                        | Emits a single structured scorecard on **stdout** that includes `error` status entries inline                                                   | Disagrees with the spec MUST                          |
+| `agentnative-cli` source (`anc audit --output json`)                                                        | Emits a single structured scorecard on **stdout** that includes `error` status entries inline                                                   | Disagrees with the spec MUST                          |
 | `docs/solutions/architecture-patterns/anc-cli-output-envelope-pattern-2026-04-29.md` (umbrella pattern doc) | "Stdout always carries a structured envelope when `--output json` is set. The `status` field switches the payload" — for both success and error | Aligns with implementation, contradicts the spec MUST |
 
 The implementation and the new umbrella pattern doc agree. The spec is the outlier. This plan brings the spec into
@@ -89,7 +89,7 @@ machine-typed identifier as a separate field. The implementation already does th
   After this spec ships:
 - `agentnative-cli` runs `scripts/sync-spec.sh`, regenerates `REQUIREMENTS` via `build.rs`, adds entries to
   `src/principles/registry.rs` for the new SHOULD ids (`p2-should-output-applies-to-every-subcommand`,
-  `p4-should-typed-error-reason`), and adds source checks that enforce them. The MUST correction (R1) ripples through
+  `p4-should-typed-error-reason`), and adds source audits that enforce them. The MUST correction (R1) ripples through
   the existing JSON error path in `src/scorecard/mod.rs` and any verb that emits errors via stderr in JSON mode.
 - `agentnative-skill` runs `scripts/sync-spec.sh` to refresh the bundled spec content.
 - `agentnative-site` runs `scripts/sync-spec.sh` to refresh `content/` for the website.
@@ -117,7 +117,7 @@ machine-typed identifier as a separate field. The implementation already does th
 - **JSONL streaming envelope shape** — `p2-must-output-flag` already mentions `jsonl`, but the streaming envelope
   contract (per-line shape, when to emit a final summary line) is not specified. Out of scope here; tracked as a
   separate plan once a streaming verb is shipped in `agentnative-cli`.
-- **Cross-spec check that flag-set is consistent across verbs** — beyond R2's SHOULD, a stronger MUST that all verbs in
+- **Cross-spec audit that flag-set is consistent across verbs** — beyond R2's SHOULD, a stronger MUST that all verbs in
   a multi-verb CLI use the same `--output`/`--quiet`/`--dry-run` flag set is interesting but premature. Wait for
   evidence that the SHOULD is insufficient.
 
@@ -147,8 +147,8 @@ machine-typed identifier as a separate field. The implementation already does th
 - **`agentnative-cli` eng-review of `anc skill install`** —
   `agentnative-cli/docs/plans/2026-04-29-002-feat-skill-subcommand-plan.md` `## GSTACK REVIEW REPORT` and `## Plan
   Rewrite Brief` sections. Decision lineage: D2, C1, OV1.
-- **Implementation verification** — `anc check . --output json` in `agentnative-cli`: error status entries appear on
-  stdout in the scorecard's `groups[].checks[].status: "error"`, not on stderr.
+- **Implementation verification** — `anc audit . --output json` in `agentnative-cli`: error status entries appear on
+  stdout in the scorecard's `groups[].audits[].status: "error"`, not on stderr.
 
 ### Versioning policy
 
@@ -258,7 +258,7 @@ clarification) are subsumed into the same release.
 - **U6. Coupled-release tracking (R8)**
 - **Files:** None in this repo. Filed as separate planning work in each downstream repo after the spec PR merges.
 - **Approach:** Open three issues (or one tracking issue with three checkboxes) in this repo's tracker covering:
-- `agentnative-cli` companion PR: `scripts/sync-spec.sh`, registry entries, source checks for the new SHOULDs,
+- `agentnative-cli` companion PR: `scripts/sync-spec.sh`, registry entries, source audits for the new SHOULDs,
   reconciliation of any stderr-emitting JSON error path with the new MUST.
 - `agentnative-skill` companion PR: `scripts/sync-spec.sh` only (no semantic changes; bundled spec refresh).
 - `agentnative-site` companion PR: `scripts/sync-spec.sh` only (content refresh for the website).
@@ -274,7 +274,7 @@ clarification) are subsumed into the same release.
 - **Schema impact:** `validate-principles.mjs` should pass unchanged (the schema already accepts SHOULD-tier entries
   with the standard fields). New regression fixtures in `scripts/__fixtures__/` are recommended but optional.
 - **Downstream impact:** Three coupled PRs (cli, skill, site). The `agentnative-cli` PR is the substantial one — it adds
-  registry entries and source checks for two new SHOULDs and reconciles any existing stderr-emitting JSON error path
+  registry entries and source audits for two new SHOULDs and reconciles any existing stderr-emitting JSON error path
   with the corrected MUST. The `agentnative-skill` and `agentnative-site` PRs are sync-only.
 - **Backward compatibility:** Tools that already follow the umbrella pattern (`anc` and any sibling that learned from
   the same review cycle) are now spec-compliant retroactively. Tools that strictly followed the previous

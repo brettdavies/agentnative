@@ -9,10 +9,10 @@ requirements:
     applicability:
       kind: conditional
       antecedent:
-        check_id: p1-feature-a
+        audit_id: p1-feature-a
         op: all_of
-        checks:
-          - check_id: p1-feature-b
+        audits:
+          - audit_id: p1-feature-b
     summary: 'v2 compound-antecedent sketch is rejected by the v1 validator (extra keys on antecedent).'
 ---
 
@@ -22,5 +22,5 @@ requirements:
 
 **MUST:**
 
-- The only MUST bullet. The frontmatter entry shapes its antecedent like Decision 2b's v2 sketch (`op`, `checks`); the
+- The only MUST bullet. The frontmatter entry shapes its antecedent like Decision 2b's v2 sketch (`op`, `audits`); the
   v1 validator must reject the extra keys.

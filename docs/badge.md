@@ -22,7 +22,7 @@ The badge is a public assertion that:
 3. The badge URL resolves to a live scorecard that any reader can re-run for verification.
 
 The badge is **not** a certification. There is no central authority granting or revoking it. The trust model is *trust
-and verify* (per the SoT contract, hybrid propagation): claims are checkable against live evidence, not gatekept by a
+and verify* (per the SoT contract, hybrid propagation): claims are auditable against live evidence, not gatekept by a
 third party.
 
 ## Eligibility
@@ -106,7 +106,7 @@ reader who wants to confirm what the badge is asserting.
 ## Honesty expectation
 
 Self-grading is acceptable. The badge URL is the trust mechanism: any reader can click through to the live scorecard,
-see the per-requirement pass/warn/fail breakdown, and re-run the linter locally with `anc check .` against the cited
+see the per-requirement pass/warn/fail breakdown, and re-run the linter locally with `anc audit .` against the cited
 spec version.
 
 A maintainer who embeds the badge MUST NOT modify the scorecard JSON to inflate the score. The scorecard contents are

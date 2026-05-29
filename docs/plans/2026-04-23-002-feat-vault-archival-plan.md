@@ -63,7 +63,7 @@ research/" needs an explicit answer before the edits run.
 ## Problem Frame
 
 Two SoTs is zero SoTs. The vault's `principles/AGENTS.md` explicitly labels that folder "the **upstream source of
-truth**" with four downstream surfaces (spec site, CLI checks, skill, and itself). That was correct in April 2026 before
+truth**" with four downstream surfaces (spec site, CLI audits, skill, and itself). That was correct in April 2026 before
 the spec repo existed; it became stale the moment
 [`2026-04-22-001-feat-requirement-id-frontmatter-plan.md`](2026-04-22-001-feat-requirement-id-frontmatter-plan.md)
 merged to `main` via v0.2.0 (commit `83bf0fd`, tag `v0.2.0`).
