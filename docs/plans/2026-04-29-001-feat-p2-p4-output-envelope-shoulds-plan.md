@@ -19,7 +19,7 @@ CLI output envelope pattern" in `docs/solutions/architecture-patterns/anc-cli-ou
 Three changes:
 
 1. **Correct `p2-must-json-errors`** — current spec says JSON errors go to **stderr**; the implementation reality (`anc
-   check --output json` emits structured `error` status entries on stdout, and the project-wide envelope pattern doc
+   audit --output json` emits structured `error` status entries on stdout, and the project-wide envelope pattern doc
    puts the success/error envelope on stdout) is **stdout**. The MUST as written is behind the implementation. Fix the
    MUST to require stdout.
 2. **Add `p2-should-output-applies-to-every-subcommand`** — make explicit that `--output` is per-subcommand, not just a
@@ -41,7 +41,7 @@ The output convention has drifted between three artifacts:
 | Artifact                                                                                                    | What it says                                                                                                                                    | Conflict with the others                              |
 | ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
 | `principles/p2-structured-parseable-output.md` (`p2-must-json-errors`)                                      | "errors are emitted as JSON (to stderr)"                                                                                                        | Disagrees with implementation and pattern doc         |
-| `agentnative-cli` source (`anc check --output json`)                                                        | Emits a single structured scorecard on **stdout** that includes `error` status entries inline                                                   | Disagrees with the spec MUST                          |
+| `agentnative-cli` source (`anc audit --output json`)                                                        | Emits a single structured scorecard on **stdout** that includes `error` status entries inline                                                   | Disagrees with the spec MUST                          |
 | `docs/solutions/architecture-patterns/anc-cli-output-envelope-pattern-2026-04-29.md` (umbrella pattern doc) | "Stdout always carries a structured envelope when `--output json` is set. The `status` field switches the payload" — for both success and error | Aligns with implementation, contradicts the spec MUST |
 
 The implementation and the new umbrella pattern doc agree. The spec is the outlier. This plan brings the spec into
@@ -147,7 +147,7 @@ machine-typed identifier as a separate field. The implementation already does th
 - **`agentnative-cli` eng-review of `anc skill install`** —
   `agentnative-cli/docs/plans/2026-04-29-002-feat-skill-subcommand-plan.md` `## GSTACK REVIEW REPORT` and `## Plan
   Rewrite Brief` sections. Decision lineage: D2, C1, OV1.
-- **Implementation verification** — `anc check . --output json` in `agentnative-cli`: error status entries appear on
+- **Implementation verification** — `anc audit . --output json` in `agentnative-cli`: error status entries appear on
   stdout in the scorecard's `groups[].checks[].status: "error"`, not on stderr.
 
 ### Versioning policy

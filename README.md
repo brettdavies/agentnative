@@ -25,7 +25,7 @@ locked. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for how to file each type.
 
 ```bash
 brew install brettdavies/tap/agentnative
-anc check .
+anc audit .
 ```
 
 Also installable via `cargo install agentnative` or platform-specific archives on
@@ -34,7 +34,7 @@ Also installable via `cargo install agentnative` or platform-specific archives o
 Example output (from running `anc` against its own source):
 
 ```text
-$ anc check .
+$ anc audit .
 P1 — Non-Interactive by Default
   [PASS] Non-interactive by default (p1-non-interactive)
   [PASS] Flags advertise env-var bindings in --help (p1-env-hints)
@@ -70,7 +70,7 @@ Code Quality
 33 checks: 26 pass, 2 warn, 1 fail, 4 skip, 0 error
 ```
 
-Run `anc check . --output json` for machine-readable output. Per-principle filtering via `anc check . --principle
+Run `anc audit . --output json` for machine-readable output. Per-principle filtering via `anc audit . --principle
 <1-7>`.
 
 ## Live leaderboard
