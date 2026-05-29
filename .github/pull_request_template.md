@@ -60,12 +60,12 @@
 
 -
 
-## Linked check review
+## Linked audit review
 
 <!-- REQUIRED for principle edits (any MUST/SHOULD/MAY tier add/remove/move).
      Paste ONE of:
 - A PR URL from brettdavies/agentnative-cli (e.g., https://github.com/brettdavies/agentnative-cli/pull/42)
-- "no check changes needed" with brief justification
+- "no audit changes needed" with brief justification
 -->
 
 ## Human reviewer

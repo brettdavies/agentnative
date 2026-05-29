@@ -63,7 +63,7 @@ doctrine, `agentnative` naming rationale) that currently live outside any public
 
 After this PR, the CLI's `src/principles/registry.rs` can be rewritten (in a companion PR) to read the spec's
 frontmatter rather than hardcode it — that turns the IDs into a one-way contract: spec publishes, CLI verifies drift,
-checker output cites the spec version it was built against.
+auditor output cites the spec version it was built against.
 
 ## Problem Frame
 
@@ -103,7 +103,7 @@ CONTRIBUTING.md, rulesets) already landed:
 - `principles/AGENTS.md` with authoring conventions.
 - Two decision records under `docs/decisions/`.
 - Frontmatter-validation CI workflow.
-- Coordinating the companion CLI PR (link it in the Linked-check-review field).
+- Coordinating the companion CLI PR (link it in the Linked-audit-review field).
 
 **Out of scope (separate feature branches):**
 
@@ -129,12 +129,12 @@ All four decisions are durable and captured in local memory at
 1. **Propagation:** hybrid — git tag is authoritative, `repository_dispatch` is advisory.
 2. **Per-requirement IDs:** SoT in this repo; CLI becomes drift check.
 3. **Versioning:** decoupled; CLI pins `SPEC_VERSION` at its own cadence.
-4. **Conformance:** trust-and-verify — spec offers GitHub badge; scorecards link to the live binary checker.
+4. **Conformance:** trust-and-verify — spec offers GitHub badge; scorecards link to the live binary auditor.
 
 ### Load-bearing references
 
 - `~/dev/agentnative/docs/coverage-matrix.md` — the 46-row authoritative list of requirement IDs, levels, applicability,
-  summaries, and which checks verify each. **This is the migration source** for R1; do NOT re-derive from principle
+  summaries, and which audits verify each. **This is the migration source** for R1; do NOT re-derive from principle
   prose (prose may have drifted from the CLI's canonical list).
 - `~/obsidian-vault/Projects/brettdavies-agentnative/principles/AGENTS.md` — the 5-section shape and pressure-test
   protocol. Adapt for this repo's scope (drop the CLI/site/skill propagation section; replace with a pointer to
@@ -189,8 +189,8 @@ Notes:
   `docs/decisions/naming-rationale.md`. Low ceremony; principle prose cites by filename.
 - **CI validation in node.** Minimal dep footprint; matches site-repo `build.mjs` pattern. Alternatives (Rust binary,
   Python) add toolchain to a prose-only repo.
-- **Companion CLI PR is required per coupled-release protocol.** This PR's `Linked check review` field must link to the
-  `agentnative-cli` PR URL — not "no check changes needed," because R1 changes the ID carrier that `registry.rs` reads.
+- **Companion CLI PR is required per coupled-release protocol.** This PR's `Linked audit review` field must link to the
+  `agentnative-cli` PR URL — not "no audit changes needed," because R1 changes the ID carrier that `registry.rs` reads.
 
 ## High-Level Technical Design
 
@@ -231,7 +231,7 @@ principle prose                                   │
 8. **Add `.github/workflows/validate-principles.yml`.** Node script walks `principles/`, validates each frontmatter
    against a JSON schema, checks ID uniqueness across files, and checks bullet-count parity per level.
 9. **Open the companion `agentnative-cli` PR.** Rewrites `registry.rs` to vendor + parse spec frontmatter. Link in this
-   PR's Linked-check-review field.
+   PR's Linked-audit-review field.
 
 Units 2–7 have no hard dependencies on each other after 1 lands; they can be parallel commits if preferred. Unit 8
 depends on Unit 2 (schema needs real frontmatter to validate). Unit 9 depends on Unit 2 (spec frontmatter must exist for
@@ -256,7 +256,7 @@ the CLI to vendor).
 - Both decision records exist and are linked from the principle prose / repo docs that depend on them.
 - `validate-principles.yml` runs green on this PR and fails on the deliberately-broken scenarios above (verified locally
   before CI).
-- Companion `agentnative-cli` PR URL is in this PR's Linked-check-review field.
+- Companion `agentnative-cli` PR URL is in this PR's Linked-audit-review field.
 
 ## Risks & Dependencies
 

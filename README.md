@@ -4,7 +4,7 @@ Eight principles for CLI tools operated by AI agents.
 
 AI agents operate CLIs differently than humans do. They can't answer interactive prompts, can't parse vague output, and
 can't recover from errors that don't say what to do next. The principles below define what *agent-native* means in RFC
-2119 language, with machine-readable `requirements[]` so a checker (and graders) can pin against the standard.
+2119 language, with machine-readable `requirements[]` so an auditor (and graders) can pin against the standard.
 
 **Early-stage spec.** Ideas, debate, and contributions are welcome: pressure-tests against any principle, real-CLI
 grading submissions, counter-examples that argue a tier sits wrong, or new principles that the genre is missing. The
@@ -67,7 +67,7 @@ P7 — Bounded Responses
 Code Quality
   [FAIL] No .unwrap() in source (code-unwrap)
 
-33 checks: 26 pass, 2 warn, 1 fail, 4 skip, 0 error
+33 audits: 26 pass, 2 warn, 1 fail, 4 skip, 0 error
 ```
 
 Run `anc audit . --output json` for machine-readable output. Per-principle filtering via `anc audit . --principle
@@ -139,7 +139,7 @@ honesty expectation, regression behavior.
 ## Decision records
 
 - [P1: behavioral MUST wording](docs/decisions/p1-behavioral-must.md): why the MUST describes observable behavior
-  instead of enumerating prompt and TUI APIs, and what the automated-check verification boundary is.
+  instead of enumerating prompt and TUI APIs, and what the automated-audit verification boundary is.
 
 ## Related
 
@@ -172,7 +172,7 @@ not from a single source.
   auto-fix runway), the [`agentnative-skill`](https://github.com/brettdavies/agentnative-skill) bundle that teaches
   agents how to invoke `anc` and remediate findings, the [live leaderboard](https://anc.dev/scorecards), the
   [score badge](docs/badge.md), and the cross-repo coupled-release norm. The principles above name the contract; this
-  tooling makes conformance verifiable so a CLI can claim agent-native and a reader can check.
+  tooling makes conformance verifiable so a CLI can claim agent-native and a reader can audit.
 
 Voice and identity decisions for the spec live in [`BRAND.md`](BRAND.md) and the spec-channel
 [`PRODUCT.md`](PRODUCT.md).
@@ -185,7 +185,7 @@ human co-sign policy for spec changes, and the coupled release protocol.
 ## License
 
 - **Spec text:** [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
-- **`anc` checker tool:** MIT or Apache-2.0
+- **`anc` auditor tool:** MIT or Apache-2.0
 - **Scripts under `scripts/`:** MIT or Apache-2.0
 
 See [LICENSE](LICENSE) for the full carve-out; per-file SPDX headers name the exact license per file.

@@ -22,7 +22,7 @@ The badge is a public assertion that:
 3. The badge URL resolves to a live scorecard that any reader can re-run for verification.
 
 The badge is **not** a certification. There is no central authority granting or revoking it. The trust model is *trust
-and verify* (per the SoT contract, hybrid propagation): claims are checkable against live evidence, not gatekept by a
+and verify* (per the SoT contract, hybrid propagation): claims are auditable against live evidence, not gatekept by a
 third party.
 
 ## Eligibility

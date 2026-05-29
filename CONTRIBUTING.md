@@ -32,7 +32,7 @@ standard takes positions because positions are useful; positions held without wi
 | Submit a grading finding                   | [agentnative](https://github.com/brettdavies/agentnative/issues/new?template=grading-finding.yml)         |
 | Ask a question about the spec              | [agentnative](https://github.com/brettdavies/agentnative/issues/new?template=spec-question.yml)           |
 | Report a false positive/negative in `anc`  | [agentnative-cli](https://github.com/brettdavies/agentnative-cli/issues/new?template=false-positive.yml)  |
-| Request a checker feature                  | [agentnative-cli](https://github.com/brettdavies/agentnative-cli/issues/new?template=feature-request.yml) |
+| Request an auditor feature                 | [agentnative-cli](https://github.com/brettdavies/agentnative-cli/issues/new?template=feature-request.yml) |
 | Report a scoring/CLI bug                   | [agentnative-cli](https://github.com/brettdavies/agentnative-cli/issues/new?template=scoring-bug.yml)     |
 | Report a site bug (rendering, performance) | [agentnative-site](https://github.com/brettdavies/agentnative-site/issues/new?template=site-bug.yml)      |
 
@@ -66,7 +66,7 @@ templates include a required field for the GitHub handle of the human reviewer.
 
 ## Coupled release protocol
 
-A principle revision is only complete when the corresponding checker has been reviewed. When submitting a PR that
+A principle revision is only complete when the corresponding auditor has been reviewed. When submitting a PR that
 changes a principle's MUST/SHOULD/MAY requirements:
 
 1. Open the PR against this repo (agentnative)
@@ -74,9 +74,9 @@ changes a principle's MUST/SHOULD/MAY requirements:
 
 - A link to the companion PR in `brettdavies/agentnative-cli` (e.g.,
   `https://github.com/brettdavies/agentnative-cli/pull/42`)
-- The text "no check changes needed" with a brief justification
+- The text "no audit changes needed" with a brief justification
 
-This ensures the spec and checker stay in sync. The spec version bumps when a principle's revision date changes.
+This ensures the spec and auditor stay in sync. The spec version bumps when a principle's revision date changes.
 
 ## Badge claim
 

@@ -33,6 +33,7 @@ Vasudevan
 agentic
 agentnative
 allowlist
+auditable
 backports
 booleans
 brettdavies

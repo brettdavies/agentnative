@@ -331,7 +331,7 @@ gh pr create --base main --head release/v0.2.0-frontmatter-contract --title "rel
 ```
 
 PR body: reference this plan, the shipped 001 plan, and the roadmap. Note that this is the first tagged release.
-Linked-check-review field: still "no companion PR yet; tracked in roadmap item 5" — the CLI PR now unblocks because
+Linked-audit-review field: still "no companion PR yet; tracked in roadmap item 5" — the CLI PR now unblocks because
 `main` has a stable SHA.
 
 **B4. After merge: watch the publish workflow.**
