@@ -106,4 +106,4 @@ and the principle contract release on different cadences.
 
 `sync-prose-tooling.sh` tracks this repo's `main` HEAD, not tagged releases. Prose tooling is shared infrastructure
 across channels, not pinned per-version. Edits land here first; consumer repos pick up the change in a follow-on commit
-(typically batched into a release branch or maintenance PR).
+(batched into a release branch or maintenance PR).
