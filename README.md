@@ -54,21 +54,21 @@ agents need it, the tiered requirements, evidence to look for, and anti-patterns
 
 ## Reading the spec
 
-Every principle file pairs a machine-readable frontmatter block with prose in a fixed order — Definition, Why Agents
-Need It, Requirements (MUST / SHOULD / MAY), Evidence, Anti-Patterns, and Pressure-test notes. Both halves are
-load-bearing: machines parse the frontmatter, humans read the prose, and a CI validator keeps the two in sync.
+Every principle file pairs a machine-readable frontmatter block with prose in a fixed order: Definition, Why Agents Need
+It, Requirements (MUST / SHOULD / MAY), Evidence, Anti-Patterns, and Pressure-test notes. Both halves are load-bearing:
+machines parse the frontmatter, humans read the prose, and a CI validator keeps the two in sync.
 
-The frontmatter carries a `requirements[]` array — one entry per MUST/SHOULD/MAY bullet — that auditors and graders pin
+The frontmatter carries a `requirements[]` array (one entry per MUST/SHOULD/MAY bullet) that auditors and graders pin
 against instead of prose. Each entry has:
 
-- **`id`** — a stable `p<n>-<level>-<slug>` identifier, unique across all eight files. Tooling references these, so they
+- **`id`**: a stable `p<n>-<level>-<slug>` identifier, unique across all eight files. Tooling references these, so they
   survive prose edits.
-- **`level`** — `must`, `should`, or `may`, with [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119) /
+- **`level`**: `must`, `should`, or `may`, with [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119) /
   [RFC 8174](https://www.rfc-editor.org/rfc/rfc8174) semantics.
-- **`applicability`** — `universal`, or conditional: gated on a prose `{if: "<reason>"}` clause, or on a
+- **`applicability`**: `universal`, or conditional: gated on a prose `{if: "<reason>"}` clause, or on a
   machine-checkable `{kind: conditional, antecedent: {audit_id: "<id>"}}` whose named verifier decides whether the
   requirement binds.
-- **`summary`** — one sentence, mirrored by the prose bullet.
+- **`summary`**: one sentence, mirrored by the prose bullet.
 
 [`principles/AGENTS.md`](principles/AGENTS.md) is the full authoring and governance contract: frontmatter fields,
 requirement-ID conventions, the conditional-applicability propagation table, the `last-revised` discipline, the status
@@ -110,6 +110,10 @@ CLI tools whose scorecards meet the 70% floor (see [Scoring](#scoring)) can embe
 [![agent-native](https://anc.dev/badge/<tool>.svg)](https://anc.dev/scorecards/<tool>)
 ```
 
+For example, `anc` is scored against the spec and embeds its own live badge:
+
+[![agent-native](https://anc.dev/badge/anc.svg)](https://anc.dev/scorecards/anc)
+
 The badge text reflects the tool's current score from the live scorecard; clicking through shows the per-requirement
 breakdown. See [`docs/badge.md`](docs/badge.md) for the claim convention: eligibility, embed URL, version pinning,
 honesty expectation, regression behavior.
@@ -124,24 +128,24 @@ honesty expectation, regression behavior.
 **Sibling repos.** This spec is the source of truth at the top of the chain; [`docs/syncs.md`](docs/syncs.md) maps how
 its content propagates downstream.
 
-- [agentnative-cli](https://github.com/brettdavies/agentnative-cli) — the `anc` linter that scores any CLI against these
+- [agentnative-cli](https://github.com/brettdavies/agentnative-cli): the `anc` linter that scores any CLI against these
   principles.
-- [agentnative-skill](https://github.com/brettdavies/agentnative-skill) — the agent-facing skill bundle that vendors the
+- [agentnative-skill](https://github.com/brettdavies/agentnative-skill): the agent-facing skill bundle that vendors the
   principles and teaches agents to invoke `anc` and remediate findings.
-- [agentnative-site](https://github.com/brettdavies/agentnative-site) — the website source behind
+- [agentnative-site](https://github.com/brettdavies/agentnative-site): the website source behind
   [anc.dev](https://anc.dev) and the live leaderboard.
 
 **In this repo.**
 
-- [`principles/`](principles/) — the eight principle files (the standard itself).
-- [`principles/AGENTS.md`](principles/AGENTS.md) — authoring and governance contract: frontmatter shape, requirement
-  IDs, conditional applicability, status lifecycle, coupled-release protocol.
-- [`principles/scoring.md`](principles/scoring.md) — leaderboard scoring formula, status taxonomy, eligibility floor,
+- [`principles/`](principles/): the eight principle files (the standard itself).
+- [`principles/AGENTS.md`](principles/AGENTS.md): authoring and governance contract: frontmatter shape, requirement IDs,
+  conditional applicability, status lifecycle, coupled-release protocol.
+- [`principles/scoring.md`](principles/scoring.md): leaderboard scoring formula, status taxonomy, eligibility floor,
   cohort bands.
-- [`docs/badge.md`](docs/badge.md) — badge claim convention: eligibility, embed shapes, version pinning, regression
+- [`docs/badge.md`](docs/badge.md): badge claim convention: eligibility, embed shapes, version pinning, regression
   behavior.
-- [`docs/decisions/`](docs/decisions/) — decision records for non-obvious spec choices.
-- [`CONTRIBUTING.md`](CONTRIBUTING.md) — contribution shapes, tier breakdown, AI disclosure, human co-sign, release
+- [`docs/decisions/`](docs/decisions/): decision records for non-obvious spec choices.
+- [`CONTRIBUTING.md`](CONTRIBUTING.md): contribution shapes, tier breakdown, AI disclosure, human co-sign, release
   protocol. [`CHANGELOG.md`](CHANGELOG.md) is the version history; [`RELEASES.md`](RELEASES.md) documents how a release
   is cut.
 
