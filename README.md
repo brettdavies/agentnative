@@ -31,78 +31,86 @@ anc audit .
 Also installable via `cargo install agentnative` or platform-specific archives on
 [GitHub Releases](https://github.com/brettdavies/agentnative-cli/releases).
 
-Example output (from running `anc` against its own source):
+Example output — behavioral audits only (the layer that drives the public score), `anc` run against its own source:
 
 ```text
-$ anc audit .
+$ anc audit . --binary
+
 P1 — Non-Interactive by Default
-  [PASS] Non-interactive by default (p1-non-interactive)
-  [PASS] Flags advertise env-var bindings in --help (p1-env-hints)
-  [PASS] Secret-bearing flags expose stdin or *-file companion (p1-secret-non-leaky-path)
-  [PASS] No interactive prompt dependencies (p1-non-interactive-source)
+  [PASS] Non-interactive by default (p1-must-no-interactive) (must)
+  [SKIP] Non-interactive gate flag advertised in --help (p1-must-no-interactive) (must)
+         target satisfies P1 via alternative gate (help-on-bare or stdin-primary)
+  [PASS] Flags advertise env-var bindings in --help (p1-must-env-var) (must)
+  [PASS] Secret-bearing flags expose stdin or *-file companion (p1-must-secret-non-leaky-path) (must)
+  [PASS] `--help` advertises default values for flags (p1-should-defaults-in-help) (should)
+  [PASS] Rich-TUI affordance for TTY contexts (p1-may-rich-tui) (may)
 
 P2 — Structured Output
-  [PASS] Structured-output CLI exposes its schema at runtime (p2-schema-print)
-  [PASS] --json / --jsonl short aliases for --output (p2-json-aliases)
-  [PASS] Output schema exported to a stable file path (p2-schema-file)
-  [WARN] Structured output support (p2-json-output)
-         --output/--format flag detected but could not validate JSON via safe probes
+  [PASS] Structured output support (p2-must-output-flag) (must)
+  [PASS] Structured-output CLI exposes its schema at runtime (p2-must-schema-print) (must)
+  [PASS] --json / --jsonl short aliases for --output (p2-should-json-aliases) (should)
+  [PASS] `--raw` flag for pipe-safe unformatted output (p2-may-raw-flag) (may)
+  [SKIP] `--output` advertises additional formats beyond text/json (p2-may-more-formats) (may)
+         no `--output` or `--format` flag advertised; vacuous skip for MAY-tier extra formats.
+  [PASS] Bad invocation exits with structured usage-error code (2) (p2-must-exit-codes) (must)
+  [PASS] Errors emit JSON envelope with `error`/`kind`/`message` under `--output json` (p2-must-json-errors) (must)
+  [PASS] JSON success and error envelopes share their non-payload key set (p2-should-consistent-envelope) (should)
 
 P3 — Progressive Help
-  [PASS] Help flag produces useful output (p3-help)
-  [PASS] Version flag works (p3-version)
+  [PASS] Help flag produces useful output (p3-must-top-level-examples) (must)
+  [PASS] Version flag works (`--version` plus short alias) (p3-must-version) (must)
+  [PASS] Version flag works (`--version` plus short alias) (p3-should-version-short) (should)
+  [PASS] `examples` subcommand or `--examples` flag for curated usage patterns (p3-may-examples-subcommand) (may)
+  [PASS] Short `-h` summary differs from `--help` long form (p3-should-about-long-about) (should)
+  [PASS] Each subcommand's `--help` ships at least one invocation example (p3-must-subcommand-examples) (must)
+  [PASS] Help text pairs human and `--output json` example invocations (p3-should-paired-examples) (should)
 
 P4 — Actionable Errors
-  [PASS] Structured error types (p4-error-types)
-  [PASS] Exit codes use named constants (p4-exit-codes)
-  [PASS] No process::exit outside main (p4-process-exit)
+  [PASS] Rejects invalid arguments (p4-must-exit-code-mapping) (must)
+  [PASS] Error messages include a hint or remediation phrase (p4-must-actionable-errors) (must)
+  [PASS] `--output json` produces JSON-formatted errors (p4-should-json-error-output) (should)
 
 P5 — Safe Retries
-  [PASS] Dry-run flag for write operations (p5-dry-run)
+  [SKIP] Destructive subcommands require `--force` or `--yes` (p5-must-force-yes) (must)
+         no destructive subcommands detected; MUST applies conditionally to CLIs with destructive operations.
+  [SKIP] Read and write surfaces are both visible in subcommand list (p5-must-read-write-distinction) (must)
+         no recognizable read or write subcommand verbs; the read/write distinction is unobservable from the help surface alone.
 
 P6 — Composable Structure
-  [PASS] Handles SIGPIPE gracefully (p6-sigpipe)
-  [PASS] Subcommand verbs follow community-standard names (p6-standard-names)
-  [PASS] Long-running CLI handles SIGTERM (p6-sigterm)
-  [PASS] Shell completions support (p6-completions)
-  [PASS] AGENTS.md exists (p6-agents-md)
+  [PASS] Handles SIGPIPE gracefully (p6-must-sigpipe) (must)
+  [SKIP] Pager-using CLI ships --no-pager escape hatch (p6-must-no-pager) (must)
+         no pager signal (less/more/$PAGER/--pager) in --help
+  [PASS] Respects NO_COLOR (p6-must-no-color) (must)
+  [PASS] Subcommand verbs follow community-standard names (p6-may-standard-names) (may)
+  [PASS] `--color` flag for explicit color control (p6-may-color-flag) (may)
+  [PASS] Input-accepting commands read from stdin when no file is given (p6-should-stdin-input) (should)
+  [WARN] Subcommand naming follows a consistent verb/noun convention (p6-should-consistent-naming) (should)
+         subcommand naming mixes verb-first (1) and noun-first (2) patterns. SHOULD-tier — pick `verb noun` or `noun verb` and apply it consistently so agents can predict names. Inspect `--help` to confirm; the verb list is a heuristic.
+  [PASS] Operations are subcommands, not verb-shaped flags (p6-should-subcommand-operations) (should)
 
 P7 — Bounded Responses
-  [PASS] Quiet mode available (p7-quiet)
-  [PASS] No naked println!/print! outside output modules (p7-naked-println)
+  [PASS] Quiet mode available (p7-must-quiet) (must)
+  [PASS] `--verbose` flag for diagnostic escalation (p7-should-verbose) (should)
+  [SKIP] `--limit` / `--max-results` flag for list operations (p7-should-limit) (should)
+         no list-style subcommand detected (list/ls/search/query/find/show/get); vacuous skip for the list-only SHOULD.
+  [SKIP] Cursor-based pagination flags for list traversal (p7-may-cursor-pagination) (may)
+         no list-style subcommand detected; vacuous skip for the list-only MAY.
+  [SKIP] `--timeout` flag for long-running operations (p7-should-timeout) (should)
+         no long-running subcommand detected (serve/daemon/watch/tail/monitor/follow/run/start/stream); vacuous skip for the conditional SHOULD.
+  [PASS] Help text advertises TTY-aware verbosity behavior (p7-may-auto-verbosity) (may)
 
 P8 — Discoverable Skill Bundles
-  [PASS] Skill bundle has install path (`tool skill install [<host>]`) (p8-bundle-install)
-  [PASS] Top-level AGENTS.md / SKILL.md bundle present (p8-bundle-exists)
+  [PASS] Skill bundle has install path (`tool skill install [<host>]`) (p8-must-bundle-install) (must)
+  [PASS] `skill install --all` for multi-runtime install (p8-may-install-all) (may)
+  [PASS] `skill update` / `skill upgrade` for bundle refresh (p8-may-bundle-update) (may)
 
-Code Quality
-  [PASS] No .unwrap() in source (code-unwrap)
+43 audits: 34 pass, 1 warn, 8 skip
 
-44 audits: 37 pass, 3 warn, 0 fail, 4 skip, 0 error
-
-🏆 Score: 93% — your tool qualifies for the agent-native badge.
+🏆 Score: 99% — your tool qualifies for the agent-native badge.
 ```
 
 Run `anc audit . --output json` for machine-readable scorecards. Per-principle filtering via `anc audit . --principle
 <1-8>`. `anc emit schema` prints the scorecard JSON Schema (draft 2020-12) for downstream consumers.
-
-## Live leaderboard
-
-| Rank | CLI            | Score   |
-| ---: | -------------- | ------- |
-|    1 | `navi`         | 100/100 |
-|    1 | `miniserve`    | 100/100 |
-|    1 | `eza`          | 100/100 |
-|    1 | `act`          | 100/100 |
-|    2 | `rg` (ripgrep) | 89/100  |
-|    2 | `just`         | 89/100  |
-|    2 | `jj`           | 89/100  |
-|    2 | `watchexec`    | 89/100  |
-|    2 | `anc`          | 89/100  |
-|    3 | `zoxide`       | 88/100  |
-
-Full board (anc100) at [anc.dev/scorecards](https://anc.dev/scorecards). Submit a PR to grade an additional tool;
-scoring is reproducible from the linter source.
 
 ## Principles
 
@@ -139,31 +147,36 @@ Current version: see [VERSION](VERSION).
 
 ## Scoring
 
-Conformance is measured against the requirement IDs in `requirements[]`, not against prose. Each check emits one of five
-statuses:
+Conformance is measured against the requirement IDs in `requirements[]`, not against prose. The public score reflects
+**shipped-binary behavior only**: behavioral-layer requirement rows observed by running the tool. Source- and
+project-layer audits do not contribute to the leaderboard score.
 
-| Status  | Counts toward `pass` | Counts toward denominator | Meaning                                         |
-| ------- | -------------------- | ------------------------- | ----------------------------------------------- |
-| `pass`  | yes                  | yes                       | Requirement verified.                           |
-| `warn`  | no                   | yes                       | SHOULD- or MAY-tier requirement not satisfied.  |
-| `fail`  | no                   | yes                       | MUST-tier requirement not satisfied.            |
-| `skip`  | no                   | no                        | Check not applicable to this target.            |
-| `error` | no                   | no                        | Check itself raised an exception (probe panic). |
+Each behavioral row resolves to one of seven statuses:
 
-`score_pct = round(pass / (pass + warn + fail) * 100)`. Skips and errors drop out of both sides of the ratio; only
-checks that actually verified something contribute to the score.
+| Status    | In denominator | Credit | Meaning                                          |
+| --------- | -------------- | ------ | ------------------------------------------------ |
+| `pass`    | yes            | 1.0    | Behavior present and correct.                    |
+| `warn`    | yes            | 0.5    | Behavior present, partially correct.             |
+| `fail`    | yes            | 0.0    | Behavior expected, absent or broken.             |
+| `opt_out` | yes            | 0.0    | Behavior deliberately declined (counts against). |
+| `n_a`     | no             | —      | Inapplicable: a conditional antecedent is unmet. |
+| `skip`    | no             | —      | Unmeasurable: the probe could not determine.     |
+| `error`   | no             | —      | The probe raised an exception.                   |
 
-Tier mapping: a missed requirement maps to a different status depending on its `level`. MUST → `fail`. SHOULD → `warn`.
-MAY → `warn`. Spec-level promotions or demotions (PATCH or MINOR per the policy above) move requirements across the
-`fail`/`warn` boundary by design.
+Under the current flat tier weights, the score is a credit-weighted ratio over the denominator set (`pass`, `warn`,
+`fail`, `opt_out`); `n_a`, `skip`, and `error` drop out of both sides:
 
-See [`docs/badge.md`](docs/badge.md) for the badge claim convention and the
-[`anc` linter README](https://github.com/brettdavies/agentnative-cli#scoring) for implementation-side detail (audit
-profiles, check-layer isolation, coverage-summary fields).
+`score_pct = round(100 × (n_pass + 0.5 · n_warn) / (n_pass + n_warn + n_fail + n_opt_out))`
+
+[`principles/scoring.md`](principles/scoring.md) is the authoritative contract: the full weighted formula, tunable tier
+weights, the 70% badge-eligibility floor, and the cohort bands (Exemplary ≥ 85, Strong 80–84, Solid 75–79, Qualified
+70–74). See [`docs/badge.md`](docs/badge.md) for the badge claim convention and the
+[`anc` linter README](https://github.com/brettdavies/agentnative-cli#scoring) for implementation detail (audit profiles,
+audit-layer isolation, coverage-summary fields).
 
 ## Badge
 
-CLI tools whose scorecards meet the 80% floor (see [Scoring](#scoring)) can embed a live-score badge in their READMEs:
+CLI tools whose scorecards meet the 70% floor (see [Scoring](#scoring)) can embed a live-score badge in their READMEs:
 
 ```markdown
 [![agent-native](https://anc.dev/badge/<tool>.svg)](https://anc.dev/scorecards/<tool>)
