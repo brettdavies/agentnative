@@ -10,8 +10,8 @@ The spec channel sits in a three-tier waterfall. Each tier owns a different conc
 1. **Universal: [`BRAND.md`](BRAND.md).** Shared identity, voice anchor, audiences, universal anti-patterns. Read that
    first.
 2. **Channel delta: this file (`PRODUCT.md`).** RFC 2119 register, third-person standards voice, present tense, no
-   first-person plural, no implementation leakage in MUSTs. The narrative companion to the executable Vale rule pack at
-   [`styles/spec/`](styles/spec/).
+   first-person plural, no implementation leakage in MUSTs. The authoritative voice contract for the spec channel; a
+   Vale rule pack on the `dev` branch enforces the literal phrases on contributor PRs (dev-only tooling, not shipped).
 3. **Authoritative content: [`principles/p*-*.md`](principles/) (the contract itself), `docs/architecture/`, and
    [`docs/decisions/`](docs/decisions/).** The principles are the canonical artifact this channel exists to publish;
    architecture and decisions are the deep-rationale tier.
@@ -35,8 +35,8 @@ human-readable expansion (prose). Both are load-bearing; the design context is a
 
 ## Register
 
-The narrative below describes the spec channel's voice rules; the executable contract for the literal phrases lives in
-[`styles/spec/README.md`](styles/spec/README.md), generated from the Vale rule pack at `styles/spec/*.yml`.
+The narrative below is the authoritative voice contract for the spec channel. A Vale rule pack on the `dev` branch
+encodes the literal phrases for enforcement on contributor PRs; the pack is dev-only tooling and does not ship to main.
 
 - **RFC 2119 throughout.** MUST / SHOULD / MAY are typographically distinct in render and load-bearing in prose.
   Lowercase forms are flagged by the rule pack.

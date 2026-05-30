@@ -42,9 +42,8 @@ Two first-class consumers across all channels:
 
 ## Universal anti-patterns
 
-These bans apply across every channel. The narrative below explains *why* each category is banned; the executable
-contract for *what* is banned lives in [`styles/brand/README.md`](styles/brand/README.md), generated from the Vale rule
-pack at `styles/brand/*.yml`.
+These bans apply across every channel. The narrative below is authoritative for both the *why* and the *what*; a Vale
+rule pack on the `dev` branch encodes the literal phrases for enforcement on contributor PRs (dev-only tooling).
 
 - **No marketing register.** First-person belief and recommendation framings are out. The standard speaks in the third
   person about contracts, not in the first person about beliefs.
@@ -57,8 +56,7 @@ pack at `styles/brand/*.yml`.
 ## Voice anchors: concrete examples
 
 The ✓ column shows the contract voice. The ✗ column names the category of failure rather than reproducing literal banned
-phrases. Those live in [`styles/brand/README.md`](styles/brand/README.md). The category labels describe the shape of the
-failure each ✓ phrasing replaces.
+phrases. The category labels describe the shape of the failure each ✓ phrasing replaces.
 
 | ✓                                                                                                                         | ✗                                                                                      |
 | ------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
@@ -82,12 +80,12 @@ The shared identity above applies to every channel. Each channel adds register a
 
 Each channel's repo carries its own narrow stack on top of this universal `BRAND.md`. The canonical layout:
 
-| Channel      | `PRODUCT.md` location          | Deep tier-3                                            | Vale rule pack | How `BRAND.md` arrives          |
-| ------------ | ------------------------------ | ------------------------------------------------------ | -------------- | ------------------------------- |
-| Spec         | `agentnative-spec/PRODUCT.md`  | `principles/`, `docs/architecture/`, `docs/decisions/` | `styles/spec/` | (origin — this repo)            |
-| Site         | `agentnative-site/PRODUCT.md`  | `DESIGN.md` (root)                                     | (none yet)     | `scripts/sync-prose-tooling.sh` |
-| CLI (`anc`)  | `agentnative-cli/PRODUCT.md`   | `src/` (Rust source IS the artifact)                   | (planned)      | `scripts/sync-prose-tooling.sh` |
-| Skill bundle | `agentnative-skill/PRODUCT.md` | `bundle/`                                              | (planned)      | `scripts/sync-prose-tooling.sh` |
+| Channel      | `PRODUCT.md` location          | Deep tier-3                                            | Vale rule pack            | How `BRAND.md` arrives          |
+| ------------ | ------------------------------ | ------------------------------------------------------ | ------------------------- | ------------------------------- |
+| Spec         | `agentnative-spec/PRODUCT.md`  | `principles/`, `docs/architecture/`, `docs/decisions/` | `styles/spec/` (dev-only) | (origin — this repo)            |
+| Site         | `agentnative-site/PRODUCT.md`  | `DESIGN.md` (root)                                     | (none yet)                | `scripts/sync-prose-tooling.sh` |
+| CLI (`anc`)  | `agentnative-cli/PRODUCT.md`   | `src/` (Rust source IS the artifact)                   | (planned)                 | `scripts/sync-prose-tooling.sh` |
+| Skill bundle | `agentnative-skill/PRODUCT.md` | `bundle/`                                              | (planned)                 | `scripts/sync-prose-tooling.sh` |
 
 Every channel has earned a `PRODUCT.md` today: each holds channel-specific decisions (visual system, error rubric,
 instructional voice, etc.) that the universal `BRAND.md` cannot carry.
