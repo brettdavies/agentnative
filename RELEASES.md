@@ -180,8 +180,8 @@ reference for the rule packs and generator:
 
 Rulesets committed under `.github/rulesets/`, applied to the repo via the GitHub API:
 
-- `protect-main.json`: required signatures, linear history, squash-only merges via PR, required status checks (common:
-  `ci`, `guard-docs`, `guard-release`), creation/deletion blocked, non-fast-forward blocked.
+- `protect-main.json`: required signatures, linear history, squash-only merges via PR, required status checks
+  (`guard-docs`, `guard-release`, `guard-provenance`), creation/deletion blocked, non-fast-forward blocked.
 - `protect-dev.json`: required signatures, deletion blocked, non-fast-forward blocked. PR-only norm is convention +
   `guard-release-branch` on the main side.
 

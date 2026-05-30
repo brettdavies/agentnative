@@ -2,11 +2,18 @@ name: Check principle last-revised discipline
 
 # Enforces the `last-revised` rule documented in principles/AGENTS.md: any
 # frontmatter mutation (other than the date itself) in a principle file must
-# be accompanied by a `last-revised` bump in the same diff. Runs on every PR
-# touching principle content or the checker.
+# be accompanied by a `last-revised` bump in the same diff.
+#
+# Scoped to PRs targeting `dev`, where the discipline is enforced as the change
+# lands. Release PRs (`release/* -> main`) replay those files unchanged from
+# `dev`, and `main` legitimately lags `dev`, so comparing against `main` would
+# flag every principle revised on a prior day as "date isn't today". The
+# pre-push hook (which always compares against origin/dev) backstops any fresh
+# principle edit authored directly on a release branch.
 
 on:
   pull_request:
+    branches: [dev]
     paths:
       - 'principles/p*-*.md'
       - 'principles/AGENTS.md'
