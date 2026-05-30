@@ -12,9 +12,9 @@ The spec channel sits in a three-tier waterfall. Each tier owns a different conc
 2. **Channel delta: this file (`PRODUCT.md`).** RFC 2119 register, third-person standards voice, present tense, no
    first-person plural, no implementation leakage in MUSTs. The narrative companion to the executable Vale rule pack at
    [`styles/spec/`](styles/spec/).
-3. **Authoritative content: [`principles/p*-*.md`](principles/) (the contract itself),
-   [`docs/architecture/`](docs/architecture/), and [`docs/decisions/`](docs/decisions/).** The principles are the
-   canonical artifact this channel exists to publish; architecture and decisions are the deep-rationale tier.
+3. **Authoritative content: [`principles/p*-*.md`](principles/) (the contract itself), `docs/architecture/`, and
+   [`docs/decisions/`](docs/decisions/).** The principles are the canonical artifact this channel exists to publish;
+   architecture and decisions are the deep-rationale tier.
 
 ## Channel: spec
 
