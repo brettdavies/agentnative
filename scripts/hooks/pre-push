@@ -176,9 +176,19 @@ else
 fi
 
 echo "==> Running prose-check (Vale + LanguageTool)"
-# Scope to files changed vs PROSE_CHECK_BASE (default origin/dev) so untracked
-# or pre-existing prose drift outside the pushed branch's diff can't block the
-# push. Full-scope check remains available via `bash scripts/prose-check.sh`.
-scripts/prose-check.sh --changed-only </dev/null
+# The prose-check stack (styles/, .vale.ini, scripts/prose-check.sh) is dev-only
+# tooling — present on `dev`, absent on `main`. When the hook runs against a
+# branch missing any of those (e.g. someone pushing from `main` directly), warn
+# and skip rather than fail; contributor work always happens on `dev` where the
+# stack is present.
+if [ ! -d styles ] || [ ! -f .vale.ini ] || [ ! -x scripts/prose-check.sh ]; then
+  echo "    WARN: prose-check stack absent (styles/, .vale.ini, scripts/prose-check.sh)."
+  echo "          This is normal on main; the stack is dev-only tooling. Skipping."
+else
+  # Scope to files changed vs PROSE_CHECK_BASE (default origin/dev) so untracked
+  # or pre-existing prose drift outside the pushed branch's diff can't block the
+  # push. Full-scope check remains available via `bash scripts/prose-check.sh`.
+  scripts/prose-check.sh --changed-only </dev/null
+fi
 
 echo "==> All pre-push checks passed"
