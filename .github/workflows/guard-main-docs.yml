@@ -10,3 +10,42 @@ permissions:
 jobs:
   guard-docs:
     uses: brettdavies/.github/.github/workflows/guard-main-docs.yml@main
+
+  # Local guard for the prose-check stack (Vale rule packs, .vale.ini, the
+  # orchestrator script). The reusable workflow above hardcodes the engineering
+  # docs paths; until it accepts an extra_paths input, this job enforces the
+  # spec-repo-specific dev-only paths inline. Retire when the reusable workflow
+  # gains parameterization.
+  guard-prose-check-stack:
+    name: check-prose-check-stack
+    runs-on: ubuntu-22.04
+    permissions:
+      pull-requests: read
+    steps:
+      - name: Block prose-check stack files from main
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
+        with:
+          script: |
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+              per_page: 100,
+            });
+            const forbidden = files
+              .filter(f => f.status === 'added' || f.status === 'modified')
+              .map(f => f.filename)
+              .filter(f =>
+                f.startsWith('styles/') ||
+                f === '.vale.ini' ||
+                f === 'scripts/prose-check.sh'
+              );
+            if (forbidden.length > 0) {
+              core.setFailed(
+                `Prose-check stack is dev-only and must not ship to main:\n` +
+                forbidden.map(f => `  - ${f}`).join('\n') +
+                `\nRationale: Vale rule packs and the orchestrator are contributor tooling, not part of the standard.`
+              );
+            } else {
+              core.info('No prose-check stack files in this PR. OK.');
+            }
