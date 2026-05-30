@@ -8,10 +8,7 @@ permissions:
   pull-requests: read
 
 jobs:
-  # SMOKE TEST: pinned at @dev to exercise the unreleased extra_paths input
-  # (brettdavies/.github PR #30). Flip back to @main after the .github repo
-  # cuts its own release carrying the input.
   guard-docs:
-    uses: brettdavies/.github/.github/workflows/guard-main-docs.yml@dev
+    uses: brettdavies/.github/.github/workflows/guard-main-docs.yml@main
     with:
       extra_paths: 'styles/,.vale.ini,scripts/prose-check.sh'
