@@ -5,8 +5,8 @@ holds the WHY behind those rules: branching model, PR conventions, release gatin
 pipeline, branch-protection pitfalls.
 
 The deep technical reference for the prose-check stack (Vale + LanguageTool rule packs, generator, pre-push integration)
-lives in [`docs/architecture/voice-enforcement.md`](./docs/architecture/voice-enforcement.md). That file is dev-only
-(blocked from `main` by `guard-main-docs.yml`). This file is the high-level decision record that ships to `main`.
+lives in `docs/architecture/voice-enforcement.md`. That file is dev-only (blocked from `main` by `guard-main-docs.yml`).
+This file is the high-level decision record that ships to `main`.
 
 Read this when:
 
@@ -182,8 +182,8 @@ For a `CHANGELOG.md` finding, fix the upstream PR body (which `generate-changelo
 regenerate. Hand-editing the generated artifact directly produces drift the next regeneration overwrites.
 
 The deep technical reference for the prose-check stack (rule packs, generator, pre-push integration) lives in
-[`docs/architecture/voice-enforcement.md`](./docs/architecture/voice-enforcement.md). That doc is dev-only and never
-reaches `main`; this section is the high-level rationale that ships.
+`docs/architecture/voice-enforcement.md`. That doc is dev-only and never reaches `main`; this section is the high-level
+rationale that ships.
 
 ## Branch protection
 
@@ -210,6 +210,5 @@ Committing the JSON alongside code means ruleset changes land via the same revie
 ## Related docs
 
 - [`RELEASES.md`](./RELEASES.md) (operational runbook: commands, paths, decision tables)
-- [`docs/architecture/voice-enforcement.md`](./docs/architecture/voice-enforcement.md) (deep technical reference for the
-  prose-check stack, dev-only)
+- `docs/architecture/voice-enforcement.md` (deep technical reference for the prose-check stack, dev-only)
 - [`.github/pull_request_template.md`](.github/pull_request_template.md) (PR body structure with changelog sections)
