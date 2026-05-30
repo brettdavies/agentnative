@@ -55,10 +55,10 @@ The spec speaks as a **standard**, not a person. Think RFC, not blog post.
 Use RFC 2119 language (MUST, SHOULD, MAY) for requirements. Concrete examples, not abstractions. Show the failure mode,
 then show the fix.
 
-The voice contract has an executable enforcement layer: `styles/brand/` and `styles/spec/` are Vale rule packs (this
-file's voice contract, in code form). `BRAND.md` and `PRODUCT.md` carry the narrative identity; the rule packs encode
-the literal phrases that fire on push. The pre-push hook runs Vale against the rule packs and LanguageTool over the
-Tailnet, gracefully skipping LT when the service is unreachable.
+`BRAND.md` and `PRODUCT.md` are the authoritative voice contract. Vale rule packs on the `dev` branch (`styles/brand/`,
+`styles/spec/`) encode the literal phrases for enforcement on contributor PRs; the packs and the orchestrator at
+`scripts/prose-check.sh` are dev-only tooling and do not ship to main. The pre-push hook runs Vale against the packs
+when present and LanguageTool over the Tailnet, gracefully skipping either when absent or unreachable.
 
 ## Editing principles
 
