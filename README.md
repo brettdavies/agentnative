@@ -31,78 +31,48 @@ anc audit .
 Also installable via `cargo install agentnative` or platform-specific archives on
 [GitHub Releases](https://github.com/brettdavies/agentnative-cli/releases).
 
-Example output (from running `anc` against its own source):
-
-```text
-$ anc audit .
-P1 — Non-Interactive by Default
-  [PASS] Non-interactive by default (p1-non-interactive)
-  [PASS] Flags advertise env-var bindings in --help (p1-env-hints)
-
-P2 — Structured Output
-  [WARN] Structured output support (p2-json-output)
-         --output/--format flag detected but could not validate JSON via safe probes
-  [PASS] Centralized output module exists (p2-output-module)
-
-P3 — Progressive Help
-  [PASS] Help flag produces useful output (p3-help)
-  [PASS] Version flag works (p3-version)
-
-P4 — Actionable Errors
-  [PASS] Structured error types (p4-error-types)
-  [PASS] Exit codes use named constants (p4-exit-codes)
-
-P5 — Safe Retries
-  [PASS] Dry-run flag for write operations (p5-dry-run)
-
-P6 — Composable Structure
-  [PASS] Handles SIGPIPE gracefully (p6-sigpipe)
-  [PASS] Respects NO_COLOR (p6-no-color)
-  [PASS] Timeout flag for network ops (p6-timeout)
-
-P7 — Bounded Responses
-  [PASS] Quiet mode available (p7-quiet)
-  [WARN] No naked println!/print! outside output modules (p7-naked-println)
-
-Code Quality
-  [FAIL] No .unwrap() in source (code-unwrap)
-
-33 audits: 26 pass, 2 warn, 1 fail, 4 skip, 0 error
-```
-
-Run `anc audit . --output json` for machine-readable output. Per-principle filtering via `anc audit . --principle
-<1-7>`.
-
-## Live leaderboard
-
-| Rank | CLI         | Score  |
-| ---: | ----------- | ------ |
-|    1 | `navi`      | 82/100 |
-|    2 | `anc`       | 73/100 |
-|    2 | `fzf`       | 73/100 |
-|    3 | `fd`        | 64/100 |
-|    3 | `jq`        | 64/100 |
-|    4 | `gh`        | 55/100 |
-|    4 | `git`       | 55/100 |
-|    5 | `lazygit`   | 45/100 |
-|    5 | `aws-cli`   | 45/100 |
-|    6 | `shell-gpt` | 36/100 |
-
-Full board (anc100) at [anc.dev/scorecards](https://anc.dev/scorecards). Submit a PR to grade an additional tool;
-scoring is reproducible from the linter source.
+Run `anc audit . --output json` for machine-readable scorecards. Per-principle filtering via `anc audit . --principle
+<1-8>`. `anc emit schema` prints the scorecard JSON Schema (draft 2020-12) for downstream consumers. For a sample
+scorecard, see the [`anc` README](https://github.com/brettdavies/agentnative-cli#example-output) or a live one at
+[anc.dev/scorecards](https://anc.dev/scorecards).
 
 ## Principles
 
-| #   | Principle                                     | Summary                                                       |
-| --- | --------------------------------------------- | ------------------------------------------------------------- |
-| P1  | Non-Interactive by Default                    | Never block on TTY input during normal operation              |
-| P2  | Structured, Parseable Output                  | Offer machine-readable formats alongside human text           |
-| P3  | Progressive Help Discovery                    | Layer help from one-liner to full reference                   |
-| P4  | Fail Fast with Actionable Errors              | Distinct exit codes, structured error output, fix suggestions |
-| P5  | Safe Retries and Explicit Mutation Boundaries | Idempotent reads, explicit mutation, dry-run support          |
-| P6  | Composable and Predictable Command Structure  | Consistent grammar, composable subcommands                    |
-| P7  | Bounded, High-Signal Responses                | Predictable output size, pagination, filtering                |
-| P8  | Discoverable Through Agent Skill Bundles      | Ship a skill bundle and an install path so agents find it     |
+Each principle is a single file under [`principles/`](principles/). Click through for the full contract: definition, why
+agents need it, the tiered requirements, evidence to look for, and anti-patterns.
+
+| #                                                               | Principle                                     | Summary                                                       |
+| --------------------------------------------------------------- | --------------------------------------------- | ------------------------------------------------------------- |
+| [P1](principles/p1-non-interactive-by-default.md)               | Non-Interactive by Default                    | Never block on TTY input during normal operation              |
+| [P2](principles/p2-structured-parseable-output.md)              | Structured, Parseable Output                  | Offer machine-readable formats alongside human text           |
+| [P3](principles/p3-progressive-help-discovery.md)               | Progressive Help Discovery                    | Layer help from one-liner to full reference                   |
+| [P4](principles/p4-fail-fast-actionable-errors.md)              | Fail Fast with Actionable Errors              | Distinct exit codes, structured error output, fix suggestions |
+| [P5](principles/p5-safe-retries-mutation-boundaries.md)         | Safe Retries and Explicit Mutation Boundaries | Idempotent reads, explicit mutation, dry-run support          |
+| [P6](principles/p6-composable-predictable-command-structure.md) | Composable and Predictable Command Structure  | Consistent grammar, composable subcommands                    |
+| [P7](principles/p7-bounded-high-signal-responses.md)            | Bounded, High-Signal Responses                | Predictable output size, pagination, filtering                |
+| [P8](principles/p8-discoverable-skill-bundle.md)                | Discoverable Through Agent Skill Bundles      | Ship a skill bundle and an install path so agents find it     |
+
+## Reading the spec
+
+Every principle file pairs a machine-readable frontmatter block with prose in a fixed order: Definition, Why Agents Need
+It, Requirements (MUST / SHOULD / MAY), Evidence, Anti-Patterns, and Pressure-test notes. Both halves are load-bearing:
+machines parse the frontmatter, humans read the prose, and a CI validator keeps the two in sync.
+
+The frontmatter carries a `requirements[]` array (one entry per MUST/SHOULD/MAY bullet) that auditors and graders pin
+against instead of prose. Each entry has:
+
+- **`id`**: a stable `p<n>-<level>-<slug>` identifier, unique across all eight files. Tooling references these, so they
+  survive prose edits.
+- **`level`**: `must`, `should`, or `may`, with [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119) /
+  [RFC 8174](https://www.rfc-editor.org/rfc/rfc8174) semantics.
+- **`applicability`**: `universal`, or conditional: gated on a prose `{if: "<reason>"}` clause, or on a
+  machine-checkable `{kind: conditional, antecedent: {audit_id: "<id>"}}` whose named verifier decides whether the
+  requirement binds.
+- **`summary`**: one sentence, mirrored by the prose bullet.
+
+[`principles/AGENTS.md`](principles/AGENTS.md) is the full authoring and governance contract: frontmatter fields,
+requirement-ID conventions, the conditional-applicability propagation table, the `last-revised` discipline, the status
+lifecycle, and the coupled-release protocol with the linter.
 
 ## Status
 
@@ -124,13 +94,25 @@ that principle changes tier, is added, or is removed. Prose-only edits do not up
 
 Current version: see [VERSION](VERSION).
 
+## Scoring
+
+Conformance is scored against the requirement IDs in `requirements[]`, not against prose, and from **shipped-binary
+behavior only**: behavioral-layer rows observed by running the tool, not its source or project layout. The status
+taxonomy, the credit-weighted formula, the tunable tier weights, the 70% badge-eligibility floor, and the cohort bands
+are all defined in [`principles/scoring.md`](principles/scoring.md). See [`docs/badge.md`](docs/badge.md) for the badge
+claim convention.
+
 ## Badge
 
-CLI tools whose scorecards meet the agent-native floor can embed a live-score badge in their READMEs:
+CLI tools whose scorecards meet the 70% floor (see [Scoring](#scoring)) can embed a live-score badge in their READMEs:
 
 ```markdown
 [![agent-native](https://anc.dev/badge/<tool>.svg)](https://anc.dev/scorecards/<tool>)
 ```
+
+For example, `anc` is scored against the spec and embeds its own live badge:
+
+[![agent-native](https://anc.dev/badge/anc.svg)](https://anc.dev/scorecards/anc)
 
 The badge text reflects the tool's current score from the live scorecard; clicking through shows the per-requirement
 breakdown. See [`docs/badge.md`](docs/badge.md) for the claim convention: eligibility, embed URL, version pinning,
@@ -143,9 +125,29 @@ honesty expectation, regression behavior.
 
 ## Related
 
-- [anc.dev](https://anc.dev): the rendered spec site and live leaderboard
-- [agentnative-cli](https://github.com/brettdavies/agentnative-cli): the `anc` linter
-- [agentnative-site](https://github.com/brettdavies/agentnative-site): the website source
+**Sibling repos.** This spec is the source of truth at the top of the chain; [`docs/syncs.md`](docs/syncs.md) maps how
+its content propagates downstream.
+
+- [agentnative-cli](https://github.com/brettdavies/agentnative-cli): the `anc` linter that scores any CLI against these
+  principles.
+- [agentnative-skill](https://github.com/brettdavies/agentnative-skill): the agent-facing skill bundle that vendors the
+  principles and teaches agents to invoke `anc` and remediate findings.
+- [agentnative-site](https://github.com/brettdavies/agentnative-site): the website source behind
+  [anc.dev](https://anc.dev) and the live leaderboard.
+
+**In this repo.**
+
+- [`principles/`](principles/): the eight principle files (the standard itself).
+- [`principles/AGENTS.md`](principles/AGENTS.md): authoring and governance contract: frontmatter shape, requirement IDs,
+  conditional applicability, status lifecycle, coupled-release protocol.
+- [`principles/scoring.md`](principles/scoring.md): leaderboard scoring formula, status taxonomy, eligibility floor,
+  cohort bands.
+- [`docs/badge.md`](docs/badge.md): badge claim convention: eligibility, embed shapes, version pinning, regression
+  behavior.
+- [`docs/decisions/`](docs/decisions/): decision records for non-obvious spec choices.
+- [`CONTRIBUTING.md`](CONTRIBUTING.md): contribution shapes, tier breakdown, AI disclosure, human co-sign, release
+  protocol. [`CHANGELOG.md`](CHANGELOG.md) is the version history; [`RELEASES.md`](RELEASES.md) documents how a release
+  is cut.
 
 ## Acknowledgements
 
@@ -179,8 +181,30 @@ Voice and identity decisions for the spec live in [`BRAND.md`](BRAND.md) and the
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for issue routing across spec/tool/site repos, AI disclosure requirements, the
-human co-sign policy for spec changes, and the coupled release protocol.
+Three shapes of contribution, in order of cost:
+
+1. **Signal** (pressure-test against a principle, grading-finding for the leaderboard, or a spec question): file an
+   issue with the matching template at
+   [github.com/brettdavies/agentnative/issues/new/choose](https://github.com/brettdavies/agentnative/issues/new/choose).
+2. **Proposal** (new principle, MUST/SHOULD/MAY tier change, applicability-clause change): open a design issue first;
+   the maintainer signs off before spec text lands.
+3. **Code**: PR against `dev` (per branch discipline). Spec edits, governance docs, release infrastructure, validator
+   tooling.
+
+Local setup:
+
+```bash
+git clone https://github.com/brettdavies/agentnative
+cd agentnative
+git config core.hooksPath scripts/hooks  # mirror CI locally on every push
+bun scripts/validate-principles.mjs
+```
+
+The full tier breakdown, AI disclosure requirements, the human co-sign policy for spec changes, and the coupled release
+protocol live in [`CONTRIBUTING.md`](./CONTRIBUTING.md). Cross-repo routing: linter bugs (false positives, scoring bugs)
+go to [brettdavies/agentnative-cli](https://github.com/brettdavies/agentnative-cli/issues/new/choose); site bugs
+(rendering, performance) to
+[brettdavies/agentnative-site](https://github.com/brettdavies/agentnative-site/issues/new/choose).
 
 ## License
 
