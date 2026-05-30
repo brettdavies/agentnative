@@ -33,6 +33,8 @@ Vasudevan
 agentic
 agentnative
 allowlist
+auditable
+backports
 booleans
 brettdavies
 brightgreen
@@ -46,6 +48,7 @@ composable
 config
 conformant
 confusables
+denylist
 dev
 docopt
 enablement
@@ -60,9 +63,12 @@ hardcoded
 healthcheck
 heredoc
 idempotency
+implementer
+implementers
 kubectl
 larksuite
 leaderboard
+longCode
 maintainer
 markdownlint
 meyay
@@ -78,9 +84,12 @@ renderer
 renderers
 repo
 repos
+ripgrep
 rsync
 ruleset
 rulesets
+runbook
+runbooks
 runtime
 runtimes
 semver

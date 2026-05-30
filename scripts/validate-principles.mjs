@@ -7,8 +7,10 @@
 //   1. Each file has frontmatter with the required keys:
 //      id, title, last-revised, status, requirements[]
 //   2. requirements[] entries have id (unique across all files),
-//      level (must|should|may), applicability (string "universal" or
-//      {if: "<reason>"}), summary (non-empty string).
+//      level (must|should|may), applicability (one of: string "universal",
+//      {if: "<reason>"} for prose-only conditionals, or
+//      {kind: "conditional", antecedent: {audit_id: "<kebab>"}} for
+//      machine-auditable conditionals), summary (non-empty string).
 //   3. id matches the filename prefix (p<n>).
 //   4. The number of MUST/SHOULD/MAY bullets in prose equals the number of
 //      requirements[] entries with that level.
@@ -69,6 +71,47 @@ function countBulletsPerLevel(body) {
   return counts;
 }
 
+const AUDIT_ID_RE = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/;
+
+function validateApplicabilityObject(app, id, file, errors) {
+  const keys = Object.keys(app);
+  if (keys.includes("kind")) {
+    if (app.kind !== "conditional") {
+      errors.push(`${file}: requirement '${id ?? "?"}' has unknown applicability kind '${app.kind}' (only "conditional" is currently supported)`);
+      return;
+    }
+    const extras = keys.filter((k) => k !== "kind" && k !== "antecedent");
+    if (extras.length > 0) {
+      errors.push(`${file}: requirement '${id ?? "?"}' has unexpected applicability keys: ${extras.join(", ")}`);
+    }
+    if (!("antecedent" in app)) {
+      errors.push(`${file}: requirement '${id ?? "?"}' is {kind: "conditional"} but missing 'antecedent' (expected {antecedent: {audit_id: "<kebab>"}})`);
+      return;
+    }
+    const ant = app.antecedent;
+    if (typeof ant !== "object" || ant === null || Array.isArray(ant)) {
+      errors.push(`${file}: requirement '${id ?? "?"}' antecedent must be an object {audit_id: "<kebab>"}`);
+      return;
+    }
+    const antKeys = Object.keys(ant);
+    const antExtras = antKeys.filter((k) => k !== "audit_id");
+    if (antExtras.length > 0) {
+      errors.push(`${file}: requirement '${id ?? "?"}' antecedent has unexpected keys: ${antExtras.join(", ")} (v1 supports only 'audit_id'; compound antecedents deferred to v2)`);
+    }
+    if (typeof ant.audit_id !== "string" || !ant.audit_id.trim()) {
+      errors.push(`${file}: requirement '${id ?? "?"}' antecedent.audit_id must be a non-empty string`);
+      return;
+    }
+    if (!AUDIT_ID_RE.test(ant.audit_id)) {
+      errors.push(`${file}: requirement '${id ?? "?"}' antecedent.audit_id '${ant.audit_id}' is not lowercase kebab-case`);
+    }
+    return;
+  }
+  if (keys.length !== 1 || keys[0] !== "if" || typeof app.if !== "string" || !app.if.trim()) {
+    errors.push(`${file}: requirement '${id ?? "?"}' has malformed applicability object (expected {if: "<reason>"} or {kind: "conditional", antecedent: {audit_id: "<kebab>"}})`);
+  }
+}
+
 function validateRequirement(entry, file, seenIds, errors) {
   if (typeof entry !== "object" || entry === null || Array.isArray(entry)) {
     errors.push(`${file}: requirements[] entry is not an object`);
@@ -92,13 +135,10 @@ function validateRequirement(entry, file, seenIds, errors) {
   }
   if (typeof applicability === "string") {
     if (applicability !== "universal") {
-      errors.push(`${file}: requirement '${id ?? "?"}' has unknown applicability string '${applicability}' (expected "universal" or {if: "<reason>"})`);
+      errors.push(`${file}: requirement '${id ?? "?"}' has unknown applicability string '${applicability}' (expected "universal", {if: "<reason>"}, or {kind: "conditional", antecedent: {audit_id: "<kebab>"}})`);
     }
   } else if (typeof applicability === "object" && applicability !== null && !Array.isArray(applicability)) {
-    const keys = Object.keys(applicability);
-    if (keys.length !== 1 || keys[0] !== "if" || typeof applicability.if !== "string" || !applicability.if.trim()) {
-      errors.push(`${file}: requirement '${id ?? "?"}' has malformed applicability object (expected {if: "<reason>"})`);
-    }
+    validateApplicabilityObject(applicability, id, file, errors);
   } else {
     errors.push(`${file}: requirement '${id ?? "?"}' has missing or invalid applicability`);
   }

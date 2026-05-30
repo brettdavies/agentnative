@@ -40,7 +40,7 @@ coverage.
   does not have.
 - **E. Behavioral MUST wording plus an honest scope note.** Accepted. The MUST describes the observable behavior ("does
   not enter any blocking-interactive surface") without enumerating APIs. A scope note in the principle explains that
-  `anc`'s automated checks verify this under non-TTY stdin only; TTY-driving-agent pass verdicts are
+  `anc`'s automated audits verify this under non-TTY stdin only; TTY-driving-agent pass verdicts are
   probable-but-not-verified.
 
 ## Decision
@@ -52,7 +52,7 @@ P1's MUST is worded in terms of observable behavior, not enumerated APIs:
 > includes prompt library calls AND TUI session initialization.
 
 The principle text carries a scope note that is explicit about the verification boundary: `agent` = a process invoking
-the CLI as a subprocess; `anc`'s automated checks verify behavior under non-TTY stdin; TTY-driving-agent scenarios are
+the CLI as a subprocess; `anc`'s automated audits verify behavior under non-TTY stdin; TTY-driving-agent scenarios are
 affected by the same MUST but are not PTY-probed at the current scale.
 
 Applicability gates are named in the principle text. Universal MUSTs apply to every CLI; conditional MUSTs apply only

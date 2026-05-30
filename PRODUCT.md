@@ -7,12 +7,12 @@ audiences, and universal anti-patterns from [`BRAND.md`](BRAND.md). Read that fi
 
 The spec channel sits in a three-tier waterfall. Each tier owns a different concern; nothing duplicates.
 
-1. **Universal — [`BRAND.md`](BRAND.md).** Shared identity, voice anchor, audiences, universal anti-patterns. Read that
+1. **Universal: [`BRAND.md`](BRAND.md).** Shared identity, voice anchor, audiences, universal anti-patterns. Read that
    first.
-2. **Channel delta — this file (`PRODUCT.md`).** RFC 2119 register, third-person standards voice, present tense, no
+2. **Channel delta: this file (`PRODUCT.md`).** RFC 2119 register, third-person standards voice, present tense, no
    first-person plural, no implementation leakage in MUSTs. The narrative companion to the executable Vale rule pack at
    [`styles/spec/`](styles/spec/).
-3. **Authoritative content — [`principles/p*-*.md`](principles/) (the contract itself), `docs/architecture/`, and
+3. **Authoritative content: [`principles/p*-*.md`](principles/) (the contract itself), `docs/architecture/`, and
    [`docs/decisions/`](docs/decisions/).** The principles are the canonical artifact this channel exists to publish;
    architecture and decisions are the deep-rationale tier.
 
@@ -61,9 +61,9 @@ These extend the universal bans in [`BRAND.md`](BRAND.md):
   Grant in P1; JSON Schema 2020-12 in P2), surrounding prose uses definite articles ("the X protocol") and cites the
   source. When a bullet names an outcome the implementer can satisfy any way (a non-leaky secret-input path, a
   graceful-shutdown window, an update-check pattern), prose uses indefinite articles and avoids language that
-  canonicalizes one shape. The MUST/SHOULD/MAY tier does not decide which case applies — open contracts exist at every
+  canonicalizes one shape. The MUST/SHOULD/MAY tier does not decide which case applies; open contracts exist at every
   tier; what decides is whether the spec is naming a thing the implementer adopts or a category the implementer fills.
-  Reference implementations are "a reference for an X pattern," never "the X pattern" — they exemplify one shape, not
+  Reference implementations are "a reference for an X pattern," never "the X pattern"; they exemplify one shape, not
   canonicalize it.
 - **No autobiographical framing in pressure-test notes.** Notes get recorded as findings, not autobiography. Use
   past-tense neutral voice ("Resolved: bullet rewritten to…"), not personal-narrative framing.

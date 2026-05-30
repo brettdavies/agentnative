@@ -34,6 +34,16 @@ const CASES = [
     dir: path.join(HERE, "__fixtures__/bad-applicability"),
     expect: /unknown applicability string 'conditional'/,
   },
+  {
+    name: "conditional-missing-antecedent",
+    dir: path.join(HERE, "__fixtures__/conditional-missing-antecedent"),
+    expect: /missing 'antecedent'/,
+  },
+  {
+    name: "conditional-compound-antecedent",
+    dir: path.join(HERE, "__fixtures__/conditional-compound-antecedent"),
+    expect: /antecedent has unexpected keys: op, audits/,
+  },
 ];
 
 let failed = 0;
