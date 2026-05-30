@@ -9,9 +9,10 @@ Everything about this folder is optimized for one property: a principle's requir
 from the file without parsing prose. Frontmatter carries the machine-readable contract; prose carries the human-readable
 expansion.
 
-Principle prose is enforced by the Vale rule packs at `styles/brand/` (universal anti-patterns) and `styles/spec/`
-(spec-channel register). The pre-push hook runs the orchestrator at `scripts/prose-check.sh` against these files.
-`BRAND.md` and `PRODUCT.md` carry the narrative identity the rule packs encode.
+Principle prose is governed by `BRAND.md` (universal anti-patterns) and `PRODUCT.md` (spec-channel register), the
+authoritative voice contracts. Vale rule packs on the `dev` branch (`styles/brand/`, `styles/spec/`) encode the literal
+phrases for enforcement on contributor PRs; the packs and the orchestrator at `scripts/prose-check.sh` are dev-only
+tooling and do not ship to main.
 
 ## What belongs here
 

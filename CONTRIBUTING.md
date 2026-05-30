@@ -153,8 +153,8 @@ scripts/prose-check.sh --vale-only          # offline (skip LT)
 ```
 
 Authoritative narrative: [`BRAND.md`](BRAND.md) (universal voice) and [`PRODUCT.md`](PRODUCT.md) (spec channel
-register). The Vale rule pack at `styles/brand/` is the executable contract for universal anti-patterns; `styles/spec/`
-covers the spec channel.
+register). Vale rule packs on the `dev` branch (`styles/brand/`, `styles/spec/`) encode the literal phrases for
+enforcement on contributor PRs; the packs and `scripts/prose-check.sh` are dev-only tooling and do not ship to main.
 
 Channel design context: canonical filename is `PRODUCT.md`. Legacy `.impeccable.md` is migrated by `/impeccable`'s
 `load-context.mjs` on first invocation; commit the rename atomically rather than letting drift accumulate. No backward
