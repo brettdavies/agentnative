@@ -175,7 +175,8 @@ copy, the coverage-matrix generator) scan for these boundaries.
 
 ## Validation
 
-Every PR touching `principles/**` runs `.github/workflows/validate-principles.yml`, which checks:
+The pre-push hook runs `scripts/validate-principles.mjs` against every principle file (see
+[`CONTRIBUTING.md` § Contributor setup](../CONTRIBUTING.md#contributor-setup)), which checks:
 
 - Required frontmatter fields are present on every file.
 - `requirements[].id` values are unique across all eight files.
@@ -184,7 +185,7 @@ Every PR touching `principles/**` runs `.github/workflows/validate-principles.ym
 - `applicability` is one of: the string `universal`, an object `{if: "<reason>"}`, or an object `{kind: conditional,
   antecedent: {audit_id: "<kebab>"}}`. Compound antecedents (`op`/`audits`) are rejected — they are deferred to v2.
 
-Drift in any of these fails the check with an actionable message naming the file and the specific mismatch.
+Drift in any of these fails the push with an actionable message naming the file and the specific mismatch.
 
 ## Pressure-test protocol
 
