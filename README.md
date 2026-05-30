@@ -31,99 +31,48 @@ anc audit .
 Also installable via `cargo install agentnative` or platform-specific archives on
 [GitHub Releases](https://github.com/brettdavies/agentnative-cli/releases).
 
-Example output — behavioral audits only (the layer that drives the public score), `anc` run against its own source:
-
-```text
-$ anc audit . --binary
-
-P1 — Non-Interactive by Default
-  [PASS] Non-interactive by default (p1-must-no-interactive) (must)
-  [SKIP] Non-interactive gate flag advertised in --help (p1-must-no-interactive) (must)
-         target satisfies P1 via alternative gate (help-on-bare or stdin-primary)
-  [PASS] Flags advertise env-var bindings in --help (p1-must-env-var) (must)
-  [PASS] Secret-bearing flags expose stdin or *-file companion (p1-must-secret-non-leaky-path) (must)
-  [PASS] `--help` advertises default values for flags (p1-should-defaults-in-help) (should)
-  [PASS] Rich-TUI affordance for TTY contexts (p1-may-rich-tui) (may)
-
-P2 — Structured Output
-  [PASS] Structured output support (p2-must-output-flag) (must)
-  [PASS] Structured-output CLI exposes its schema at runtime (p2-must-schema-print) (must)
-  [PASS] --json / --jsonl short aliases for --output (p2-should-json-aliases) (should)
-  [PASS] `--raw` flag for pipe-safe unformatted output (p2-may-raw-flag) (may)
-  [SKIP] `--output` advertises additional formats beyond text/json (p2-may-more-formats) (may)
-         no `--output` or `--format` flag advertised; vacuous skip for MAY-tier extra formats.
-  [PASS] Bad invocation exits with structured usage-error code (2) (p2-must-exit-codes) (must)
-  [PASS] Errors emit JSON envelope with `error`/`kind`/`message` under `--output json` (p2-must-json-errors) (must)
-  [PASS] JSON success and error envelopes share their non-payload key set (p2-should-consistent-envelope) (should)
-
-P3 — Progressive Help
-  [PASS] Help flag produces useful output (p3-must-top-level-examples) (must)
-  [PASS] Version flag works (`--version` plus short alias) (p3-must-version) (must)
-  [PASS] Version flag works (`--version` plus short alias) (p3-should-version-short) (should)
-  [PASS] `examples` subcommand or `--examples` flag for curated usage patterns (p3-may-examples-subcommand) (may)
-  [PASS] Short `-h` summary differs from `--help` long form (p3-should-about-long-about) (should)
-  [PASS] Each subcommand's `--help` ships at least one invocation example (p3-must-subcommand-examples) (must)
-  [PASS] Help text pairs human and `--output json` example invocations (p3-should-paired-examples) (should)
-
-P4 — Actionable Errors
-  [PASS] Rejects invalid arguments (p4-must-exit-code-mapping) (must)
-  [PASS] Error messages include a hint or remediation phrase (p4-must-actionable-errors) (must)
-  [PASS] `--output json` produces JSON-formatted errors (p4-should-json-error-output) (should)
-
-P5 — Safe Retries
-  [SKIP] Destructive subcommands require `--force` or `--yes` (p5-must-force-yes) (must)
-         no destructive subcommands detected; MUST applies conditionally to CLIs with destructive operations.
-  [SKIP] Read and write surfaces are both visible in subcommand list (p5-must-read-write-distinction) (must)
-         no recognizable read or write subcommand verbs; the read/write distinction is unobservable from the help surface alone.
-
-P6 — Composable Structure
-  [PASS] Handles SIGPIPE gracefully (p6-must-sigpipe) (must)
-  [SKIP] Pager-using CLI ships --no-pager escape hatch (p6-must-no-pager) (must)
-         no pager signal (less/more/$PAGER/--pager) in --help
-  [PASS] Respects NO_COLOR (p6-must-no-color) (must)
-  [PASS] Subcommand verbs follow community-standard names (p6-may-standard-names) (may)
-  [PASS] `--color` flag for explicit color control (p6-may-color-flag) (may)
-  [PASS] Input-accepting commands read from stdin when no file is given (p6-should-stdin-input) (should)
-  [WARN] Subcommand naming follows a consistent verb/noun convention (p6-should-consistent-naming) (should)
-         subcommand naming mixes verb-first (1) and noun-first (2) patterns. SHOULD-tier — pick `verb noun` or `noun verb` and apply it consistently so agents can predict names. Inspect `--help` to confirm; the verb list is a heuristic.
-  [PASS] Operations are subcommands, not verb-shaped flags (p6-should-subcommand-operations) (should)
-
-P7 — Bounded Responses
-  [PASS] Quiet mode available (p7-must-quiet) (must)
-  [PASS] `--verbose` flag for diagnostic escalation (p7-should-verbose) (should)
-  [SKIP] `--limit` / `--max-results` flag for list operations (p7-should-limit) (should)
-         no list-style subcommand detected (list/ls/search/query/find/show/get); vacuous skip for the list-only SHOULD.
-  [SKIP] Cursor-based pagination flags for list traversal (p7-may-cursor-pagination) (may)
-         no list-style subcommand detected; vacuous skip for the list-only MAY.
-  [SKIP] `--timeout` flag for long-running operations (p7-should-timeout) (should)
-         no long-running subcommand detected (serve/daemon/watch/tail/monitor/follow/run/start/stream); vacuous skip for the conditional SHOULD.
-  [PASS] Help text advertises TTY-aware verbosity behavior (p7-may-auto-verbosity) (may)
-
-P8 — Discoverable Skill Bundles
-  [PASS] Skill bundle has install path (`tool skill install [<host>]`) (p8-must-bundle-install) (must)
-  [PASS] `skill install --all` for multi-runtime install (p8-may-install-all) (may)
-  [PASS] `skill update` / `skill upgrade` for bundle refresh (p8-may-bundle-update) (may)
-
-43 audits: 34 pass, 1 warn, 8 skip
-
-🏆 Score: 99% — your tool qualifies for the agent-native badge.
-```
-
 Run `anc audit . --output json` for machine-readable scorecards. Per-principle filtering via `anc audit . --principle
-<1-8>`. `anc emit schema` prints the scorecard JSON Schema (draft 2020-12) for downstream consumers.
+<1-8>`. `anc emit schema` prints the scorecard JSON Schema (draft 2020-12) for downstream consumers. For a sample
+scorecard, see the [`anc` README](https://github.com/brettdavies/agentnative-cli#example-output) or a live one at
+[anc.dev/scorecards](https://anc.dev/scorecards).
 
 ## Principles
 
-| #   | Principle                                     | Summary                                                       |
-| --- | --------------------------------------------- | ------------------------------------------------------------- |
-| P1  | Non-Interactive by Default                    | Never block on TTY input during normal operation              |
-| P2  | Structured, Parseable Output                  | Offer machine-readable formats alongside human text           |
-| P3  | Progressive Help Discovery                    | Layer help from one-liner to full reference                   |
-| P4  | Fail Fast with Actionable Errors              | Distinct exit codes, structured error output, fix suggestions |
-| P5  | Safe Retries and Explicit Mutation Boundaries | Idempotent reads, explicit mutation, dry-run support          |
-| P6  | Composable and Predictable Command Structure  | Consistent grammar, composable subcommands                    |
-| P7  | Bounded, High-Signal Responses                | Predictable output size, pagination, filtering                |
-| P8  | Discoverable Through Agent Skill Bundles      | Ship a skill bundle and an install path so agents find it     |
+Each principle is a single file under [`principles/`](principles/). Click through for the full contract: definition, why
+agents need it, the tiered requirements, evidence to look for, and anti-patterns.
+
+| #                                                               | Principle                                     | Summary                                                       |
+| --------------------------------------------------------------- | --------------------------------------------- | ------------------------------------------------------------- |
+| [P1](principles/p1-non-interactive-by-default.md)               | Non-Interactive by Default                    | Never block on TTY input during normal operation              |
+| [P2](principles/p2-structured-parseable-output.md)              | Structured, Parseable Output                  | Offer machine-readable formats alongside human text           |
+| [P3](principles/p3-progressive-help-discovery.md)               | Progressive Help Discovery                    | Layer help from one-liner to full reference                   |
+| [P4](principles/p4-fail-fast-actionable-errors.md)              | Fail Fast with Actionable Errors              | Distinct exit codes, structured error output, fix suggestions |
+| [P5](principles/p5-safe-retries-mutation-boundaries.md)         | Safe Retries and Explicit Mutation Boundaries | Idempotent reads, explicit mutation, dry-run support          |
+| [P6](principles/p6-composable-predictable-command-structure.md) | Composable and Predictable Command Structure  | Consistent grammar, composable subcommands                    |
+| [P7](principles/p7-bounded-high-signal-responses.md)            | Bounded, High-Signal Responses                | Predictable output size, pagination, filtering                |
+| [P8](principles/p8-discoverable-skill-bundle.md)                | Discoverable Through Agent Skill Bundles      | Ship a skill bundle and an install path so agents find it     |
+
+## Reading the spec
+
+Every principle file pairs a machine-readable frontmatter block with prose in a fixed order — Definition, Why Agents
+Need It, Requirements (MUST / SHOULD / MAY), Evidence, Anti-Patterns, and Pressure-test notes. Both halves are
+load-bearing: machines parse the frontmatter, humans read the prose, and a CI validator keeps the two in sync.
+
+The frontmatter carries a `requirements[]` array — one entry per MUST/SHOULD/MAY bullet — that auditors and graders pin
+against instead of prose. Each entry has:
+
+- **`id`** — a stable `p<n>-<level>-<slug>` identifier, unique across all eight files. Tooling references these, so they
+  survive prose edits.
+- **`level`** — `must`, `should`, or `may`, with [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119) /
+  [RFC 8174](https://www.rfc-editor.org/rfc/rfc8174) semantics.
+- **`applicability`** — `universal`, or conditional: gated on a prose `{if: "<reason>"}` clause, or on a
+  machine-checkable `{kind: conditional, antecedent: {audit_id: "<id>"}}` whose named verifier decides whether the
+  requirement binds.
+- **`summary`** — one sentence, mirrored by the prose bullet.
+
+[`principles/AGENTS.md`](principles/AGENTS.md) is the full authoring and governance contract: frontmatter fields,
+requirement-ID conventions, the conditional-applicability propagation table, the `last-revised` discipline, the status
+lifecycle, and the coupled-release protocol with the linter.
 
 ## Status
 
@@ -147,32 +96,11 @@ Current version: see [VERSION](VERSION).
 
 ## Scoring
 
-Conformance is measured against the requirement IDs in `requirements[]`, not against prose. The public score reflects
-**shipped-binary behavior only**: behavioral-layer requirement rows observed by running the tool. Source- and
-project-layer audits do not contribute to the leaderboard score.
-
-Each behavioral row resolves to one of seven statuses:
-
-| Status    | In denominator | Credit | Meaning                                          |
-| --------- | -------------- | ------ | ------------------------------------------------ |
-| `pass`    | yes            | 1.0    | Behavior present and correct.                    |
-| `warn`    | yes            | 0.5    | Behavior present, partially correct.             |
-| `fail`    | yes            | 0.0    | Behavior expected, absent or broken.             |
-| `opt_out` | yes            | 0.0    | Behavior deliberately declined (counts against). |
-| `n_a`     | no             | —      | Inapplicable: a conditional antecedent is unmet. |
-| `skip`    | no             | —      | Unmeasurable: the probe could not determine.     |
-| `error`   | no             | —      | The probe raised an exception.                   |
-
-Under the current flat tier weights, the score is a credit-weighted ratio over the denominator set (`pass`, `warn`,
-`fail`, `opt_out`); `n_a`, `skip`, and `error` drop out of both sides:
-
-`score_pct = round(100 × (n_pass + 0.5 · n_warn) / (n_pass + n_warn + n_fail + n_opt_out))`
-
-[`principles/scoring.md`](principles/scoring.md) is the authoritative contract: the full weighted formula, tunable tier
-weights, the 70% badge-eligibility floor, and the cohort bands (Exemplary ≥ 85, Strong 80–84, Solid 75–79, Qualified
-70–74). See [`docs/badge.md`](docs/badge.md) for the badge claim convention and the
-[`anc` linter README](https://github.com/brettdavies/agentnative-cli#scoring) for implementation detail (audit profiles,
-audit-layer isolation, coverage-summary fields).
+Conformance is scored against the requirement IDs in `requirements[]`, not against prose, and from **shipped-binary
+behavior only**: behavioral-layer rows observed by running the tool, not its source or project layout. The status
+taxonomy, the credit-weighted formula, the tunable tier weights, the 70% badge-eligibility floor, and the cohort bands
+are all defined in [`principles/scoring.md`](principles/scoring.md). See [`docs/badge.md`](docs/badge.md) for the badge
+claim convention.
 
 ## Badge
 
@@ -193,11 +121,29 @@ honesty expectation, regression behavior.
 
 ## Related
 
-- [anc.dev](https://anc.dev): the rendered spec site and live leaderboard
-- [agentnative-cli](https://github.com/brettdavies/agentnative-cli): the `anc` linter
-- [agentnative-skill](https://github.com/brettdavies/agentnative-skill): the agent-facing skill bundle that vendors the
-  principles and teaches agents to invoke `anc` and remediate findings
-- [agentnative-site](https://github.com/brettdavies/agentnative-site): the website source
+**Sibling repos.** This spec is the source of truth at the top of the chain; [`docs/syncs.md`](docs/syncs.md) maps how
+its content propagates downstream.
+
+- [agentnative-cli](https://github.com/brettdavies/agentnative-cli) — the `anc` linter that scores any CLI against these
+  principles.
+- [agentnative-skill](https://github.com/brettdavies/agentnative-skill) — the agent-facing skill bundle that vendors the
+  principles and teaches agents to invoke `anc` and remediate findings.
+- [agentnative-site](https://github.com/brettdavies/agentnative-site) — the website source behind
+  [anc.dev](https://anc.dev) and the live leaderboard.
+
+**In this repo.**
+
+- [`principles/`](principles/) — the eight principle files (the standard itself).
+- [`principles/AGENTS.md`](principles/AGENTS.md) — authoring and governance contract: frontmatter shape, requirement
+  IDs, conditional applicability, status lifecycle, coupled-release protocol.
+- [`principles/scoring.md`](principles/scoring.md) — leaderboard scoring formula, status taxonomy, eligibility floor,
+  cohort bands.
+- [`docs/badge.md`](docs/badge.md) — badge claim convention: eligibility, embed shapes, version pinning, regression
+  behavior.
+- [`docs/decisions/`](docs/decisions/) — decision records for non-obvious spec choices.
+- [`CONTRIBUTING.md`](CONTRIBUTING.md) — contribution shapes, tier breakdown, AI disclosure, human co-sign, release
+  protocol. [`CHANGELOG.md`](CHANGELOG.md) is the version history; [`RELEASES.md`](RELEASES.md) documents how a release
+  is cut.
 
 ## Acknowledgements
 
