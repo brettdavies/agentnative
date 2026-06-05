@@ -153,7 +153,7 @@ separating the workspaces.
   `ANC_ROOT="${ANC_ROOT:-$HOME/dev/agentnative}"` env-var convention. Default value needs updating; the env-var name
   stays.
 - `~/dev/solutions-docs/best-practices/pr-body-driven-changelog-generation-20260423.md` — references
-  `~/dev/agentnative/scripts/generate-changelog.sh` as the reference implementation. Path needs updating.
+  `~/dev/agentnative/scripts/generate-changelog.py` as the reference implementation. Path needs updating.
 
 ### Institutional Learnings
 

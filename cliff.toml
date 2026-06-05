@@ -1,6 +1,6 @@
 # git-cliff configuration for agentnative-spec.
 #
-# Two-stage pipeline driven by `scripts/generate-changelog.sh`:
+# Two-stage pipeline driven by `scripts/generate-changelog.py`:
 #   1. `git-cliff` renders a skeleton entry from each commit's subject line,
 #      linking `(#N)` squash-merge references to the PR via `[remote.github]`.
 #   2. The script's Python post-processor fetches each PR body from the
@@ -10,7 +10,7 @@
 #
 # The PR body is the source of truth. If a bullet is wrong, edit the PR
 # body on GitHub (even after merge — PR bodies stay editable) and re-run
-# `scripts/generate-changelog.sh` on the release branch; it re-fetches.
+# `scripts/generate-changelog.py` on the release branch; it re-fetches.
 # Never hand-write `CHANGELOG.md`.
 #
 # No commit-body parsing, no preprocessors — cherry-picks and squash-merges

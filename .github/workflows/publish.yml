@@ -70,7 +70,7 @@ jobs:
           fi
           # Pull the section starting with `## [$VERSION]` up to (but not including) the next `## [` heading.
           # Matches the Keep-a-Changelog heading shape produced by cliff.toml
-          # and scripts/generate-changelog.sh (e.g. "## [0.2.0] - 2026-04-23").
+          # and scripts/generate-changelog.py (e.g. "## [0.2.0] - 2026-04-23").
           section="$(awk -v ver="${VERSION}" '
             $0 ~ "^## \\[" ver "\\]" { capture = 1; next }
             capture && /^## \[/ { exit }

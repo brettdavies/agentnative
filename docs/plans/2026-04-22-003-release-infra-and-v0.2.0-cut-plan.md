@@ -39,7 +39,7 @@ tags:
 > - **Mid-execution upstream fixes** that the plan didn't anticipate but closed real gaps:
 >   - [PR #6](https://github.com/brettdavies/agentnative/pull/6): `publish.yml` no-ops gracefully when `CHANGELOG.md`
 >     lacks a matching `## v$VERSION` section, instead of failing.
->   - [PR #9](https://github.com/brettdavies/agentnative/pull/9): `cliff.toml` and `scripts/generate-changelog.sh`
+>   - [PR #9](https://github.com/brettdavies/agentnative/pull/9): `cliff.toml` and `scripts/generate-changelog.py`
 >     ported from `agentnative-cli` — PR-body-driven changelog generation via the GitHub API, replacing the fragile
 >     commit-body preprocessor approach (commit-body headers were getting silently stripped during cherry-picks;
 >     root cause still undiagnosed but now irrelevant).
@@ -57,7 +57,7 @@ tags:
 >   PR) marked UNBLOCKED by the stable `v0.2.0` SHA.
 > - **Learning captured:**
 >   [`docs/solutions/best-practices/pr-body-driven-changelog-generation-20260423.md`](../solutions/best-practices/pr-body-driven-changelog-generation-20260423.md).
-> - **Upstream follow-up filed:** portable `generate-changelog.sh` template under the `github-repo-setup` skill —
+> - **Upstream follow-up filed:** portable `generate-changelog.py` template under the `github-repo-setup` skill —
 >   tracked at `~/dev/agent-skills/.context/compound-engineering/todos/014-pending-p2-portable-generate-changelog-template.md`.
 
 ## Overview
