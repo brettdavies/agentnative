@@ -129,7 +129,7 @@ missing, the workflow logs `::notice::No '## [$VERSION]' section … skipping re
 **Generate the CHANGELOG entry on the release branch:**
 
 ```bash
-scripts/generate-changelog.sh
+scripts/generate-changelog.py
 ```
 
 The script extracts the version from the branch name, runs `git-cliff` to produce a skeleton, then re-fetches each PR
@@ -177,7 +177,7 @@ lt_check /tmp/body.md
 # 6. Submit once.
 gh pr create --base <base> --title "..." --body-file /tmp/body.md      # new PR
 gh pr edit <num> --body-file /tmp/body.md                              # existing PR
-# scripts/generate-changelog.sh                                        # CHANGELOG.md (re-fetches PR bodies)
+# scripts/generate-changelog.py                                        # CHANGELOG.md (re-fetches PR bodies)
 ```
 
 For a `CHANGELOG.md` finding, fix the upstream PR body and regenerate. Hand-editing `CHANGELOG.md` directly produces

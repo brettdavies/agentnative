@@ -113,7 +113,7 @@ VERSION cut a release without needing a principle edit.
 ### CHANGELOG.md is the release signal
 
 When the trigger fires, `publish.yml` reads `VERSION` and looks for a matching `## [$VERSION] - YYYY-MM-DD` section in
-`CHANGELOG.md` (Keep-a-Changelog shape, produced by `cliff.toml` + `scripts/generate-changelog.sh`). If that section is
+`CHANGELOG.md` (Keep-a-Changelog shape, produced by `cliff.toml` + `scripts/generate-changelog.py`). If that section is
 missing, the workflow logs `::notice::No '## [$VERSION]' section … skipping release cut` and exits cleanly. No tag, no
 Release, no dispatch. A principle push without a CHANGELOG bump is treated as a no-op, not an error. The release author
 opts in by committing the CHANGELOG entry on the release branch.
@@ -145,7 +145,7 @@ The author bumps `VERSION` manually; the hook only verifies the bump is coherent
 
 ### PR body is the source of truth
 
-The release author runs `scripts/generate-changelog.sh` on the release branch. Stage 1 runs `git-cliff --tag v$VERSION
+The release author runs `scripts/generate-changelog.py` on the release branch. Stage 1 runs `git-cliff --tag v$VERSION
 --unreleased --prepend CHANGELOG.md` to produce a skeleton section keyed off commit subjects, with `(#N)` references
 auto-linked via `cliff.toml`'s `[remote.github]` block. Stage 2 is a Python post-processor that, for every PR number in
 the skeleton, fetches the PR body via `gh api repos/.../pulls/N`, extracts its `## Changelog → ### Added / Changed /
@@ -153,7 +153,7 @@ Fixed / Removed / Security` subsections, and rewrites the skeleton bullets with 
 @user in [#N]` attribution and a `**Full Changelog**: v<prev>...v<this>` compare link.
 
 If a bullet is wrong (typo, missed detail, wrong category), edit the PR body on GitHub (PR bodies remain editable after
-merge) and re-run `scripts/generate-changelog.sh`. It re-fetches from the API every run. Never hand-write `CHANGELOG.md`
+merge) and re-run `scripts/generate-changelog.py`. It re-fetches from the API every run. Never hand-write `CHANGELOG.md`
 (CI reads CHANGELOG, the script writes it, the PR body governs it).
 
 ### Why `cliff.toml` skips chore/style/test/ci/build
@@ -178,7 +178,7 @@ Scrub-before-submit (author in `/tmp/`, scrub there, submit via `--body-file`) a
 edit, scrub again". Every fix lands locally and the public PR sees only clean text. The auto-format hook skips `/tmp/`
 paths so the body keeps its authored shape and no soft-wrapping is injected.
 
-For a `CHANGELOG.md` finding, fix the upstream PR body (which `generate-changelog.sh` re-fetches every run) and
+For a `CHANGELOG.md` finding, fix the upstream PR body (which `generate-changelog.py` re-fetches every run) and
 regenerate. Hand-editing the generated artifact directly produces drift the next regeneration overwrites.
 
 The deep technical reference for the prose-check stack (rule packs, generator, pre-push integration) lives in
