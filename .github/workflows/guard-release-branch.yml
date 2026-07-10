@@ -7,6 +7,10 @@ on:
 permissions:
   pull-requests: read
 
+concurrency:
+  group: guard-release-branch-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   guard-release:
     uses: brettdavies/.github/.github/workflows/guard-release-branch.yml@main
