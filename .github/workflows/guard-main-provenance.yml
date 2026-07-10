@@ -12,6 +12,10 @@ on:
 permissions:
   pull-requests: read
 
+concurrency:
+  group: guard-main-provenance-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   guard-provenance:
     uses: brettdavies/.github/.github/workflows/guard-main-provenance.yml@main
