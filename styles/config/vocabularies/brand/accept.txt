@@ -1,6 +1,7 @@
 APIs
 Andrej
 Anthropic
+Backport
 CLIs
 Composability
 Composable
@@ -36,6 +37,8 @@ allowlist
 auditable
 backfill
 backfilled
+backport
+backported
 backports
 booleans
 brettdavies
@@ -66,12 +69,16 @@ gws
 hardcoded
 healthcheck
 heredoc
+hotfix
+hotfixes
 idempotency
 implementer
 implementers
 kubectl
 larksuite
 leaderboard
+lockfile
+lockfiles
 longCode
 maintainer
 markdownlint
@@ -83,6 +90,7 @@ orchestrator
 overfits
 preprocessor
 reachability
+reconverges
 regenerable
 renderer
 renderers
