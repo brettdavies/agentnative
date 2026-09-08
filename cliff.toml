@@ -1,19 +1,20 @@
-# git-cliff configuration for agentnative-spec.
+# git-cliff configuration.
 #
 # Two-stage pipeline driven by `scripts/generate-changelog.py`:
-#   1. `git-cliff` renders a skeleton entry from each commit's subject line,
-#      linking `(#N)` squash-merge references to the PR via `[remote.github]`.
+#   1. git-cliff renders a skeleton `## [version]` entry from each commit's
+#      subject line, linking `(#N)` squash-merge references to the PR via
+#      the `[remote.github]` owner/repo below.
 #   2. The script's Python post-processor fetches each PR body from the
-#      GitHub API, extracts its `## Changelog` → `### Added / Changed /
-#      Fixed / Removed / Security` subsections, and rewrites the skeleton
-#      bullets with the richer PR-body content. Authors + PR links remain.
+#      GitHub API, extracts its `## Changelog` -> `### Added / Changed /
+#      Fixed / Documentation` subsections, and rewrites the skeleton
+#      bullets with the richer PR-body content. Author + PR links remain.
 #
 # The PR body is the source of truth. If a bullet is wrong, edit the PR
-# body on GitHub (even after merge — PR bodies stay editable) and re-run
+# body on GitHub (PR bodies stay editable after merge) and re-run
 # `scripts/generate-changelog.py` on the release branch; it re-fetches.
 # Never hand-write `CHANGELOG.md`.
 #
-# No commit-body parsing, no preprocessors — cherry-picks and squash-merges
+# No commit-body parsing, no preprocessors: cherry-picks and squash-merges
 # can't mangle what we never read.
 
 [changelog]
@@ -25,46 +26,54 @@ All notable changes to this repository are documented here: governance, validato
 Changes to the standard itself (principle MUST/SHOULD/MAY tier moves, requirement IDs added/removed/renamed, applicability shifts) are tracked per-principle in `principles/p*-*.md` via the `last-revised:` calver frontmatter field and the `## Pressure test notes` section appended to each file.
 
 """
-
 body = """
 {% if version %}\
-## [{{ version | trim_start_matches(pat="v") }}] - {{ timestamp | date(format="%Y-%m-%d") }}
+    ## [{{ version | trim_start_matches(pat="v") }}] - {{ timestamp | date(format="%Y-%m-%d") }}
 {% else %}\
-## [Unreleased]
+    ## [Unreleased]
 {% endif %}\
 {% for group, commits in commits | group_by(attribute="group") %}
-
-### {{ group | upper_first }}
-{% for commit in commits %}
-- {{ commit.message | upper_first }}\
-    {% if commit.remote.username %} by @{{ commit.remote.username }}{%- endif %}\
-    {% if commit.remote.pr_number %} in \
-      [#{{ commit.remote.pr_number }}](https://github.com/{{ remote.github.owner }}/{{ remote.github.repo }}/pull/{{ commit.remote.pr_number }}){%- endif %}
-{%- endfor %}
-{% endfor %}
-
+    ### {{ group | upper_first }}
+    {% for commit in commits %}
+        - {{ commit.message | split(pat="\n") | first | upper_first }}\
+            {% if commit.remote.username %} by @{{ commit.remote.username }}{%- endif %}\
+            {% if commit.remote.pr_number %} in \
+              [#{{ commit.remote.pr_number }}](https://github.com/{{ remote.github.owner }}/{{ remote.github.repo }}/pull/{{ commit.remote.pr_number }}){%- endif %}
+    {%- endfor %}
+{% endfor %}\n
 """
-
 trim = true
 footer = ""
 
 [git]
 conventional_commits = true
 filter_unconventional = true
-tag_pattern = "v[0-9]+.[0-9]+.[0-9]+"
+split_commits = false
+# Only unprefixed `vX.Y.Z` tags mark releases; anchored so a tag such as
+# `sdk-v1.0.0` or `v1.0.0-rc1` is not a release boundary.
+tag_pattern = "^v[0-9]+\\.[0-9]+\\.[0-9]+$"
+sort_commits = "oldest"
 
 commit_parsers = [
+  # The release squash commit itself (`release: vX.Y.Z (...)`) is bookkeeping,
+  # not a change.
+  { message = "^release", skip = true },
+  { message = "^docs: update CHANGELOG", skip = true },
+  # Breaking changes route first: `feat!`, `fix(api)!`, `refactor!`, etc.
+  # would otherwise match the patterns below and land under Added/Fixed/
+  # Changed, silently dropping the SemVer-major signal from the changelog.
+  { message = "^[a-z]+(\\(.*\\))?!:", group = "Breaking changes" },
+  { body = ".*BREAKING CHANGE:.*", group = "Breaking changes" },
   { message = "^feat", group = "Added" },
   { message = "^fix", group = "Fixed" },
-  { message = "^docs", group = "Changed" },
-  { message = "^perf", group = "Changed" },
   { message = "^refactor", group = "Changed" },
-  { message = "^chore", skip = true },
+  { message = "^perf", group = "Changed" },
+  { message = "^docs", group = "Documentation" },
   { message = "^style", skip = true },
   { message = "^test", skip = true },
   { message = "^ci", skip = true },
   { message = "^build", skip = true },
-  { message = "^release", skip = true },
+  { message = "^chore", skip = true },
 ]
 
 [remote.github]

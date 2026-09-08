@@ -3,6 +3,11 @@
 #
 # Verifies commits in PRs to main came from squash-merged PRs to dev
 # (have (#N) references). Only needs pull-requests: read.
+#
+# SHA-PIN the @main ref before committing into the consumer repo. Pattern:
+#   uses: brettdavies/.github/.github/workflows/guard-main-provenance.yml@<SHA> # main as of YYYY-MM-DD
+# Recipe: `gh api repos/brettdavies/.github/commits/main --jq .sha`.
+# See ~/.claude/skills/github-repo-setup/references/sha-pinning-recipes.md.
 name: Guard main commit provenance
 
 on:
@@ -11,10 +16,6 @@ on:
 
 permissions:
   pull-requests: read
-
-concurrency:
-  group: guard-main-provenance-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
 
 jobs:
   guard-provenance:

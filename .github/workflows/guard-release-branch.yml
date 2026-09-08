@@ -1,3 +1,23 @@
+# Source-repo caller wrapper for the reusable guard-release-branch workflow.
+# Copy to .github/workflows/guard-release-branch.yml in repos using the
+# forever-dev + release/* flow.
+#
+# SHA-PIN the @main ref before committing into the consumer repo. Pattern:
+#   uses: brettdavies/.github/.github/workflows/guard-release-branch.yml@<SHA> # main as of YYYY-MM-DD
+# Recipe: `gh api repos/brettdavies/.github/commits/main --jq .sha`.
+# See ~/.claude/skills/github-repo-setup/references/sha-pinning-recipes.md.
+#
+# Rejects PRs to main whose head branch doesn't start with `release/`.
+# Keeps `dev` off the list of PR heads, which is what makes
+# `deleteBranchOnMerge: true` safe to leave on without risking `origin/dev`.
+#
+# Default prefix `release/` is supplied by the reusable workflow; pass
+# `with: prefix: <other>` to override.
+#
+# Required caller permissions: pull-requests: read
+#
+# The caller's job key must be `guard-release:` so the required status
+# check context is `guard-release / check-release-branch-name`.
 name: Guard release branch pattern
 
 on:
@@ -6,10 +26,6 @@ on:
 
 permissions:
   pull-requests: read
-
-concurrency:
-  group: guard-release-branch-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
 
 jobs:
   guard-release:

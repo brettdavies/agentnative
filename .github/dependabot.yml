@@ -1,0 +1,66 @@
+# Dependabot configuration.
+#
+# One ecosystem: github-actions. This repo carries no package manifest (the
+# pre-push hook installs js-yaml on demand, outside any lockfile), so
+# workflow actions are the only dependencies Dependabot tracks.
+#
+# `target-branch: dev` on the version-update block keeps Dependabot PRs on
+# the dev -> release/* -> main flow that guard-release-branch.yml enforces.
+# Retargeting after the fact orphans and closes the PR, so it is set here
+# from the start. Minor and patch updates batch into one PR per week via
+# `patterns` rather than `update-types`: a SHA pin's SemVer level comes from
+# its trailing comment, and an unclassifiable action would otherwise fall
+# out of the group and open alone. Majors are ignored on this block; a
+# major bump is a reviewed, hand-made change.
+#
+# Security updates are raised against the default branch and ignore every
+# option on a block that carries `target-branch`. The trailing block has no
+# target-branch, `open-pull-requests-limit: 0` so it never opens version
+# updates there, and a group with `applies-to: security-updates` that
+# batches minor and patch fixes per run. Cooldown, the majors ignore, and
+# lockfile pinning are deliberately absent from it: cooldown is a
+# version-update option, and the other two would suppress a fix that
+# resolves outside the current range.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: "/"
+    target-branch: dev
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: America/Chicago
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 3
+    reviewers:
+      - brettdavies
+    labels:
+      - dependencies
+      - github-actions
+    groups:
+      actions-minor-patch:
+        patterns:
+          - "*"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - version-update:semver-major
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: America/Chicago
+    open-pull-requests-limit: 0
+    labels:
+      - dependencies
+      - security
+    groups:
+      actions-security-minor-patch:
+        applies-to: security-updates
+        update-types:
+          - minor
+          - patch
