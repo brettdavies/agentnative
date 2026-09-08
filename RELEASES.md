@@ -96,12 +96,13 @@ Each box is a go/no-go. Any unchecked item holds the cut.
 
 - [ ] **Branch drift.** `scripts/release/drift.sh` exits 0. Security PRs, hotfixes, and config edits land on `main`
   first; the overlay takes `dev`'s content for every file, so anything `main` holds that `dev` never received is
-  reverted by the release. Gate 1 lists the commits whose changes `dev` lacks (`differs` or `missing`); backport them by
-  PR into `dev`, merge, and rerun. Gate 2 requires `.github/` to match on both branches. Gate 3 has no lockfile to
-  compare in this repo.
+  reverted by the release. Gate 0 fails when the previous release's bookkeeping (`VERSION`, `CHANGELOG.md`) never
+  reached `dev`; run `scripts/sync-dev-after-release.sh v<prev>` and merge its PR. Gate 1 lists the commits whose
+  changes `dev` lacks (`differs` or `missing`); backport them by PR into `dev`, merge, and rerun. Gate 2 requires
+  `.github/` to match on both branches. Gate 3 has no lockfile to compare in this repo.
 - [ ] **Previous backport merged.** `git show origin/dev:VERSION` equals the last tag minus its `v`. When it does not,
   `scripts/sync-dev-after-release.sh v<prev>` never merged: the overlay would carry `dev`'s stale `CHANGELOG.md` and
-  this cut would drop the previous release's section from `main`.
+  this cut would drop the previous release's section from `main`. `drift.sh` gate 0 reports the same condition.
 - [ ] **Guarded set resolves.** `scripts/release/guarded-paths.sh` prints the base list plus this repo's `extra_paths`.
   Never restate the set inline.
 - [ ] **Surface established.** `git log origin/main..origin/dev --oneline` is what ships. No tag is an ancestor of `dev`
@@ -159,9 +160,12 @@ git diff --cached --name-only origin/main | grep -E "$GUARDED" \
 #       workflow's extra_paths and removing from the branch.
 git diff --cached --diff-filter=A --name-only origin/main | grep -E '(^docs/|\.md$)' | grep -Ev "$GUARDED" || echo "(none unguarded)"
 
-# 6. Commit the overlay as one commit sitting directly on top of main. The pre-push hook
-#    runs scripts/check-release-version.sh against it on push (see § Release gating).
+# 6. Commit the overlay as one commit sitting directly on top of main, then rerun the
+#    drift gate: anything that landed on main during the cut would be reverted by this
+#    overlay. The pre-push hook runs scripts/check-release-version.sh on push (see
+#    § Release gating).
 git commit
+scripts/release/drift.sh
 
 # 7. Push and open the PR. Scrub body in /tmp/ first.
 git push -u origin release/v<version>
@@ -305,9 +309,8 @@ scripts/sync-dev-after-release.sh v<version>
 
 The script opens a PR against `dev`; merge it once CI is green. Never merge `main` into `dev` or push to `dev` directly:
 the squash-merged histories share no recent ancestry, so the merge conflicts on every file both sides touched, and a
-direct push bypasses `dev`'s required checks. A non-tagging release has nothing to backport. `drift.sh` anchors on the
-last tag, so a missed backport of the release commit itself is not drift it reports; the pre-cut checklist's `VERSION`
-item is what catches it.
+direct push bypasses `dev`'s required checks. A non-tagging release has nothing to backport. `drift.sh` gate 0 fails at
+the next cut while the backport is missing.
 
 → Rationale:
 [`RELEASES-RATIONALE.md` § Why backport main to dev after publish](./RELEASES-RATIONALE.md#why-backport-main-to-dev-after-publish).

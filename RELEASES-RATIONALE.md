@@ -226,8 +226,8 @@ See "Prefer `feat`/`fix` over `chore`" in global CLAUDE.md for prevention.
 Once `publish.yml` has created the GitHub Release, the release-bookkeeping files on `main` (`VERSION`, `CHANGELOG.md`)
 need to reach `dev` so the next release's changelog stacks on the released section and so the next dev work starts from
 the released baseline. The overlay takes `dev`'s copy of `CHANGELOG.md` and `--from-dev-prs` seeds the new section on
-top of it, so a skipped backport drops the previous release's section from `main` at the next cut. `drift.sh` anchors on
-the last tag and does not see the release commit itself; the runbook's pre-cut `VERSION` check is the guard.
+top of it, so a skipped backport drops the previous release's section from `main` at the next cut. `drift.sh` gate 0
+compares the version carriers and `CHANGELOG.md` at the last tag against `dev` and fails while the backport is missing.
 
 The backport is a PR opened by `scripts/sync-dev-after-release.sh`, never a merge of `main` into `dev` and never a
 direct push. The squash-merged branches share no recent history, so a merge conflicts on every file both sides touched,
