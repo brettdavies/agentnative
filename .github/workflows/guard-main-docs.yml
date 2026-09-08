@@ -1,3 +1,13 @@
+# Source repo guard-main-docs wrapper — calls the centralized reusable workflow.
+# Copy to .github/workflows/guard-main-docs.yml in repos with guarded docs.
+#
+# Blocks compound-engineering docs (plans, solutions, brainstorms, reviews)
+# from being merged into main. Only needs pull-requests: read.
+#
+# SHA-PIN the @main ref before committing into the consumer repo. Pattern:
+#   uses: brettdavies/.github/.github/workflows/guard-main-docs.yml@<SHA> # main as of YYYY-MM-DD
+# Recipe: `gh api repos/brettdavies/.github/commits/main --jq .sha`.
+# See ~/.claude/skills/github-repo-setup/references/sha-pinning-recipes.md.
 name: Guard main from engineering docs
 
 on:
@@ -6,10 +16,6 @@ on:
 
 permissions:
   pull-requests: read
-
-concurrency:
-  group: guard-main-docs-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
 
 jobs:
   guard-docs:
