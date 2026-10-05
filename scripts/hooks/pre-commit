@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: MIT OR Apache-2.0
+#
+# Pre-commit hook — fast, staged-file-only lint for immediate feedback.
+# The full gate (markdown wrap, link check, principle validation,
+# last-revised discipline, release-version semver, pack-README drift,
+# and the Vale/LanguageTool prose-check stack) runs at push time via
+# scripts/hooks/pre-push; this hook only covers what is cheap enough to
+# run on every commit without slowing the loop down.
+#
+# Activation (run once after clone):
+#   git config core.hooksPath scripts/hooks
+#
+# Checks, scoped to staged files only (git diff --cached --name-only):
+#   1. markdownlint-cli2 — staged *.md files, against the repo's
+#      .markdownlint-cli2.yaml (same config pre-push and the editor use).
+#   2. shellcheck (--severity=warning) — staged *.sh files plus anything
+#      staged under scripts/hooks/.
+#   3. actionlint — staged .github/workflows/*.yml files.
+#
+# Every check no-ops with a one-line notice when its tool isn't installed,
+# so a missing linter never blocks a commit.
+
+set -euo pipefail
+
+cd "$(git rev-parse --show-toplevel)"
+
+mapfile -t STAGED_FILES < <(git diff --cached --name-only --diff-filter=ACM)
+
+if [ ${#STAGED_FILES[@]} -eq 0 ]; then
+  exit 0
+fi
+
+status=0
+
+mapfile -t STAGED_MD < <(printf '%s\n' "${STAGED_FILES[@]}" | grep -E '\.md$' || true)
+if [ ${#STAGED_MD[@]} -gt 0 ]; then
+  if command -v markdownlint-cli2 >/dev/null 2>&1; then
+    echo "==> markdownlint-cli2 (staged markdown)"
+    markdownlint-cli2 "${STAGED_MD[@]}" || status=1
+  else
+    echo "pre-commit: markdownlint-cli2 not installed; skipping markdown lint"
+  fi
+fi
+
+mapfile -t STAGED_SH < <(printf '%s\n' "${STAGED_FILES[@]}" | grep -E '(\.sh$|^scripts/hooks/)' || true)
+if [ ${#STAGED_SH[@]} -gt 0 ]; then
+  if command -v shellcheck >/dev/null 2>&1; then
+    echo "==> shellcheck --severity=warning (staged shell files)"
+    shellcheck --severity=warning "${STAGED_SH[@]}" || status=1
+  else
+    echo "pre-commit: shellcheck not installed; skipping shell lint"
+  fi
+fi
+
+mapfile -t STAGED_WORKFLOWS < <(printf '%s\n' "${STAGED_FILES[@]}" | grep -E '^\.github/workflows/.*\.ya?ml$' || true)
+if [ ${#STAGED_WORKFLOWS[@]} -gt 0 ]; then
+  if command -v actionlint >/dev/null 2>&1; then
+    echo "==> actionlint (staged workflows)"
+    actionlint "${STAGED_WORKFLOWS[@]}" || status=1
+  else
+    echo "pre-commit: actionlint not installed; skipping workflow lint"
+  fi
+fi
+
+if [ $status -ne 0 ]; then
+  echo "FAILED: pre-commit checks found issues in staged files." >&2
+  exit 1
+fi
+
+echo "==> All pre-commit checks passed"

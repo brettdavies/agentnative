@@ -78,8 +78,8 @@ See `RELEASES.md`. Summary:
 - `main`: production. Only release commits arrive here, via squash-merge of a `release/*` PR.
 - `dev`: forever integration branch. All feature work squash-merges to `dev`.
 - `feat/*`, `fix/*`, `chore/*`, `docs/*`: feature branches, one PR's worth, auto-deleted on merge.
-- `release/<slug>`: branched from `origin/main`, cherry-picks commits from `dev`, PR'd to `main`. Short-lived,
-  auto-deleted.
+- `release/v<version>`: branched from `origin/main`, carries `dev`'s tree overlaid on top minus the guarded set, PR'd to
+  `main`. Short-lived, auto-deleted.
 - Docs trees (`docs/plans/`, `docs/brainstorms/`, `docs/solutions/`, `docs/reviews/`) live on `dev` only;
   `guard-main-docs.yml` blocks them from `main`. `guard-release-branch.yml` rejects any PR to `main` whose head isn't
   `release/*`.
@@ -134,7 +134,7 @@ symlink is missing, recreate it: `ln -s ~/dev/solutions-docs docs/solutions`.
 
 1. Read `CONTRIBUTING.md` for the graduated AI-disclosure gate and coupled-release protocol; these are governance
    constraints, not optional conventions.
-2. Read `RELEASES.md` for the `dev` → `release/*` → `main` cherry-pick flow and the guard workflows.
+2. Read `RELEASES.md` for the `dev` → `release/*` → `main` overlay flow and the guard workflows.
 3. Skim the 8 `principles/p<n>-*.md` files to understand what's in-scope for this repo (vs. the CLI or site).
 4. Before proposing changes that affect cross-repo surfaces, `qmd query "<topic>" --collection solutions` to check for
    prior art and documented decisions.
