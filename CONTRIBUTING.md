@@ -116,15 +116,24 @@ when changes land on `main` without a tag.
 
 ## Contributor setup
 
-The repo ships a pre-push hook that runs eight stages before each push: markdown wrap, markdownlint, link check,
-principle-frontmatter validation, validator regression fixtures, release-version semver check, pack-README drift check,
-and the prose-check stack (Vale rule packs + LanguageTool). Activate the hook once after clone:
+The repo ships a pre-commit hook and a pre-push hook, both activated by the same `core.hooksPath` setting. Activate once
+after clone:
 
 ```bash
 brew install vale jaq bun
 git config core.hooksPath scripts/hooks
 mkdir -p styles && vale sync
 ```
+
+**Pre-commit** (fast, staged-file-only, runs on every commit): markdownlint-cli2 on staged `*.md`, `shellcheck
+--severity=warning` on staged `*.sh` and anything under `scripts/hooks/`, and `actionlint` on staged
+`.github/workflows/*.yml`. Each check is a no-op with a notice when its tool isn't installed, so a missing linter never
+blocks a commit.
+
+**Pre-push** runs eight stages before each push: markdown wrap, markdownlint, link check, principle-frontmatter
+validation, validator regression fixtures, release-version semver check, pack-README drift check, and the prose-check
+stack (Vale rule packs + LanguageTool). This is the exhaustive gate; pre-commit only covers what's cheap enough to run
+on every commit.
 
 First push installs `js-yaml@4.1.0` into a gitignored `node_modules/`; `vale sync` pulls the gitignored baseline packs
 (`write-good`, `proselint`) from the URLs pinned in `.vale.ini`. Subsequent runs are fast. No remote CI replaces this; a

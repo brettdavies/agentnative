@@ -1,0 +1,8 @@
+# Mandatory review on producer-ops paths that determine what ships and how.
+# The principle markdown (principles/, README.md, VERSION) is reviewed via
+# normal PR rules; downstream repos vendor the published artifacts.
+
+scripts/**              @brettdavies
+.github/workflows/**    @brettdavies
+.github/rulesets/**     @brettdavies
+.github/CODEOWNERS      @brettdavies
