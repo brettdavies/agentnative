@@ -86,7 +86,7 @@ resolved. See [`principles/AGENTS.md`](principles/AGENTS.md) for the full status
 
 The spec uses semver-adjacent versioning:
 
-- **MINOR**: new or changed MUSTs
+- **MINOR**: new or changed MUST requirements
 - **PATCH**: SHOULD/MAY changes, prose edits
 
 Each principle carries an independent `last-revised` date in frontmatter. The date updates when any MUST/SHOULD/MAY in
