@@ -157,8 +157,10 @@ tool a building block rather than a dead end.
 - A `completions` command that requires auth or config to run.
 - No stdin support on commands where piped input is a natural use case.
 
-Measured by audit IDs `p6-sigpipe`, `p6-no-color`, `p6-completions`, `p6-timeout`, `p6-agents-md`. Run `anc audit
---principle 6 .` against the CLI under test to see each.
+Measured by audit IDs `p6-sigpipe`, `p6-sigterm`, `p6-no-color-behavioral`, `p6-no-color`, `p6-completions`,
+`p6-timeout`, `p6-no-pager-behavioral`, `p6-no-pager`, `p6-global-flags`, `p6-stdin-input`, `p6-consistent-naming`,
+`p6-subcommand-operations`, `p6-color-flag`, `p6-standard-names`, `p6-dependencies`. Run `anc audit --principle 6 .`
+against the CLI under test to see each.
 
 ## Pressure test notes
 

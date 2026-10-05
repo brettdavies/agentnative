@@ -134,8 +134,9 @@ catastrophically later.
 - `process::exit()` in library code, bypassing structured error propagation.
 - Human-formatted tables as the only output mode with no JSON alternative.
 
-Measured by audit IDs `p2-output-json`, `p2-output-format`, `p2-stderr-diagnostics`. Run `anc audit --principle 2 .`
-against the CLI under test to see each.
+Measured by audit IDs `p2-json-output`, `p2-structured-output`, `p2-output-module`, `p2-structured-exit-codes`,
+`p2-json-errors`, `p2-schema-print`, `p2-consistent-envelope`, `p2-schema-file`, `p2-json-aliases`, `p2-more-formats`,
+`p2-raw-flag`. Run `anc audit --principle 2 .` against the CLI under test to see each.
 
 ## Pressure test notes
 

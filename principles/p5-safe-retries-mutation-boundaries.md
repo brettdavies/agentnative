@@ -77,8 +77,8 @@ does not modify state" is a better sentence to put in `--help` than to assume.
 - No `--dry-run` option on bulk operations, where a preview prevents costly mistakes.
 - Operations that fail on retry because the first attempt partially succeeded: non-idempotent writes without rollback.
 
-Measured by audit IDs `p5-dry-run`, `p5-destructive-guard`. Run `anc audit --principle 5 .` against the CLI under test
-to see each.
+Measured by audit IDs `p5-force-yes`, `p5-read-write-distinction`, `p5-dry-run`. Run `anc audit --principle 5 .` against
+the CLI under test to see each.
 
 ## Pressure test notes
 

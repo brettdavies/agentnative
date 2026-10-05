@@ -102,8 +102,9 @@ high-signal and inside budget.
 - Progress bars or spinners that write to stderr in non-TTY contexts, adding noise to agent logs.
 - No `--timeout` on network operations. A stalled request blocks the agent indefinitely.
 
-Measured by audit IDs `p7-quiet`, `p7-limit`, `p7-timeout`. Run `anc audit --principle 7 .` against the CLI under test
-to see each.
+Measured by audit IDs `p7-quiet`, `p7-output-clamping`, `p7-verbose`, `p7-limit`, `p7-timeout-behavioral`,
+`p7-cursor-pagination`, `p7-auto-verbosity`, `p7-naked-println`. Run `anc audit --principle 7 .` against the CLI under
+test to see each.
 
 ## Pressure test notes
 

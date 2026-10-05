@@ -110,8 +110,9 @@ trial-and-errors its way into a working call, burning tokens and sometimes landi
 - A hand-written command list that prefixes every entry with the binary name, so the command token sits second on each
   line and a scanner has to strip the prefix before it can read the command.
 
-Measured by audit IDs `p3-help`, `p3-after-help`, `p3-version`. Run `anc audit --principle 3 .` against the CLI under
-test to see each.
+Measured by audit IDs `p3-subcommand-examples`, `p3-help`, `p3-version`, `p3-paired-examples`, `p3-about-long-about`,
+`p3-unprefixed-command-list`, `p3-examples-subcommand`. Run `anc audit --principle 3 .` against the CLI under test to
+see each.
 
 ## Pressure test notes
 

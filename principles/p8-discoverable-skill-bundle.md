@@ -92,3 +92,6 @@ recognizes the tool's idioms across every subsequent invocation.
 
 The vendor census in the v0.4.0 source-mining sprint documents the shipped patterns across Firecrawl, CLI-Anything, gws,
 Crush, and larksuite; the `agentnative-skill` repo's `bin/check-update` is a reference for an update-check pattern.
+
+Measured by audit IDs `p8-bundle-install`, `p8-bundle-exists`, `p8-install-all`, `p8-bundle-update`. Run `anc audit
+--principle 8 .` against the CLI under test to see each.
