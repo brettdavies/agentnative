@@ -61,9 +61,10 @@ trial-and-errors its way into a working call, burning tokens and sometimes landi
 
 - Every subcommand that takes its own arguments or options MUST render at least one concrete invocation example with
   realistic arguments, in the section that appears after the flags list. A subcommand whose `--help` shows no positional
-  argument and no option beyond `-h`/`--help` and the global flags every subcommand inherits is exempt: its usage line
-  (`tool version`, `tool logout`) is its whole call shape, so an example would repeat it. Clap's `after_help` attribute
-  is the Rust realization; other frameworks have equivalents (see Evidence section below).
+  argument (a nested command list counts as one) and no option beyond `-h`/`--help` and the global flags every
+  subcommand inherits is exempt: its usage line (`tool version`, `tool logout`) is its whole call shape, so an example
+  would repeat it. Clap's `after_help` attribute is the Rust realization; other frameworks have equivalents (see
+  Evidence section below).
 - The top-level command MUST render 2–3 examples covering the primary use cases.
 - The top-level command MUST respond to `--version` with a non-empty version line on stdout and exit 0. Agents pin
   against tool versions to detect breaking changes; a `--version` that errors, exits non-zero, or prints nothing forces
