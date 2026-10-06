@@ -13,8 +13,8 @@ locked. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for how to file each type.
 
 ## The four artifacts
 
-- **Spec**: this repo. Eight RFC 2119 principles plus machine-readable `requirements[]` in YAML frontmatter. Currently
-  v0.4.0; all principles ship as `status: active`.
+- **Spec**: this repo. Eight RFC 2119 principles plus machine-readable `requirements[]` in YAML frontmatter. Current
+  version: see [VERSION](VERSION); all principles ship as `status: active`.
 - **Linter**: [`anc`](https://github.com/brettdavies/agentnative-cli). Scores any CLI repo against the spec. Pins
   against requirement IDs, not prose.
 - **Skill bundle**: [`agentnative-skill`](https://github.com/brettdavies/agentnative-skill). Agent-facing guide that
@@ -86,7 +86,7 @@ resolved. See [`principles/AGENTS.md`](principles/AGENTS.md) for the full status
 
 The spec uses semver-adjacent versioning:
 
-- **MINOR**: new or changed MUSTs
+- **MINOR**: new or changed MUST requirements
 - **PATCH**: SHOULD/MAY changes, prose edits
 
 Each principle carries an independent `last-revised` date in frontmatter. The date updates when any MUST/SHOULD/MAY in
