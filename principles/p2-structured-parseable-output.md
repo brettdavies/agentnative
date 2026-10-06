@@ -1,7 +1,7 @@
 ---
 id: p2
 title: Structured, Parseable Output
-last-revised: 2026-10-05
+last-revised: 2026-10-06
 status: active
 requirements:
   - id: p2-must-output-flag

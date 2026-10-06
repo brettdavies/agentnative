@@ -1,7 +1,7 @@
 ---
 id: p3
 title: Progressive Help Discovery
-last-revised: 2026-10-05
+last-revised: 2026-10-06
 status: active
 requirements:
   - id: p3-must-subcommand-examples
