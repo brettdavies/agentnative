@@ -27,9 +27,6 @@ concurrency:
   group: check-last-revised-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   check-last-revised:
     runs-on: ubuntu-latest
