@@ -31,10 +31,10 @@ anc audit .
 Also installable via `cargo install agentnative` or platform-specific archives on
 [GitHub Releases](https://github.com/brettdavies/agentnative-cli/releases).
 
-Run `anc audit . --output json` for machine-readable scorecards. Per-principle filtering via `anc audit . --principle
-<1-8>`. `anc emit schema` prints the scorecard JSON Schema (draft 2020-12) for downstream consumers. For a sample
-scorecard, see the [`anc` README](https://github.com/brettdavies/agentnative-cli#example-output) or a live one at
-[anc.dev/scorecards](https://anc.dev/scorecards).
+Run `anc audit . --output json` for machine-readable scorecards. Per-principle filtering via
+`anc audit . --principle <1-8>`. `anc emit schema` prints the scorecard JSON Schema (draft 2020-12) for downstream
+consumers. For a sample scorecard, see the [`anc` README](https://github.com/brettdavies/agentnative-cli#example-output)
+or a live one at [anc.dev/scorecards](https://anc.dev/scorecards).
 
 ## Principles
 
@@ -69,6 +69,13 @@ against instead of prose. Each entry has:
   machine-checkable `{kind: conditional, antecedent: {audit_id: "<id>"}}` whose named verifier decides whether the
   requirement binds.
 - **`summary`**: one sentence, mirrored by the prose bullet.
+
+Requirement text names a flag by its double-dash spelling (`--force`, `--quiet`, `--output`). A tool whose help declares
+no double-dash name follows the Go `flag` convention, where one dash and two name the same flag, and meets the
+requirement with the single-dash spelling: `-force` on `terraform force-unlock` satisfies a requirement that names
+`--force`. In a help that declares any double-dash name, a single-dash word is a name of its own and does not stand in
+for the double-dash spelling. A single letter is a different name in either case and meets only a requirement that names
+that letter, so `-f` meets `--force` only where the requirement also names `-f`.
 
 [`principles/AGENTS.md`](principles/AGENTS.md) is the full authoring and governance contract: frontmatter fields,
 requirement-ID conventions, the conditional-applicability propagation table, the `last-revised` discipline, the status
