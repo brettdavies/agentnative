@@ -1,9 +1,9 @@
 ---
 title: "refactor: align local CLI dir, heal spec-repo name drift across docs, and manufacture GitHub redirect alias"
 type: refactor
-status: shipped
+status: done
+completed: 2026-04-27
 date: 2026-04-27
-shipped: 2026-04-27
 merge-commits:
   spec: 07d89a4d9b48594df13f41418859d4f3f6cd4d50            # U1
   site: 6d76ae9eee01060c6e81a7cfbd5ec5a3e1eb3b38            # U4 (in agentnative-site dev)
@@ -18,53 +18,6 @@ non-commit-units:
 ---
 
 # refactor: align local CLI dir, heal spec-repo name drift across docs, and manufacture GitHub redirect alias
-
-> **Close-out (2026-04-27).** All 9 implementation units shipped on 2026-04-27. Verified during the launch-readiness
-> audit (v0.3.0-wave launch plan § U4, since moved to `.context/` as operational coordination) which discovered the
-> plan was severely stale — every box `[ ]` even though work had landed across all four downstream surfaces.
-> Outcomes vs. the plan:
->
-> - **U1 — Spec repo drift fixes:** shipped via spec commit `07d89a4` (4 occurrences healed in
->   `docs/decisions/naming-rationale.md`, `docs/plans/2026-04-22-002-post-frontmatter-roadmap.md`, and
->   `docs/plans/2026-04-23-002-feat-vault-archival-plan.md`). The naming convention was codified in the rationale doc
->   as planned. **Verification AC met** at audit time: `rg 'brettdavies/agentnative-spec' ~/dev/agentnative-spec`
->   returns hits only in *this* plan file and the launch-readiness plan, both intentionally documenting the rewrite.
-> - **U2 — Local CLI rename + slug-cache hygiene:** filesystem-only, no commit. `~/dev/agentnative/` is gone;
->   `~/dev/agentnative-cli/` exists; `~/.claude/skills/gstack/bin/gstack-slug` from the renamed dir derives
->   `brettdavies-agentnative-cli`; the orphaned slug-cache key was trashed. **All three verification ACs met.**
-> - **U3 — CLI repo drift fix:** healed in place per plan; the host file was committed later under the spec-vendor
->   plan. **Verification AC met:** `rg 'brettdavies/agentnative-spec' ~/dev/agentnative-cli` returns 0 hits.
-> - **U4 — Site repo drift fix:** shipped via site commit `6d76ae9` ("docs(plans): correct upstream spec repo name in
->   sync-spec plan"). **Verification AC met:** zero drift hits in `~/dev/agentnative-site`. The unrelated untracked
->   plan `2026-04-24-001-feat-skill-distribution-endpoint-plan.md` was correctly left alone.
-> - **U5 — Solutions-docs (drift + CLI path refs + forensic annotate):** shipped via solutions-docs commit `cb1386d`
->   ("docs: correct upstream spec name + update local CLI path refs after rename"). `ANC_ROOT` default updated to
->   `agentnative-cli`; `pr-body-driven-changelog-generation-20260423.md` paths updated; forensic
->   `headless-server-post-reboot-...` doc retained intentionally per the annotate-and-leave directive (the remaining
->   `agentnative` references in that file are runtime process names, not directory paths). **Both verification ACs
->   met.**
-> - **U6 — Dotfiles tmuxinator update:** shipped via dotfiles commit `17c43d7`
->   ("feat(tmuxinator): rename agentnative session to agentnative-cli matching renamed dir"). `agentnative.yml` →
->   `agentnative-cli.yml`; `name:` and `root:` fields updated. **Verification AC met.**
-> - **U7 — Spec memory codification:** local-only, no commit. `ecosystem_layout.md` topology table updated (CLI path
->   is `~/dev/agentnative-cli/`, no `(pre-rename dir name)` annotation, naming convention statement appended).
->   `pending_upstream_work.md` drift hit healed. **Both verification ACs met:** zero `'pre-rename dir name'` and zero
->   `brettdavies/agentnative-spec` hits in memory.
-> - **U8 — GitHub redirect alias:** the manufactured-alias trick worked. `gh api repos/brettdavies/agentnative-spec`
->   resolves to `https://github.com/brettdavies/agentnative` — external links of the broken shape now redirect
->   silently as intended. **Verification AC met.**
-> - **U9 — Final verification:** the full 9-row check table in U9 passes per the audit-time spot-checks. The handoff
->   from this plan to the launch-readiness plan is what surfaced the staleness — Gate 5 of the central launch tracker
->   (which references this plan's U2-U5/U8/U9) flips from `partial` to `done`, including the "deferred post-launch"
->   carve-outs for U6 (dotfiles) and U7 (memory) which had also already shipped.
->
-> **Why the plan went stale:** units shipped across four working trees, four separate commits (plus three non-commit
-> operations), all on 2026-04-27 — but the central plan file was edited on the spec-repo working tree only when U1
-> shipped, and no subsequent commit updated the boxes. The launch-readiness audit caught it on the same day.
->
-> **Lesson for future cross-repo refactors:** flip the orchestrating plan's checkboxes in the same commit as the
-> last cross-repo unit, not as a follow-up. A `chore(plans): close out 2026-04-27-001` commit on `dev` after the
-> dotfiles commit lands would have prevented the drift between physical state and tracked state.
 
 ## Overview
 
@@ -572,7 +525,7 @@ Run the full verification battery in one batch:
 | Rename window leaves canonical name as `agentnative-spec` (T1 → T2 gap)                                 | Run T1 and T2 back-to-back; ~seconds of exposure. No concurrent fetches in this session. Acceptable.                                                                                                    |
 | Bare `agentnative-spec` references in docs (without `brettdavies/` prefix) get false-positive rewritten | Per-occurrence sanity check during U3, U4, U5. Most bare refs are local-dir-shaped and stay; GitHub-shorthand refs (`agentnative-spec:CONTRIBUTING.md`) get rewritten to `brettdavies/agentnative:...`. |
 | Dotfiles uncommitted user changes get accidentally committed in U6                                      | Surgical `git add stow/tmuxinator/...` only. Verify `git status` after staging; abort and reset if anything else got staged.                                                                            |
-| Future maintainer renames or deletes `brettdavies/agentnative`, killing the redirect                    | Codified in spec memory `ecosystem_layout.md` (U7) as a permanent constraint. The decision record `naming-rationale.md` (U1) also documents the convention.                                             |
+| Future maintainer renames or deletes `brettdavies/agentnative`, killing the redirect                    | Codified in spec memory `ecosystem_layout.md` (U7) as a permanent constraint.                                                                                                                           |
 
 ## Documentation / Operational Notes
 
@@ -586,7 +539,6 @@ Run the full verification battery in one batch:
 
 - Audit handoff (precedent for cross-repo cleanup methodology):
   `/home/brett/dev/agentnative-site/.context/handoffs/2026-04-25-gstack-cross-repo-audit.md`
-- Canonical naming decision (the doc this plan corrects most directly): `docs/decisions/naming-rationale.md`
 - SoT contract (background on three-repo family):
   `docs/solutions/best-practices/sot-contract-for-spec-repos-with-downstream-consumers-2026-04-22.md`
 - Prior repo-rename postmortem (informs U8 expectations):

@@ -1,7 +1,8 @@
 ---
 title: "feat: P0 — mirror skill PR #25 release-flow hardening (changelog --dry-run)"
 type: feat
-status: proposed
+status: active
+prs: ["#48"]
 priority: P0
 date: 2026-06-01
 origin: "cross-repo mirror of brettdavies/agentnative-skill PR #25 (merged 2026-06-01); applies only the items relevant to this repo's scripts"
@@ -12,9 +13,7 @@ origin: "cross-repo mirror of brettdavies/agentnative-skill PR #25 (merged 2026-
 ## Summary
 
 `agentnative-skill` PR #25 hardened its release flow with two changes to `scripts/sync-dev-after-release.sh` and two
-changes to `scripts/generate-changelog.py`. This repo has `scripts/generate-changelog.py` but **no
-`scripts/sync-dev-after-release.sh`** (the spec repo's release artifacts are markdown principles, not a Cargo crate, so
-there is no dev-backport step). Mirror only the items that apply.
+changes to `scripts/generate-changelog.py`. Mirror only the items that apply.
 
 Reference PRs (read the exact diffs before implementing): <https://github.com/brettdavies/agentnative-skill/pull/25> and
 the follow-up <https://github.com/brettdavies/agentnative-skill/pull/26>.
@@ -39,25 +38,24 @@ the follow-up <https://github.com/brettdavies/agentnative-skill/pull/26>.
    change at the `PR_NUMBERS` extraction; carry it over verbatim from the skill repo's diff.
 
 3. **`scripts/generate-changelog.py --dry-run` — wrap-tolerant comparison.** Known follow-up that the skill repo did
-   *not* ship in PR #26. The dry-run comparison uses byte-exact `cmp -s`. The on-disk `CHANGELOG.md` is line-wrapped by
-   the repo's markdownlint / `md-wrap` hook; the script's direct writes are unwrapped. Even after item 2, the dry-run
-   will false-positive "drift" on every release until the comparison is made wrap-tolerant. There is no
-   `sync-dev-after-release.sh` consumer in this repo, so the false-positive is stderr-only here — but the dry-run flag
-   itself is the contract item 1 commits to, so land the fix in the same pass that ports the flag. Suggested approach:
-   run both files through `fmt -w 9999` (or an equivalent paragraph-flatten) before diffing, then use `diff
-   --ignore-all-space --ignore-blank-lines`.
+   *not* ship in PR #26. The dry-run comparison is byte-exact. When the on-disk `CHANGELOG.md` is line-wrapped by a
+   markdownlint / `md-wrap` hook and the script's direct writes are unwrapped, the dry-run false-positives "drift" on
+   every release, even after item 2, until the comparison is made wrap-tolerant. The dry-run flag itself is the contract
+   item 1 commits to, so land the fix in the same pass that ports the flag. Suggested approach: run both files through
+   `fmt -w 9999` (or an equivalent paragraph-flatten) before diffing, then use
+   `diff --ignore-all-space --ignore-blank-lines`.
 
 ### Already shipped here
 
 - **Duplicate-section guard** — `scripts/generate-changelog.py` already refuses to prepend a `## [X.Y.Z]` section when
-  one exists for the current tag (see existing `CHANGELOG.md already has a [${RELEASE_VER}] section` exit path). No
-  action needed; cross-check during implementation that the guard semantics match the skill repo's so future cross-repo
-  polish stays uniform.
+  one exists for the current tag (see existing `CHANGELOG.md already has a [{version}] section` exit path). No action
+  needed; cross-check during implementation that the guard semantics match the skill repo's so future cross-repo polish
+  stays uniform.
 
 ### Not applicable
 
-- `scripts/sync-dev-after-release.sh` does not exist in this repo. Both preconditions (GitHub Release published-state
-  check and post-sync regen-idempotency check) have no host. Do not create the script just to host them.
+- The two `scripts/sync-dev-after-release.sh` changes (GitHub Release published-state check and post-sync
+  regen-idempotency check) are out of scope for this plan.
 
 ## Acceptance
 

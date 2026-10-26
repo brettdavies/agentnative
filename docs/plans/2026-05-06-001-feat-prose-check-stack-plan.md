@@ -1,7 +1,10 @@
 ---
 title: "feat: Add Vale + LanguageTool pre-push prose-check stack (spec-side)"
 type: feat
-status: completed
+status: released
+released_in: v0.3.1
+completed: 2026-05-07
+prs: ["#22"]
 date: 2026-05-06
 origin: docs/brainstorms/2026-05-06-prose-check-stack-requirements.md
 related:
@@ -1257,7 +1260,7 @@ equivalent to U9 and U10 locally.
 - **Existing pre-push hook (spec):** `scripts/hooks/pre-push`
 - **Existing pre-push hook (site):** `agentnative-site/scripts/hooks/pre-push`
 - **Existing sync pattern (site):** `agentnative-site/scripts/sync-spec.sh`
-- **Brand identity SoT (current, on `feat/v0.4.0`):** `BRAND.md`, `.impeccable.md`
+- **Brand identity SoT:** `BRAND.md`, `PRODUCT.md`
 - **Cross-repo learnings:**
 - `docs/solutions/best-practices/prose-spec-repo-pre-push-pipeline-20260422.md`
 - `docs/solutions/best-practices/tracked-git-hooks-core-hookspath-20260401.md`

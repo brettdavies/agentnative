@@ -1,7 +1,10 @@
 ---
 title: "feat: Deploy LanguageTool docker container on pool for prose-check stack"
 type: feat
-status: shipped
+status: released
+released_in: v0.3.1
+completed: 2026-05-07
+prs: ["#22"]
 date: 2026-05-06
 related:
   - docs/plans/2026-05-06-001-feat-prose-check-stack-plan.md
@@ -458,10 +461,11 @@ BRAND.md voice. Implementer writes accordingly.
 - **Rollback posture:** `docker compose down languagetool` removes the container; the sibling plan's pre-push hook
   prints the skip notice and the developer keeps shipping. Rollback is risk-free.
 - **Monitoring:** None at v1. The healthcheck is the only signal. If `pool` skips the container after a reboot,
-  diagnostic chain is in U4's doc. If failures become frequent, add a Slack/email alert via `pool`'s existing host
-  monitoring.
+  diagnostic chain is in
+  `docs/solutions/architecture-patterns/self-hosted-languagetool-for-prose-check-stacks-2026-05-20.md`. If failures
+  become frequent, add a Slack/email alert via `pool`'s existing host monitoring.
 - **Image bump cadence:** Quarterly review of `meyay/languagetool` releases, or earlier if a CVE drops. PR with the new
-  digest in the deployment doc + the compose file; smoke-test U3 against the new container; merge.
+  digest in the compose file; smoke-test U3 against the new container; merge.
 
 ---
 

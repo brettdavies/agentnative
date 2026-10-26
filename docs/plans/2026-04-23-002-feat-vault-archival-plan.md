@@ -1,52 +1,15 @@
 ---
 title: "feat: Vault archival — retire pre-repo principles + research folders"
 type: feat
-status: complete
+status: done
+completed: 2026-04-29
 date: 2026-04-23
-closed: 2026-04-29
 parents:
   - docs/plans/2026-04-22-002-post-frontmatter-roadmap.md
 roadmap-item: 3
 ---
 
 # feat: Vault archival — retire pre-repo principles + research folders
-
-## Completion Notes (2026-04-29)
-
-**Both implementation units shipped via vault edits in a single session.** Out-of-band per the plan's design (vault is
-not a git repo). Picked up after spec v0.3.0 published — gate 6 in the central launch tracker now closeable.
-
-**U1 — Archive vault `principles/`:** All 9 files (`AGENTS.md`, `index.md`, `p1-*..p7-*.md`) moved to
-`_archive-2026-04-23/` subfolder. Redirect `README.md` written pointing at
-<https://github.com/brettdavies/agentnative/blob/main/principles/AGENTS.md> (governance) and
-<https://github.com/brettdavies/agentnative/tree/main/principles> (principle text). Cited current `v0.3.0` (2026-04-29)
-as the live tag — superseded the plan's original `v0.2.0` reference since spec shipped a MINOR bump in the meantime.
-
-**U2 — Disposition for vault `research/`:** Inbound-link audit ran cleanly — `rg` across `agentnative-cli`,
-`agentnative-site`, `agentnative-skill`, and `solutions-docs` returned zero references to `research/` paths. Per the
-plan's decision matrix ("Zero hits → (a) retire fully is safe"), disposition **(a) retire fully** chosen. Same archival
-pattern as U1: `AGENTS.md`, `index.md`, `principle-map.md`, `extracts/`, `raw/` moved to `_archive-2026-04-23/`,
-redirect `README.md` written.
-
-**Bonus finding from the U2 audit (out of scope per R4 but fixed in-flight):** the `principles/` audit (run alongside
-`research/` for completeness) surfaced one stale vault link in `agentnative-site/docs/VOICE.md:110` — the file cited
-`principles/AGENTS.md` at the vault path as the canonical "five-section shape" reference. Live fix landed in the site
-repo's working tree on the parallel `feat/split-install-skill-endpoints` branch: replaced the vault path with the public
-GitHub URL. Site session decides whether to bundle into their in-flight PR or extract.
-
-**Verification (post-edits):**
-
-- `ls ~/obsidian-vault/Projects/brettdavies-agentnative/principles/` → `README.md _archive-2026-04-23/` (only).
-- `ls ~/obsidian-vault/Projects/brettdavies-agentnative/research/` → `README.md _archive-2026-04-23/` (only).
-- `rg "obsidian-vault/Projects/brettdavies-agentnative" /home/brett/dev/agentnative-site/` → zero matches after the
-  VOICE.md fix.
-- `rg "obsidian-vault/Projects/brettdavies-agentnative" /home/brett/dev/agentnative-{cli,skill}/
-  /home/brett/dev/solutions-docs/` → zero matches (all clean from the start).
-
-**Roadmap 002 item 3 struck as shipped 2026-04-29.** Central launch tracker gate 6 now closeable as `done` — disposition
-(a) retired, no public-visitor consequence (vault was always private).
-
----
 
 ## Overview
 
@@ -169,7 +132,7 @@ archival would drop live context. U2 below makes this decision explicit before e
 
 ## Implementation Units
 
-- [x] U1. **Archive vault `principles/` folder** *(shipped 2026-04-29; see Completion Notes above)*
+- [x] U1. **Archive vault `principles/` folder**
 
 **Goal:** Replace `~/obsidian-vault/Projects/brettdavies-agentnative/principles/` contents with a single redirect note.
 All existing files move to a sibling `_archive-2026-04-23/` subfolder so they're preserved but clearly superseded.
@@ -212,8 +175,7 @@ conflicts.
 
 ---
 
-- [x] U2. **Decide and apply disposition for vault `research/` folder** *(shipped 2026-04-29 with disposition (a) retire
-  fully; see Completion Notes above)*
+- [x] U2. **Decide and apply disposition for vault `research/` folder**
 
 **Goal:** Resolve the research-folder question (retire / migrate / keep-with-governance-update) and apply the decision.
 
@@ -286,12 +248,6 @@ before applying it a second time)
 | Inbound-link audit in U2 misses a private reference                           | Accept — the vault is a private space; worst case is a dead link the owner fixes when they next land on it.              |
 
 ---
-
-## Documentation / Operational Notes
-
-- Item 3 of roadmap 002 was struck as shipped on 2026-04-29 with disposition (a) "retire fully" recorded.
-- Disposition (a) was chosen, so no follow-up link-rewrite work in CLI/site repos is required (inbound-link audit
-  returned zero hits across all four downstream repos).
 
 ## Sources & References
 
