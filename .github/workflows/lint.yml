@@ -14,3 +14,5 @@ permissions:
 jobs:
   lint:
     uses: brettdavies/.github/.github/workflows/lint-basics.yml@main
+    with:
+      plans: true
