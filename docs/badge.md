@@ -96,9 +96,9 @@ visual color drop.
 ## Version pinning
 
 The badge URL is `/badge/<tool>.svg` — always-latest. The badge tracks the tool's current score against the spec version
-the scorecard was last graded under, and that spec version surfaces in the badge label text (`agent-native
-vMAJOR.MINOR`), not in the URL path. Trust-and-verify means the URL MUST reflect current state, not a snapshot; pinning
-the spec version into the path would invert that posture.
+the scorecard was last graded under, and that spec version surfaces in the badge label text
+(`agent-native vMAJOR.MINOR`), not in the URL path. Trust-and-verify means the URL MUST reflect current state, not a
+snapshot; pinning the spec version into the path would invert that posture.
 
 The scorecard page (`anc.dev/scorecards/<tool>`) also names the spec version explicitly in the page header for any
 reader who wants to confirm what the badge is asserting.

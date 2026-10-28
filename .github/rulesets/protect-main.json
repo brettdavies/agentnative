@@ -55,6 +55,10 @@
           {
             "context": "guard-provenance / check-provenance",
             "integration_id": 15368
+          },
+          {
+            "context": "lint / actionlint",
+            "integration_id": 15368
           }
         ]
       }
