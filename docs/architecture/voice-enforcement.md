@@ -263,10 +263,10 @@ channel, skill-bundle imperative voice for the skill channel. Each repo then run
 
 ### Markdown preprocessor for LanguageTool
 
-The v1 LT blocking whitelist is narrowed to `TYPOS | GRAMMAR | CONFUSED_WORDS`. The other categories (`PUNCTUATION |
-TYPOGRAPHY | CASING | COMPOUNDING`) stay on the warning tier because LT misreads markdown syntax — table cell whitespace
-fires `WHITESPACE_RULE`, `->` arrows fire `ARROWS`, code-fence remnants fire `UPPERCASE_SENTENCE_START`. The LT
-maintainer's canonical position is that clients pre-filter markdown outside the LT request (issue
+The v1 LT blocking whitelist is narrowed to `TYPOS | GRAMMAR | CONFUSED_WORDS`. The other categories
+(`PUNCTUATION | TYPOGRAPHY | CASING | COMPOUNDING`) stay on the warning tier because LT misreads markdown syntax — table
+cell whitespace fires `WHITESPACE_RULE`, `->` arrows fire `ARROWS`, code-fence remnants fire `UPPERCASE_SENTENCE_START`.
+The LT maintainer's canonical position is that clients pre-filter markdown outside the LT request (issue
 languagetool-org/languagetool#9626, closed 2023). Three v2 paths:
 
 1. Roll a markdown preprocessor that strips code fences, tables, link syntax, and inline code spans before sending to

@@ -16,10 +16,10 @@ across the three-repo ecosystem (agentnative-cli, agentnative-skill, agentnative
 CLI output envelope pattern" in `docs/solutions/architecture-patterns/anc-cli-output-envelope-pattern-2026-04-29.md`.
 Three changes:
 
-1. **Correct `p2-must-json-errors`** — current spec says JSON errors go to **stderr**; the implementation reality (`anc
-   audit --output json` emits structured `error` status entries on stdout, and the project-wide envelope pattern doc
-   puts the success/error envelope on stdout) is **stdout**. The MUST as written is behind the implementation. Fix the
-   MUST to require stdout.
+1. **Correct `p2-must-json-errors`** — current spec says JSON errors go to **stderr**; the implementation reality
+   (`anc audit --output json` emits structured `error` status entries on stdout, and the project-wide envelope pattern
+   doc puts the success/error envelope on stdout) is **stdout**. The MUST as written is behind the implementation. Fix
+   the MUST to require stdout.
 2. **Add `p2-should-output-applies-to-every-subcommand`** — make explicit that `--output` is per-subcommand, not just a
    top-level switch. A multi-verb CLI silently ignoring `--output json` on a subset of verbs violates P2 in spirit but
    not in current letter.
@@ -45,12 +45,12 @@ The output convention has drifted between three artifacts:
 The implementation and the new umbrella pattern doc agree. The spec is the outlier. This plan brings the spec into
 alignment.
 
-A second drift surfaced during the `anc skill install` eng review (2026-04-29): the original plan scoped `--output
-{text,json}` to the dry-run path only, with silent-ignore on the live exec path. An independent reviewer flagged that as
-a P2 violation. The agreed shape now applies `--output {text,json}` on every output-producing path, but the spec does
-not currently require this — it requires `--output` at the CLI top level (per `p2-must-output-flag`) without specifying
-that every subcommand must honor it consistently. A multi-verb CLI today can technically pass the spec while only
-honoring `--output json` on some of its verbs.
+A second drift surfaced during the `anc skill install` eng review (2026-04-29): the original plan scoped
+`--output {text,json}` to the dry-run path only, with silent-ignore on the live exec path. An independent reviewer
+flagged that as a P2 violation. The agreed shape now applies `--output {text,json}` on every output-producing path, but
+the spec does not currently require this — it requires `--output` at the CLI top level (per `p2-must-output-flag`)
+without specifying that every subcommand must honor it consistently. A multi-verb CLI today can technically pass the
+spec while only honoring `--output json` on some of its verbs.
 
 A third drift: error envelopes are well-served by typed identifiers (e.g., `reason: "destination-not-empty"`) rather
 than English in `message` fields. P4 currently requires `error`, `kind`, and `message` fields but does not require the
@@ -143,8 +143,8 @@ machine-typed identifier as a separate field. The implementation already does th
   agent-native-semantic-json-fields, cli-structure-for-machines, rust-clap-try-parse, cli-env-vars-must-appear-in-help.
   The umbrella doc is the new project-wide enforced convention; the cluster is the underlying patterns.
 - **`agentnative-cli` eng-review of `anc skill install`** —
-  `agentnative-cli/docs/plans/2026-04-29-002-feat-skill-subcommand-plan.md` `## GSTACK REVIEW REPORT` and `## Plan
-  Rewrite Brief` sections. Decision lineage: D2, C1, OV1.
+  `agentnative-cli/docs/plans/2026-04-29-002-feat-skill-subcommand-plan.md` `## GSTACK REVIEW REPORT` and
+  `## Plan Rewrite Brief` sections. Decision lineage: D2, C1, OV1.
 - **Implementation verification** — `anc audit . --output json` in `agentnative-cli`: error status entries appear on
   stdout in the scorecard's `groups[].audits[].status: "error"`, not on stderr.
 
@@ -154,8 +154,8 @@ Per `CONTRIBUTING.md`:
 
 > MINOR bumps on MUST changes; PATCH on SHOULD/MAY changes.
 
-R1 changes a MUST's wording (stderr → stdout). MINOR bump: the next minor release after the one current when this
-ships. R2/R4 (new SHOULDs) and R3 (SHOULD prose clarification) are subsumed into the same release.
+R1 changes a MUST's wording (stderr → stdout). MINOR bump: the next minor release after the one current when this ships.
+R2/R4 (new SHOULDs) and R3 (SHOULD prose clarification) are subsumed into the same release.
 
 ---
 
@@ -239,8 +239,8 @@ ships. R2/R4 (new SHOULDs) and R3 (SHOULD prose clarification) are subsumed into
 
 - **U5. Bump `VERSION`, update `CHANGELOG.md` (R6, R7)**
 - **Files:** `VERSION`, `CHANGELOG.md`
-- **Approach:** `VERSION` → the next minor release after the one current when this ships. `CHANGELOG.md` gains a
-  new section under `[Unreleased]` (or a new MINOR section if the release process inserts one), grouped by principle:
+- **Approach:** `VERSION` → the next minor release after the one current when this ships. `CHANGELOG.md` gains a new
+  section under `[Unreleased]` (or a new MINOR section if the release process inserts one), grouped by principle:
 - **P2:**
 - Corrected `p2-must-json-errors` to require JSON errors on stdout (was stderr); brings the spec in line with existing
   implementations and the cross-repo umbrella pattern doc.
@@ -320,7 +320,7 @@ ships. R2/R4 (new SHOULDs) and R3 (SHOULD prose clarification) are subsumed into
   `cli-structure-for-machines-typed-json-fields-over-display-strings-2026-04-20.md`,
   `rust-clap-try-parse-for-custom-error-handling-2026-04-20.md`, `cli-env-vars-must-appear-in-help-2026-04-20.md`.
 - Sibling agentnative-cli plan whose eng review surfaced the divergence:
-  `agentnative-cli/docs/plans/2026-04-29-002-feat-skill-subcommand-plan.md` (`## GSTACK REVIEW REPORT` and `## Plan
-  Rewrite Brief` sections).
+  `agentnative-cli/docs/plans/2026-04-29-002-feat-skill-subcommand-plan.md` (`## GSTACK REVIEW REPORT` and
+  `## Plan Rewrite Brief` sections).
 - Decision lineage IDs for the umbrella pattern: D2 (--dry-run not --print), C1 (always JSON envelope), OV1 (--output
   applies to live exec too).
