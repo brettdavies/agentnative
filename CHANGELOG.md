@@ -40,8 +40,7 @@ Changes to the standard itself (principle MUST/SHOULD/MAY tier moves, requiremen
 
 ### Documentation
 
-- Release docs and `cliff.toml` / `publish.yml` comments name `generate-changelog.py` as the entry point.
- by @brettdavies in [#48](https://github.com/brettdavies/agentnative/pull/48)
+- Release docs and `cliff.toml` / `publish.yml` comments name `generate-changelog.py` as the entry point. by @brettdavies in [#48](https://github.com/brettdavies/agentnative/pull/48)
 
 **Full Changelog**: [v0.5.0...v0.6.0](https://github.com/brettdavies/agentnative/compare/v0.5.0...v0.6.0)
 
