@@ -42,6 +42,38 @@ requirements:
 
 const TODAY = "2026-05-27";
 
+// Zones 26 hours apart, so at any instant at least one zone's local date
+// differs from the UTC date. The Etc/GMT sign is inverted: Etc/GMT-14 is
+// UTC+14. `offset` is what Date#getTimezoneOffset reports there.
+const ZONES = [
+  { tz: "Etc/GMT-14", offset: -840 },
+  { tz: "Etc/GMT+12", offset: 720 },
+];
+
+function utcDate() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+const CLOCK_CASES = ZONES.flatMap(({ tz }) => [
+  {
+    name: `fix-stamps-utc-date-${tz}`,
+    tz,
+    headContent: BASE_FM.replace("Original summary.", "Rewritten summary."),
+    args: ["--fix", "base"],
+    expectPass: true,
+    expectFileMatch: (today) => new RegExp(`^last-revised: ${today}$`, "m"),
+  },
+  {
+    name: `utc-date-passes-${tz}`,
+    tz,
+    headContent: (today) =>
+      BASE_FM
+        .replace("Original summary.", "Rewritten summary.")
+        .replace("last-revised: 2026-04-22", `last-revised: ${today}`),
+    expectPass: true,
+  },
+]);
+
 const CASES = [
   {
     name: "no-change",
@@ -104,6 +136,7 @@ const CASES = [
     expectPass: true,
     expectFileMatch: /^last-revised: 2026-04-22$/m,
   },
+  ...CLOCK_CASES,
 ];
 
 function git(cwd, ...args) {
@@ -112,6 +145,10 @@ function git(cwd, ...args) {
 
 function runCase(c) {
   const dir = mkdtempSync(path.join(tmpdir(), "check-lr-"));
+  const today = c.tz ? utcDate() : TODAY;
+  const headContent = typeof c.headContent === "function" ? c.headContent(today) : c.headContent;
+  const expectFileMatch =
+    typeof c.expectFileMatch === "function" ? c.expectFileMatch(today) : c.expectFileMatch;
   try {
     git(dir, "init", "-q", "-b", "base");
     git(dir, "config", "user.email", "test@example.com");
@@ -123,20 +160,27 @@ function runCase(c) {
     git(dir, "commit", "-q", "-m", "base");
 
     git(dir, "checkout", "-q", "-b", "head");
-    writeFileSync(path.join(dir, principlePath), c.headContent);
+    writeFileSync(path.join(dir, principlePath), headContent);
     git(dir, "add", "-A");
     git(dir, "commit", "--allow-empty", "-q", "-m", "head");
 
     const cliArgs = c.args ?? ["base"];
+    const env = {
+      ...process.env,
+      NODE_PATH: path.join(REPO_ROOT, "node_modules"),
+      CHECK_LR_TODAY: TODAY,
+    };
+    if (c.tz) {
+      env.TZ = c.tz;
+      delete env.CHECK_LR_TODAY;
+    }
     const res = spawnSync(process.execPath, [CHECKER, ...cliArgs], {
       cwd: dir,
       encoding: "utf8",
-      env: {
-        ...process.env,
-        NODE_PATH: path.join(REPO_ROOT, "node_modules"),
-        CHECK_LR_TODAY: TODAY,
-      },
+      env,
     });
+    // A run that crossed midnight UTC compared against either date; run it again.
+    if (c.tz && utcDate() !== today) return runCase(c);
     const passed = res.status === 0;
     if (passed !== c.expectPass) {
       const wanted = c.expectPass ? "pass" : "fail";
@@ -151,10 +195,10 @@ function runCase(c) {
       console.error(`  ${res.stderr}`);
       return false;
     }
-    if (c.expectFileMatch || c.expectFileNotMatch) {
+    if (expectFileMatch || c.expectFileNotMatch) {
       const onDisk = readFileSync(path.join(dir, principlePath), "utf8");
-      if (c.expectFileMatch && !c.expectFileMatch.test(onDisk)) {
-        console.error(`FAIL ${c.name}: file content does not match ${c.expectFileMatch}`);
+      if (expectFileMatch && !expectFileMatch.test(onDisk)) {
+        console.error(`FAIL ${c.name}: file content does not match ${expectFileMatch}`);
         console.error(`  on-disk:\n${onDisk}`);
         return false;
       }
@@ -168,6 +212,20 @@ function runCase(c) {
     return true;
   } finally {
     execFileSync("rm", ["-rf", dir]);
+  }
+}
+
+// An unknown zone silently falls back to UTC, which would let the clock cases
+// pass without exercising a local date that differs from the UTC one.
+for (const { tz, offset } of ZONES) {
+  const res = spawnSync(
+    process.execPath,
+    ["-e", "process.stdout.write(String(new Date().getTimezoneOffset()))"],
+    { encoding: "utf8", env: { ...process.env, TZ: tz } },
+  );
+  if (res.stdout !== String(offset)) {
+    console.error(`test-check-last-revised: TZ=${tz} reports offset ${res.stdout}, not ${offset}`);
+    process.exit(1);
   }
 }
 

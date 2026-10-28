@@ -52,10 +52,12 @@ Fields:
 
 - `id`: lowercase principle code (`p1` through `p8`). Matches the filename prefix.
 - `title`: human-readable principle title; mirrors the H1.
-- `last-revised: YYYY-MM-DD`. Stamps **today's date** whenever any frontmatter field changes — `summary` rewrites,
-  `applicability` shape migrations, tier changes, requirement add/remove, `status` flips, even reordering. Prose-only
-  edits to the body below the closing `---` fence do not bump the date. Enforced by `scripts/check-last-revised.mjs` at
-  pre-push and in PR CI; rerun with `--fix` to auto-stamp today's date on every violating file.
+- `last-revised: YYYY-MM-DD`. Stamps **today's UTC date** whenever any frontmatter field changes — `summary` rewrites,
+  `applicability` shape migrations, tier changes, requirement add/remove, `status` flips, even reordering. Use the UTC
+  calendar date, not the local one: CI checks against UTC, and the two differ for part of every day outside UTC.
+  Prose-only edits to the body below the closing `---` fence do not bump the date. Enforced by
+  `scripts/check-last-revised.mjs` at pre-push and in PR CI; rerun with `--fix` to auto-stamp today's UTC date on every
+  violating file.
 - `status`: lifecycle marker. `draft` when first extracted; `under-review` during a pressure-test cycle; `active` once
   the principle is published as part of the standard and accepting pressure-tests as normal-course feedback (default
   state for shipped principles); `locked` when edits are intentionally frozen for a defined review window. Routine
@@ -228,7 +230,7 @@ When a principle changes, the order of operations is:
 1. Edit prose and frontmatter together: a new MUST bullet in prose needs a new `requirements[]` entry with matching
    `id`, `level`, `summary`, and `applicability`. Removing a bullet removes the corresponding entry.
 2. If a requirement's tier changed (MUST ↔ SHOULD ↔ MAY) or a requirement was added/removed, bump `last-revised:` to
-   today's date and bump `VERSION` (MINOR for MUST changes, PATCH for SHOULD/MAY changes; see `CONTRIBUTING.md`).
+   today's UTC date and bump `VERSION` (MINOR for MUST changes, PATCH for SHOULD/MAY changes; see `CONTRIBUTING.md`).
 3. If a requirement `id` changed or was removed, note this in the PR body, because downstream `anc` consumers pin
    against IDs, and renaming an ID is a breaking change for their registry drift check.
 4. Include a `## Changelog` section in the PR body naming the affected principle and the change.
