@@ -32,11 +32,11 @@ CONTRIBUTING.md, rulesets) already landed:
 1. **Requirement IDs live only in `agentnative-cli`** (`src/principles/registry.rs`, 46 entries). A principle edit here
    can't stably reference an ID without asking the CLI author what the ID is. Per the 2026-04-22 SoT decision, IDs move
    into this repo and the CLI becomes a drift check.
-2. **Principle-authoring conventions live in the obsidian vault** (`~/obsidian-vault/Projects/
-   brettdavies-agentnative/principles/AGENTS.md`). The vault's AGENTS.md still claims that folder is "upstream source of
-   truth" — stale as of this repo's creation. The 5-section shape (Definition / Why Agents Need It / Requirements /
-   Evidence / Anti-Patterns) and the pressure- test protocol (draft → under-review → locked) are useful conventions;
-   they need to migrate here before the vault is archived.
+2. **Principle-authoring conventions live in the obsidian vault**
+   (`~/obsidian-vault/Projects/ brettdavies-agentnative/principles/AGENTS.md`). The vault's AGENTS.md still claims that
+   folder is "upstream source of truth" — stale as of this repo's creation. The 5-section shape (Definition / Why Agents
+   Need It / Requirements / Evidence / Anti-Patterns) and the pressure- test protocol (draft → under-review → locked)
+   are useful conventions; they need to migrate here before the vault is archived.
 3. **Two design decisions shape the current principles but aren't cited from anywhere public.** P1 reflects the
    2026-04-20 Option ε doctrine (behavioral MUST + honest scope note) and the `agentnative` / `anc` / `anc.dev` naming
    embodies the namespace-graveyard research. Without decision records in this repo, pressure-testers will re-litigate
@@ -133,8 +133,8 @@ Notes:
 
 - `summary` is duplicated between frontmatter (machine-readable) and prose bullet (human-readable expansion). Accept the
   mild redundancy; reordering robustness outweighs the cost.
-- `applicability` is `universal` (string) or `{if: <reason>}` (object). Maps to CLI's `Applicability::Universal |
-  Conditional(reason)` enum.
+- `applicability` is `universal` (string) or `{if: <reason>}` (object). Maps to CLI's
+  `Applicability::Universal | Conditional(reason)` enum.
 - IDs stay lowercase-kebab, matching CLI's serde `rename_all = "snake_case"`.
 - No inline `{#anchor}` markers in prose; the site renderer synthesizes anchors from frontmatter.
 

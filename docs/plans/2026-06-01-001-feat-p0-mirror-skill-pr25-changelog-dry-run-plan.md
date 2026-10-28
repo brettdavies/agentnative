@@ -65,8 +65,8 @@ the follow-up <https://github.com/brettdavies/agentnative-skill/pull/26>.
   regeneration would produce; exits 1 with a unified diff on stderr when PR bodies have drifted.
 - `CHANGELOG.md` is restored to its pre-invocation byte-for-byte content after every `--dry-run` run, including the
   failure path (verified by the `finally` block).
-- PR-number extraction handles both `(#X)` and `[#X]` forms, so a run against an already-processed `CHANGELOG.md`
-  still finds its PR numbers.
+- PR-number extraction handles both `(#X)` and `[#X]` forms, so a run against an already-processed `CHANGELOG.md` still
+  finds its PR numbers.
 - `--dry-run` does not false-positive drift on a `CHANGELOG.md` whose only difference from a fresh regeneration is the
   markdownlint / `md-wrap` line-wrapping applied by the pre-commit hook.
 - No regression in the non-`--dry-run` path; existing duplicate-section guard still fires.

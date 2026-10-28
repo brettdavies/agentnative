@@ -89,10 +89,11 @@ into `dev`, where the release PR never lands.
 
 ### Why internal-tooling commits don't appear in `## Changelog`
 
-`chore(cliff): ...`, `chore(prose-check): ...`, and similar internal tooling commits don't appear in the PR body's `##
-Changelog`. They are not user-facing. `cliff.toml` skips `^chore` (and `^style` / `^test` / `^ci` / `^build`) regardless
-of body content, and `--from-dev-prs` applies the same rule to a PR title when the body carries no `## Changelog`. They
-belong in commit history and in the Summary section of the PR body, not in the source-of-truth release notes.
+`chore(cliff): ...`, `chore(prose-check): ...`, and similar internal tooling commits don't appear in the PR body's
+`## Changelog`. They are not user-facing. `cliff.toml` skips `^chore` (and `^style` / `^test` / `^ci` / `^build`)
+regardless of body content, and `--from-dev-prs` applies the same rule to a PR title when the body carries no
+`## Changelog`. They belong in commit history and in the Summary section of the PR body, not in the source-of-truth
+release notes.
 
 ## Triple-diff verification
 
@@ -197,11 +198,11 @@ The author bumps `VERSION` manually; the hook only verifies the bump is coherent
 The release author runs `scripts/generate-changelog.py --from-dev-prs` on the release branch. The script reads the
 version from the branch name, finds the previous tag, and lists the PRs merged into `dev` since the earlier of that tag
 and the previous release PR (PR numbers the changelog already lists are dropped, which covers the overlap). For every PR
-it fetches the body via `gh api repos/.../pulls/N`, extracts its `## Changelog → ### Added / Changed / Fixed / Removed /
-Security` subsections, and writes the version section with `by @user in [#N]` attribution and a `**Full Changelog**:
-v<prev>...v<this>` compare link. A PR whose body carries no changelog content contributes its title as a `Changed`
-bullet, except `chore` / `ci` / `build` / `style` / `test` PRs, which stay out unless they carry a `## Changelog` of
-their own.
+it fetches the body via `gh api repos/.../pulls/N`, extracts its
+`## Changelog → ### Added / Changed / Fixed / Removed / Security` subsections, and writes the version section with
+`by @user in [#N]` attribution and a `**Full Changelog**: v<prev>...v<this>` compare link. A PR whose body carries no
+changelog content contributes its title as a `Changed` bullet, except `chore` / `ci` / `build` / `style` / `test` PRs,
+which stay out unless they carry a `## Changelog` of their own.
 
 Without `--from-dev-prs` the script runs `git-cliff --tag v$VERSION --unreleased --prepend CHANGELOG.md` over the
 branch's own commits first, then expands the same way. That mode fits a cherry-picked branch whose commits carry `(#N)`

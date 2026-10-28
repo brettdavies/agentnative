@@ -193,8 +193,8 @@ Bumps are PRs, not silent edits, mirroring the GitHub Actions SHA-pin policy.
 
 - **Compose file location.** Where on disk does `pool` keep its other docker-compose stacks today? U2 implementer reads
   `pool`'s existing layout and slots the new compose file into the established convention.
-- **Exact `meyay/languagetool` digest at PR time.** Resolves at U1 implementation via `docker buildx imagetools
-  inspect`.
+- **Exact `meyay/languagetool` digest at PR time.** Resolves at U1 implementation via
+  `docker buildx imagetools inspect`.
 - **`MAP_UID` / `MAP_GID` values for the `pool` container user.** Defaults usually work; confirm against `pool`'s
   conventions at U2.
 - **Whether `pool` already has `curl` available inside running containers (for the healthcheck CMD).** If not, fall back
@@ -291,8 +291,8 @@ services:
   manual stops).
 - Error path: a malformed env var (e.g., `JAVA_XMX: "two_g"`) causes the container to fail healthcheck; compose reports
   `unhealthy` and an operator runs `docker logs languagetool` to diagnose.
-- Integration: after U2 completes, **the sibling plan's reachability probe** (`curl --max-time 2 -fsS
-  http://pool:8081/v2/languages`) succeeds from any developer Mac with Tailscale active.
+- Integration: after U2 completes, **the sibling plan's reachability probe**
+  (`curl --max-time 2 -fsS http://pool:8081/v2/languages`) succeeds from any developer Mac with Tailscale active.
 
 **Verification:**
 

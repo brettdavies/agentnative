@@ -337,8 +337,8 @@ solutions-docs convention from the global CLAUDE.md).
 **Files:**
 
 - Rename: `stow/tmuxinator/dot-config/tmuxinator/agentnative.yml` → `agentnative-cli.yml`
-- Modify (in renamed file): `name: agentnative` → `name: agentnative-cli`; `root: ~/dev/agentnative` → `root:
-  ~/dev/agentnative-cli`
+- Modify (in renamed file): `name: agentnative` → `name: agentnative-cli`; `root: ~/dev/agentnative` →
+  `root: ~/dev/agentnative-cli`
 
 **Approach:**
 
@@ -427,9 +427,9 @@ T2:  gh repo rename agentnative --repo brettdavies/agentnative-spec --yes
 - Run T1, immediately verify intermediate state via `gh api`, then run T2. Total elapsed time: a few seconds.
 - Local `git remote -v` for the spec repo never needs updating: the URL still says `brettdavies/agentnative.git` and
   GitHub's redirect machinery honors it transparently.
-- During the brief window between T1 and T2, the spec repo's canonical name is `agentnative-spec`. Any concurrent `git
-  fetch` from another session would receive a "moved" warning. Avoid concurrent fetches; this session won't be fetching
-  during that window anyway.
+- During the brief window between T1 and T2, the spec repo's canonical name is `agentnative-spec`. Any concurrent
+  `git fetch` from another session would receive a "moved" warning. Avoid concurrent fetches; this session won't be
+  fetching during that window anyway.
 
 **Verification:**
 

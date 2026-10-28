@@ -278,8 +278,8 @@ git add CHANGELOG.md
 git commit -m "docs(changelog): v0.2.0 entry"
 ```
 
-The v0.2.0 entry should contain the Added/Changed/Fixed/Removed/Security categories extracted from PR #3's body's `##
-Changelog` section. Review for voice and spec-consumer framing before committing.
+The v0.2.0 entry should contain the Added/Changed/Fixed/Removed/Security categories extracted from PR #3's body's
+`## Changelog` section. Review for voice and spec-consumer framing before committing.
 
 **B3. PR `release/v0.2.0-frontmatter-contract` to `main`.**
 
