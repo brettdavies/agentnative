@@ -3,7 +3,9 @@
 //
 // Enforces the `last-revised` discipline declared in `principles/AGENTS.md`:
 // any change to a principle file's frontmatter (other than `last-revised`
-// itself) must leave `last-revised` set to today's date.
+// itself) must leave `last-revised` set to today's date in UTC. CI runs in
+// UTC and js-yaml parses a bare frontmatter date as UTC midnight, so a local
+// date anywhere off UTC disagrees with CI for part of every day.
 //
 // Detection uses a base git ref (default `origin/dev`, overridable via
 // `BASE_REF` env or first positional CLI arg). For each
@@ -12,13 +14,13 @@
 //   1. Loads frontmatter on both sides.
 //   2. Strips the `last-revised` key from both.
 //   3. If the remaining frontmatter differs, asserts that `last-revised`
-//      equals today's local date.
+//      equals today's UTC date.
 //
 // New files (added in HEAD) and deletions are skipped — the discipline
 // applies only to in-place edits.
 //
 // Flags:
-//   --fix    Rewrite `last-revised` to today's local date on every
+//   --fix    Rewrite `last-revised` to today's UTC date on every
 //            violating file in the working tree, then exit 0. Without
 //            --fix, the script is read-only and exits 1 on any violation.
 //
@@ -71,10 +73,9 @@ function stringifyDate(value) {
   return String(value);
 }
 
-function todayLocal() {
+function todayUtc() {
   if (process.env.CHECK_LR_TODAY) return process.env.CHECK_LR_TODAY;
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  return new Date().toISOString().slice(0, 10);
 }
 
 function rewriteLastRevised(content, newDate) {
@@ -147,7 +148,7 @@ async function main() {
   const errors = [];
   const fixes = [];
   let inPlace = 0;
-  const today = todayLocal();
+  const today = todayUtc();
 
   for (const { status, path: filePath } of changed) {
     if (status === "A" || status === "D") continue;
@@ -183,8 +184,8 @@ async function main() {
       } else {
         errors.push(
           `${filePath}: frontmatter changed (other than 'last-revised') but 'last-revised' is ` +
-            `${headDate ?? "MISSING"}, not today (${today}). Per principles/AGENTS.md, any frontmatter ` +
-            `mutation must stamp 'last-revised' to today's date. Re-run with --fix to set it automatically.`,
+            `${headDate ?? "MISSING"}, not today (${today}, UTC). Per principles/AGENTS.md, any frontmatter ` +
+            `mutation must stamp 'last-revised' to today's UTC date. Re-run with --fix to set it automatically.`,
         );
       }
     }
