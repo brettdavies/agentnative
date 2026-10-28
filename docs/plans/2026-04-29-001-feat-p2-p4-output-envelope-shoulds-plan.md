@@ -129,7 +129,7 @@ machine-typed identifier as a separate field. The implementation already does th
 - `principles/p4-fail-fast-actionable-errors.md` — current frontmatter and prose for P4.
 - `principles/AGENTS.md` — per-file structure and pressure-test protocol.
 - `CONTRIBUTING.md` — coupled-release norm and MUST/SHOULD/MAY versioning policy.
-- `VERSION` — current `0.3.0`, target `0.4.0` after this plan ships (MINOR bump).
+- `VERSION` — target is the next minor release after the one current when this ships (MINOR bump).
 - `scripts/validate-principles.mjs` — frontmatter schema validator; should pass unchanged for the new SHOULD entries.
 
 ### Cross-repo evidence the spec is behind reality
@@ -154,8 +154,8 @@ Per `CONTRIBUTING.md`:
 
 > MINOR bumps on MUST changes; PATCH on SHOULD/MAY changes.
 
-R1 changes a MUST's wording (stderr → stdout). MINOR bump: `0.3.0` → `0.4.0`. R2/R4 (new SHOULDs) and R3 (SHOULD prose
-clarification) are subsumed into the same release.
+R1 changes a MUST's wording (stderr → stdout). MINOR bump: the next minor release after the one current when this
+ships. R2/R4 (new SHOULDs) and R3 (SHOULD prose clarification) are subsumed into the same release.
 
 ---
 
@@ -187,7 +187,8 @@ clarification) are subsumed into the same release.
 - **Stderr-vs-stdout for JSON errors** → resolved: stdout. Implementation, umbrella doc, and best-practice cluster
   agree.
 - **MUST correction or additive SHOULD** → resolved: MUST correction (R1).
-- **VERSION bump tier** → resolved: MINOR (`0.3.0` → `0.4.0`) per `CONTRIBUTING.md`.
+- **VERSION bump tier** → resolved: MINOR (the next minor release after the one current when this ships) per
+  `CONTRIBUTING.md`.
 
 ### Deferred to implementation
 
@@ -238,8 +239,8 @@ clarification) are subsumed into the same release.
 
 - **U5. Bump `VERSION`, update `CHANGELOG.md` (R6, R7)**
 - **Files:** `VERSION`, `CHANGELOG.md`
-- **Approach:** `VERSION` → `0.4.0`. `CHANGELOG.md` gains a new section under `[Unreleased]` (or a new MINOR section if
-  the release process inserts one), grouped by principle:
+- **Approach:** `VERSION` → the next minor release after the one current when this ships. `CHANGELOG.md` gains a
+  new section under `[Unreleased]` (or a new MINOR section if the release process inserts one), grouped by principle:
 - **P2:**
 - Corrected `p2-must-json-errors` to require JSON errors on stdout (was stderr); brings the spec in line with existing
   implementations and the cross-repo umbrella pattern doc.
@@ -251,7 +252,7 @@ clarification) are subsumed into the same release.
 - Added `p4-should-typed-error-reason`: error envelopes include a typed kebab-case `reason` identifier alongside the
   human-readable `message`.
 - **Verification:** `CHANGELOG.md` parses with the existing release tooling; version-derivation script (if any) reads
-  `0.4.0` correctly.
+  the new version correctly.
 
 - **U6. Coupled-release tracking (R8)**
 - **Files:** None in this repo. Filed as separate planning work in each downstream repo after the spec PR merges.
