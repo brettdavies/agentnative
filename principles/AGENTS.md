@@ -52,10 +52,12 @@ Fields:
 
 - `id`: lowercase principle code (`p1` through `p8`). Matches the filename prefix.
 - `title`: human-readable principle title; mirrors the H1.
-- `last-revised: YYYY-MM-DD`. Stamps **today's date** whenever any frontmatter field changes — `summary` rewrites,
-  `applicability` shape migrations, tier changes, requirement add/remove, `status` flips, even reordering. Prose-only
-  edits to the body below the closing `---` fence do not bump the date. Enforced by `scripts/check-last-revised.mjs` at
-  pre-push and in PR CI; rerun with `--fix` to auto-stamp today's date on every violating file.
+- `last-revised: YYYY-MM-DD`. Stamps **today's UTC date** whenever any frontmatter field changes — `summary` rewrites,
+  `applicability` shape migrations, tier changes, requirement add/remove, `status` flips, even reordering. Use the UTC
+  calendar date, not the local one: CI checks against UTC, and the two differ for part of every day outside UTC.
+  Prose-only edits to the body below the closing `---` fence do not bump the date. Enforced by
+  `scripts/check-last-revised.mjs` at pre-push and in PR CI; rerun with `--fix` to auto-stamp today's UTC date on every
+  violating file.
 - `status`: lifecycle marker. `draft` when first extracted; `under-review` during a pressure-test cycle; `active` once
   the principle is published as part of the standard and accepting pressure-tests as normal-course feedback (default
   state for shipped principles); `locked` when edits are intentionally frozen for a defined review window. Routine
@@ -65,10 +67,10 @@ Fields:
 - `id`: `p<n>-<level>-<slug>`, lowercase-kebab, unique across all eight files.
 - `level`: `must`, `should`, or `may` (lowercase). RFC 2119 semantics.
 - `applicability`: one of three shapes. `universal` (bare string) applies to every CLI. `{if: "<reason>"}` is the
-  prose-only conditional: the verifier interprets the reason via heuristics. `{kind: conditional, antecedent: {audit_id:
-  "<id>"}}` is the machine-auditable conditional: the named `audit_id` resolves to a verifier whose status drives
-  whether the consequent applies. See [Conditional applicability](#conditional-applicability) below for the propagation
-  table and worked examples.
+  prose-only conditional: the verifier interprets the reason via heuristics.
+  `{kind: conditional, antecedent: {audit_id: "<id>"}}` is the machine-auditable conditional: the named `audit_id`
+  resolves to a verifier whose status drives whether the consequent applies. See
+  [Conditional applicability](#conditional-applicability) below for the propagation table and worked examples.
 - `summary`: one sentence. Duplicated between frontmatter and prose; the prose bullet can expand with examples, but the
   first-sentence meaning must match.
 
@@ -78,11 +80,11 @@ sync is a review responsibility (enforced by the CI validator, see below).
 ### Conditional applicability
 
 A requirement is conditional when it binds only if some prerequisite feature is present. The frontmatter carries two
-shapes for this: `{if: "<reason>"}` for cases where no verifier yet probes the prerequisite, and `{kind: conditional,
-antecedent: {audit_id: "<id>"}}` for cases where a verifier does. Both shapes coexist; an author chooses the
-machine-auditable form whenever an `audit_id` for the prerequisite already exists in the CLI's verifier catalog. The
-`{if: "<reason>"}` form remains valid for prerequisites the CLI does not yet probe — verifier authors interpret the
-reason string via heuristics until a dedicated audit lands.
+shapes for this: `{if: "<reason>"}` for cases where no verifier yet probes the prerequisite, and
+`{kind: conditional, antecedent: {audit_id: "<id>"}}` for cases where a verifier does. Both shapes coexist; an author
+chooses the machine-auditable form whenever an `audit_id` for the prerequisite already exists in the CLI's verifier
+catalog. The `{if: "<reason>"}` form remains valid for prerequisites the CLI does not yet probe — verifier authors
+interpret the reason string via heuristics until a dedicated audit lands.
 
 The `audit_id` value is a verifier identifier, not a requirement `id`. A single verifier may underwrite several
 requirements (e.g., a probe that detects `--output json` underwrites both a tier-MUST output requirement and a tier-MUST
@@ -151,9 +153,9 @@ The v1 schema supports single-antecedent conditionals only. If a requirement rea
 modeling options are: split into two rows that depend on different single antecedents, or introduce a synthetic
 intermediate verifier that the CLI composes internally and reference the synthetic from the row.
 
-When real cases surface that cannot be modeled either way, v2 of the schema will gain an `antecedent` array with an `op:
-all_of | any_of` discriminator. The v1 validator rejects any extra keys on `antecedent` so v2 drift is caught loudly
-rather than silently coerced.
+When real cases surface that cannot be modeled either way, v2 of the schema will gain an `antecedent` array with an
+`op: all_of | any_of` discriminator. The v1 validator rejects any extra keys on `antecedent` so v2 drift is caught
+loudly rather than silently coerced.
 
 #### One result per requirement row
 
@@ -183,8 +185,9 @@ The pre-push hook runs `scripts/validate-principles.mjs` against every principle
 - `requirements[].id` values are unique across all eight files.
 - The number of MUST / SHOULD / MAY entries in `requirements[]` equals the number of MUST / SHOULD / MAY bullets in the
   prose.
-- `applicability` is one of: the string `universal`, an object `{if: "<reason>"}`, or an object `{kind: conditional,
-  antecedent: {audit_id: "<kebab>"}}`. Compound antecedents (`op`/`audits`) are rejected — they are deferred to v2.
+- `applicability` is one of: the string `universal`, an object `{if: "<reason>"}`, or an object
+  `{kind: conditional, antecedent: {audit_id: "<kebab>"}}`. Compound antecedents (`op`/`audits`) are rejected — they are
+  deferred to v2.
 
 Drift in any of these fails the push with an actionable message naming the file and the specific mismatch.
 
@@ -228,7 +231,7 @@ When a principle changes, the order of operations is:
 1. Edit prose and frontmatter together: a new MUST bullet in prose needs a new `requirements[]` entry with matching
    `id`, `level`, `summary`, and `applicability`. Removing a bullet removes the corresponding entry.
 2. If a requirement's tier changed (MUST ↔ SHOULD ↔ MAY) or a requirement was added/removed, bump `last-revised:` to
-   today's date and bump `VERSION` (MINOR for MUST changes, PATCH for SHOULD/MAY changes; see `CONTRIBUTING.md`).
+   today's UTC date and bump `VERSION` (MINOR for MUST changes, PATCH for SHOULD/MAY changes; see `CONTRIBUTING.md`).
 3. If a requirement `id` changed or was removed, note this in the PR body, because downstream `anc` consumers pin
    against IDs, and renaming an ID is a breaking change for their registry drift check.
 4. Include a `## Changelog` section in the PR body naming the affected principle and the change.

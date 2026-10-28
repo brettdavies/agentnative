@@ -108,11 +108,12 @@ Each box is a go/no-go. Any unchecked item holds the cut.
 - [ ] **Surface established.** `git log origin/main..origin/dev --oneline` is what ships. No tag is an ancestor of `dev`
   on a squash-only lineage, so `$LAST_TAG..dev` is empty here; compare against `origin/main`.
 - [ ] **Breaking markers reviewed.** `git log origin/main..origin/dev --grep '^[a-z]\+\(([^)]*)\)\?!:' --oneline` lists
-  every Conventional-Commits `!:` subject, scoped or not. Each one drives the version decision and gets a `### Breaking
-  changes` row in the release changelog.
+  every Conventional-Commits `!:` subject, scoped or not. Each one drives the version decision and gets a
+  `### Breaking changes` row in the release changelog.
 - [ ] **Every PR merged since the last tag carries a `## Changelog` section**, or is a `chore` / `ci` / `build` /
-  `style` / `test` PR that has nothing to say. Spot-check via `gh pr list --base dev --state merged --search
-  "merged:>=$(git log -1 --format=%cI v<prev>)"` then `gh pr view <num> --json body`.
+  `style` / `test` PR that has nothing to say. Spot-check via
+  `gh pr list --base dev --state merged --search "merged:>=$(git log -1 --format=%cI v<prev>)"` then
+  `gh pr view <num> --json body`.
 
 ### Recipe
 
@@ -241,8 +242,8 @@ git cherry-pick --continue --no-edit
 ```
 
 Repeat per conflicting commit. After all picks land, run `git ls-files | grep -E "$(scripts/release/guarded-paths.sh)"`.
-If anything remains, drop it with the same two-step pattern and commit as `chore(release): drop stray guarded paths from
-cherry-pick rename detection` before the leak check.
+If anything remains, drop it with the same two-step pattern and commit as
+`chore(release): drop stray guarded paths from cherry-pick rename detection` before the leak check.
 
 ## Release gating
 
@@ -262,9 +263,9 @@ scripts/generate-changelog.py --from-dev-prs
 ```
 
 The script reads the version from the `release/v<version>` branch name (or `--tag`), lists the PRs merged into `dev`
-since the previous tag, fetches each PR body from the GitHub API, and writes the version section from their `##
-Changelog` subsections with author and PR-link attribution. PR bodies remain editable post-merge; typos can be fixed by
-editing the PR on GitHub and re-running the script. Without `--from-dev-prs` the script runs `git-cliff` over the
+since the previous tag, fetches each PR body from the GitHub API, and writes the version section from their
+`## Changelog` subsections with author and PR-link attribution. PR bodies remain editable post-merge; typos can be fixed
+by editing the PR on GitHub and re-running the script. Without `--from-dev-prs` the script runs `git-cliff` over the
 branch's own commits first, which only fits a cherry-picked branch.
 
 After generation, scrub `CHANGELOG.md` through Vale + LanguageTool + unslop (see [§ Prose scrubbing](#prose-scrubbing));
@@ -285,11 +286,11 @@ without a content change (e.g., the prior run failed partway through). The input
 
 Run after the `release/* → main` PR merges.
 
-- [ ] **`publish.yml` green.** `gh run list --workflow publish.yml --limit 1`, then `gh run view <id> --json conclusion
-  --jq .conclusion` is `success`. A run that logged the `skipping release cut` notice is a non-tagging release, not a
-  failure.
-- [ ] **Tag and Release exist.** `gh release view v<version>` is neither draft nor prerelease, and `gh api
-  repos/brettdavies/agentnative/releases/latest --jq .tag_name` returns `v<version>`.
+- [ ] **`publish.yml` green.** `gh run list --workflow publish.yml --limit 1`, then
+  `gh run view <id> --json conclusion --jq .conclusion` is `success`. A run that logged the `skipping release cut`
+  notice is a non-tagging release, not a failure.
+- [ ] **Tag and Release exist.** `gh release view v<version>` is neither draft nor prerelease, and
+  `gh api repos/brettdavies/agentnative/releases/latest --jq .tag_name` returns `v<version>`.
 - [ ] **Downstream dispatch delivered.** `spec-release` reached `agentnative-cli` and `agentnative-site` (the workflow
   log lists each target; a missing `CI_RELEASE_TOKEN` skips the step with a warning). See `docs/syncs.md`.
 - [ ] **Last-good identifier recorded.** The previous tag (`gh release list --limit 2`) is what a rollback re-points to;

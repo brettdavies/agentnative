@@ -14,8 +14,8 @@ mechanisms change.
 commits the vendored copy into its own tree, so consumer builds are reproducible without network access to this repo.
 
 For the rationale behind commit-a-copy over submodule/build-time fetch, see
-[`solutions/cross-repo-artifact-sync-commit-over-fetch`](solutions/) (search via `qmd query "cross-repo artifact sync"
---collection solutions`).
+[`solutions/cross-repo-artifact-sync-commit-over-fetch`](solutions/) (search via
+`qmd query "cross-repo artifact sync" --collection solutions`).
 
 ## Upstream — data flowing INTO this repo
 
@@ -63,8 +63,8 @@ fan-out (see Release / dispatch chain below); its release flow re-runs `sync-spe
 | `agentnative-skill` | `spec/`                           | `principles/p*-*.md`, `VERSION`, `CHANGELOG.md` |
 | `agentnative-site`  | `src/data/spec/`                  | `principles/p*-*.md`, `VERSION`, `CHANGELOG.md` |
 
-The cli, skill, and site scripts are intentionally near-identical mirrors; only `DEST_DIR` differs. All three use `gh
-api` against the GitHub contents endpoint to vendor files at the resolved ref, with a local-checkout fallback for
+The cli, skill, and site scripts are intentionally near-identical mirrors; only `DEST_DIR` differs. All three use
+`gh api` against the GitHub contents endpoint to vendor files at the resolved ref, with a local-checkout fallback for
 offline runs. The `--ref <branch|tag|SHA>` flag (and the matching `SPEC_REF` env var) is uniform across all three.
 
 ## Release / dispatch chain

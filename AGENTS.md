@@ -26,10 +26,10 @@ frontmatter are the machine-readable contract with downstream repos.
 
 - `principles/p1-*.md` through `p8-*.md`: each principle, with YAML frontmatter (`id`, `title`, `last-revised`,
   `status`, `requirements[]`) and MUST/SHOULD/MAY prose in RFC 2119 language. `requirements[]` is the machine-readable
-  contract: each entry carries a stable `id`, a `level` (must/should/may), an `applicability` (`universal` or `{if:
-  <reason>}`), and a one-sentence `summary`. Downstream consumers (the `anc` CLI, the site) read the frontmatter; the
-  prose is the human-readable expansion. See [`principles/AGENTS.md`](principles/AGENTS.md) for the full per-file shape
-  and pressure-test protocol.
+  contract: each entry carries a stable `id`, a `level` (must/should/may), an `applicability` (`universal` or
+  `{if: <reason>}`), and a one-sentence `summary`. Downstream consumers (the `anc` CLI, the site) read the frontmatter;
+  the prose is the human-readable expansion. See [`principles/AGENTS.md`](principles/AGENTS.md) for the full per-file
+  shape and pressure-test protocol.
 - `VERSION`: single-line semver-adjacent version. MINOR bumps on MUST changes; PATCH on SHOULD/MAY changes.
 - `CHANGELOG.md`: spec evolution, grouped by principle.
 - `CONTRIBUTING.md`: canonical routing doc across the four-repo ecosystem; graduated AI-disclosure gate; coupled release

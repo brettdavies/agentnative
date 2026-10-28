@@ -16,8 +16,8 @@ PRs.
 | **3. Code**     | Governance docs, CHANGELOG corrections, validator-script work, workflow improvements, badge / cross-repo automation. **Principle text changes do not happen via visitor-authored PRs.** They happen via Tier 2 pressure-tests that move the principle to `status: under-review`, then maintainer-authored PRs land the revision. | PR against `dev` per the branch-discipline rules                                                                                                                                                          | Variable |
 
 The principle text is the canonical artifact and changes through the documented revision mechanism. See
-[`principles/AGENTS.md` § Pressure-test protocol](principles/AGENTS.md) for the full lifecycle: `draft → under-review →
-active → locked`.
+[`principles/AGENTS.md` § Pressure-test protocol](principles/AGENTS.md) for the full lifecycle:
+`draft → under-review → active → locked`.
 
 **Response expectations:** Tier 1 and Tier 2 are welcome and get a substantive reply when time allows. A pressure-test
 that names a specific failure mode and an implementer's reasoning is the contribution shape that lands fastest. Tier 3
@@ -125,8 +125,8 @@ git config core.hooksPath scripts/hooks
 mkdir -p styles && vale sync
 ```
 
-**Pre-commit** (fast, staged-file-only, runs on every commit): markdownlint-cli2 on staged `*.md`, `shellcheck
---severity=warning` on staged `*.sh` and anything under `scripts/hooks/`, and `actionlint` on staged
+**Pre-commit** (fast, staged-file-only, runs on every commit): markdownlint-cli2 on staged `*.md`,
+`shellcheck --severity=warning` on staged `*.sh` and anything under `scripts/hooks/`, and `actionlint` on staged
 `.github/workflows/*.yml`. Each check is a no-op with a notice when its tool isn't installed, so a missing linter never
 blocks a commit.
 
