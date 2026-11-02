@@ -17,6 +17,9 @@
 #   2. shellcheck (--severity=warning) — staged *.sh files plus anything
 #      staged under scripts/hooks/.
 #   3. actionlint — staged .github/workflows/*.yml files.
+#   4. concurrency namespacing — scripts/check-workflow-concurrency.sh,
+#      when any workflow is staged: every concurrency group starts with a
+#      literal token naming the workflow that owns it.
 #
 # Every check no-ops with a one-line notice when its tool isn't installed,
 # so a missing linter never blocks a commit.
@@ -60,6 +63,12 @@ if [ ${#STAGED_WORKFLOWS[@]} -gt 0 ]; then
     actionlint "${STAGED_WORKFLOWS[@]}" || status=1
   else
     echo "pre-commit: actionlint not installed; skipping workflow lint"
+  fi
+  if [ -x scripts/check-workflow-concurrency.sh ]; then
+    echo "==> concurrency namespacing (staged workflows)"
+    scripts/check-workflow-concurrency.sh >/dev/null || status=1
+  else
+    echo "pre-commit: scripts/check-workflow-concurrency.sh is not in this checkout; skipping concurrency namespacing"
   fi
 fi
 
