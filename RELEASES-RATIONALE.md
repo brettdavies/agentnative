@@ -233,7 +233,15 @@ compares the version carriers and `CHANGELOG.md` at the last tag against `dev` a
 The backport is a PR opened by `scripts/sync-dev-after-release.sh`, never a merge of `main` into `dev` and never a
 direct push. The squash-merged branches share no recent history, so a merge conflicts on every file both sides touched,
 and a direct push to `dev` bypasses its required status checks. The script writes the released version into `VERSION`,
-copies `CHANGELOG.md` from `main`, and opens the PR.
+copies `CHANGELOG.md` from `main`, and opens the PR. Guarded paths never enter the copy, so the backport cannot remove
+`dev`-only content.
+
+The other paths are discovered rather than listed. A release branch is edited for reasons nobody predicts (a doc fix, a
+reverted payload, a deleted config), each such edit is made against `main`'s base, and a fixed list misses it silently
+until the next release's overlay restores `dev`'s copy over it. Discovery is bounded by the previous release tag, the
+last point the branches agreed: a path `dev` left alone since then is release-prep and adopted, and a path `dev` also
+changed is contested and withheld unless the operator names it, so widening the copy cannot revert `dev`'s unreleased
+work.
 
 ### Rollback
 

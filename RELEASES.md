@@ -106,8 +106,10 @@ Each box is a go/no-go. Any unchecked item holds the cut.
   first; the overlay takes `dev`'s content for every file, so anything `main` holds that `dev` never received is
   reverted by the release. Gate 0 fails when the previous release's bookkeeping (`VERSION`, `CHANGELOG.md`) never
   reached `dev`; run `scripts/sync-dev-after-release.sh v<prev>` and merge its PR. Gate 1 lists the commits whose
-  changes `dev` lacks (`differs` or `missing`); backport them by PR into `dev`, merge, and rerun. Gate 2 requires
-  `.github/` to match on both branches. Gate 3 has no lockfile to compare in this repo.
+  changes `dev` lacks (`differs` or `missing`); backport them by PR into `dev`, merge, and rerun. Gate 2 fails when
+  `main` holds workflow or ruleset config under `.github/` that `dev` never received, and names each path as `missing`
+  or `differs`; `.github/` config that has reached `dev` and not `main` is what this release delivers, not drift. Gate 3
+  has no lockfile to compare in this repo.
 - [ ] **Previous backport merged.** `git show origin/dev:VERSION` equals the last tag minus its `v`. When it does not,
   `scripts/sync-dev-after-release.sh v<prev>` never merged: the overlay would carry `dev`'s stale `CHANGELOG.md` and
   this cut would drop the previous release's section from `main`. `drift.sh` gate 0 reports the same condition.
@@ -313,13 +315,40 @@ Once `publish.yml` has created the GitHub Release, bring the release bookkeeping
 `dev` so the integration branch starts from the released baseline:
 
 ```bash
+scripts/sync-dev-after-release.sh v<version> --dry-run   # see what diverged
 scripts/sync-dev-after-release.sh v<version>
 ```
 
-The script opens a PR against `dev`; merge it once CI is green. Never merge `main` into `dev` or push to `dev` directly:
-the squash-merged histories share no recent ancestry, so the merge conflicts on every file both sides touched, and a
-direct push bypasses `dev`'s required checks. A non-tagging release has nothing to backport. `drift.sh` gate 0 fails at
-the next cut while the backport is missing.
+The script cuts a `chore/sync-dev-after-v<version>` branch, writes the released version into `VERSION`, copies
+`CHANGELOG.md` from `main`, adopts the paths discovery classes as release-prep, and opens a PR against `dev` with the
+version in its title. It refuses to run while the GitHub Release is missing or still a draft. `--dry-run` prints the
+contested paths and the paths it would sync, then creates no branch and leaves the tree clean. A `dev` already in sync
+exits 0 with nothing committed.
+
+Besides `VERSION` and `CHANGELOG.md`, the script **discovers** every other path `main` and `dev` disagree about, minus
+the guarded set, and classifies each against the **previous** release tag, the last point the branches agreed:
+
+| Class          | Condition                                                   | Action                                          |
+| -------------- | ----------------------------------------------------------- | ----------------------------------------------- |
+| `release-prep` | `dev`'s copy is byte-identical to its copy at the prior tag | Adopted: `main`'s version is pure release-prep  |
+| `contested`    | Both branches moved the path since the prior tag            | Reported, not adopted, unless you say otherwise |
+
+`--include-contested` takes every contested path, which is rarely right: a change that landed on `dev` after the release
+makes `main`'s copy the stale one. Prefer `--only PATH` (repeatable) to name the ones you want; it intersects with the
+discovered set, so a guarded or misspelled path, or one `main` and `dev` already agree on, is refused rather than forced
+through.
+
+Merge the PR once CI is green. Never merge `main` into `dev` or push to `dev` directly: the squash-merged histories
+share no recent ancestry, so the merge conflicts on every file both sides touched, and a direct push bypasses `dev`'s
+required checks. A non-tagging release has nothing to backport. `drift.sh` gate 0 fails at the next cut while the
+backport is missing.
+
+After it merges, confirm the branches converged. This is what catches a contested path nobody resolved:
+
+```bash
+git fetch origin
+git diff --name-only origin/dev origin/main | grep -Ev "$(scripts/release/guarded-paths.sh)" || echo "(converged)"
+```
 
 → Rationale:
 [`RELEASES-RATIONALE.md` § Why backport main to dev after publish](./RELEASES-RATIONALE.md#why-backport-main-to-dev-after-publish).
