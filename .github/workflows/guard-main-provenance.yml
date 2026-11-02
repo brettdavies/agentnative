@@ -1,13 +1,11 @@
-# Source repo guard-main-provenance wrapper — calls the centralized reusable workflow.
+# Canonical version: 2026.09.08 (generic)
+#
+# Source repo guard-main-provenance wrapper that calls the fleet's reusable workflow.
 # Copy to .github/workflows/guard-main-provenance.yml in repos with the dev→main pattern.
 #
 # Verifies commits in PRs to main came from squash-merged PRs to dev
 # (have (#N) references). Only needs pull-requests: read.
 #
-# SHA-PIN the @main ref before committing into the consumer repo. Pattern:
-#   uses: brettdavies/.github/.github/workflows/guard-main-provenance.yml@<SHA> # main as of YYYY-MM-DD
-# Recipe: `gh api repos/brettdavies/.github/commits/main --jq .sha`.
-# See ~/.claude/skills/github-repo-setup/references/sha-pinning-recipes.md.
 name: Guard main commit provenance
 
 on:

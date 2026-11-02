@@ -1,11 +1,8 @@
+# Canonical version: 2026.09.08 (generic)
+#
 # Source-repo caller wrapper for the reusable guard-release-branch workflow.
 # Copy to .github/workflows/guard-release-branch.yml in repos using the
 # forever-dev + release/* flow.
-#
-# SHA-PIN the @main ref before committing into the consumer repo. Pattern:
-#   uses: brettdavies/.github/.github/workflows/guard-release-branch.yml@<SHA> # main as of YYYY-MM-DD
-# Recipe: `gh api repos/brettdavies/.github/commits/main --jq .sha`.
-# See ~/.claude/skills/github-repo-setup/references/sha-pinning-recipes.md.
 #
 # Rejects PRs to main whose head branch doesn't start with `release/`.
 # Keeps `dev` off the list of PR heads, which is what makes
