@@ -82,9 +82,9 @@ markdown that ships verbatim to GitHub.
 
 ### Why release-PR bodies repeat changelog entries from upstream PRs
 
-The release PR carries the same `### Added` / `### Changed` / `### Fixed` / `### Removed` / `### Security` bullets as
-the feature PRs it ships. The repetition is intentional and harmless: `cliff.toml`'s `^release` skip prevents the
-release-PR squash commit from being double-counted in any future regeneration, and `--from-dev-prs` reads PRs merged
+The release PR carries the same `## Changelog` subsection bullets (`### Added`, `### Changed`, `### Fixed`, and the
+rest) as the feature PRs it ships. The repetition is intentional and harmless: `cliff.toml`'s `^release` skip prevents
+the release-PR squash commit from being double-counted in any future regeneration, and `--from-dev-prs` reads PRs merged
 into `dev`, where the release PR never lands.
 
 ### Why internal-tooling commits don't appear in `## Changelog`
@@ -199,10 +199,10 @@ The release author runs `scripts/generate-changelog.py --from-dev-prs` on the re
 version from the branch name, finds the previous tag, and lists the PRs merged into `dev` since the earlier of that tag
 and the previous release PR (PR numbers the changelog already lists are dropped, which covers the overlap). For every PR
 it fetches the body via `gh api repos/.../pulls/N`, extracts its
-`## Changelog → ### Added / Changed / Fixed / Removed / Security` subsections, and writes the version section with
-`by @user in [#N]` attribution and a `**Full Changelog**: v<prev>...v<this>` compare link. A PR whose body carries no
-changelog content contributes its title as a `Changed` bullet, except `chore` / `ci` / `build` / `style` / `test` PRs,
-which stay out unless they carry a `## Changelog` of their own.
+`## Changelog → ### Breaking changes / Added / Changed / Deprecated / Removed / Fixed / Documentation` subsections, and
+writes the version section with `by @user in [#N]` attribution and a `**Full Changelog**: v<prev>...v<this>` compare
+link. A PR whose body carries no changelog content contributes its title as a `Changed` bullet, except `chore` / `ci` /
+`build` / `style` / `test` PRs, which stay out unless they carry a `## Changelog` of their own.
 
 Without `--from-dev-prs` the script runs `git-cliff --tag v$VERSION --unreleased --prepend CHANGELOG.md` over the
 branch's own commits first, then expands the same way. That mode fits a cherry-picked branch whose commits carry `(#N)`

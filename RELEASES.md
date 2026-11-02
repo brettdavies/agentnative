@@ -55,8 +55,10 @@ The standard feature → PR → squash-merge flow remains required for everythin
 
 ## PR body
 
-Every PR (feature, fix, docs, release) uses `.github/pull_request_template.md` verbatim. Five sections, no inventions:
-`## Summary`, `## Changelog`, `## Linked audit review`, `## Human reviewer`, `## AI disclosure`.
+Every PR (feature, fix, docs, release) uses `.github/pull_request_template.md` verbatim. Nine sections, in template
+order, no inventions: the six base sections `## Summary`, `## Changelog`, `## Type of Change`,
+`## Related Issues/Stories`, `## Testing`, `## Files Modified`, then this repo's governance sections
+`## Linked audit review`, `## Human reviewer`, `## AI disclosure`.
 
 - **No explainer prose anywhere in the body.** User-facing substance only.
 - **Summary describes the net diff only**: what merged `main` looks like vs the base branch. Not commit history,
@@ -64,8 +66,14 @@ Every PR (feature, fix, docs, release) uses `.github/pull_request_template.md` v
 - **Zero verification artifacts in the body.** No diff stats, leak-check output ("`guard-main-docs` runs clean"),
   patch-id cherry-check counts, pre-push gate results, CI status, or prose-scrub findings. Anomalies get fixed before
   push, not audit-trailed.
-- **Changelog** subsections (`### Added` / `### Changed` / `### Fixed` / `### Removed` / `### Security`): 1-5 bullets
-  each, delete empty subsections, each bullet starts with a verb.
+- **Changelog** subsections (`### Breaking changes` / `### Added` / `### Changed` / `### Deprecated` / `### Removed` /
+  `### Fixed` / `### Documentation`, in that order): 1-5 bullets each, delete empty subsections, each bullet starts with
+  a verb.
+- **Type of Change**: one checkbox. Prefer `feat`/`fix` over `chore` for any user-observable change.
+- **Related Issues/Stories**: four labels (`Story:` / `Issue:` / `Architecture:` / `Related PRs:`). All four required
+  even when empty (`- None.` / `n/a`).
+- **Files Modified**: four sub-headers (`Modified` / `Created` / `Renamed` / `Deleted`). All four required even when
+  empty.
 - **Linked audit review** carries the companion-PR URL on `agentnative-cli` (or "no audit changes needed" with
   justification) per the coupled-release norm in `principles/AGENTS.md`. Required for any PR that adds, removes, or
   re-tiers a `requirements[]` entry.
