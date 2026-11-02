@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Canonical version: 2026.10.05 (generic)
+#
 # Emits one ERE matching every path that must never reach `main`, for `grep -E`.
 #
 # `guard-main-docs` rejects two sets on a PR to main: a base list hardcoded in
@@ -22,6 +24,14 @@
 #   git diff origin/main..HEAD --name-only | grep -E "$GUARDED"
 #
 # Exit 1 when nothing resolves, so a missing workflow cannot pass as "clean".
+
+if ((BASH_VERSINFO[0] < 4 || (BASH_VERSINFO[0] == 4 && BASH_VERSINFO[1] < 4))); then
+  for b in /opt/homebrew/bin/bash /usr/local/bin/bash; do
+    [ -x "$b" ] && exec "$b" "$0" "$@"
+  done
+  echo "ERROR: needs bash >= 4.4 (running $BASH_VERSION); install it with: brew install bash" >&2
+  exit 1
+fi
 
 set -euo pipefail
 
