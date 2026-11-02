@@ -47,16 +47,21 @@
 #                             missing exits) while ignoring info/style
 #                             noise. Skipped with a one-line note when the
 #                             linter is not installed.
+#   8b. concurrency namespacing — scripts/check-workflow-concurrency.sh
+#                             over the tracked workflows: every
+#                             concurrency group starts with a literal
+#                             token naming the workflow that owns it.
 #   9. prose-check            — Vale (Brand + Spec + write-good +
 #                             proselint) plus LanguageTool when reachable.
 #                             Vale errors and category-whitelisted LT
 #                             matches block; LT-unreachable falls back to
 #                             Vale-only with a notice.
 #
-# Branch deletions (`git push origin --delete <branch>`) short-circuit
-# at the top — the hook reads the push protocol from stdin to detect
-# this, so stages 7 and 9 redirect their child stdin to /dev/null
-# so they don't fight for protocol bytes.
+# Branch deletions (`git push origin --delete <branch>`) and pushes with
+# no ref to update short-circuit at the top — the hook reads the push
+# protocol from stdin to detect this, so stages 7 and 9 redirect their
+# child stdin to /dev/null so they don't fight for protocol bytes. A hand
+# run passes no remote and checks everything.
 #
 # Working-tree clean precondition: the pipeline below scans the working
 # tree, but only committed changes are pushed. A dirty tree could pass
@@ -71,14 +76,27 @@ set -euo pipefail
 
 # Skip the hook for branch deletions (`git push origin --delete <branch>`),
 # which arrive with sha=0000... on stdin from the hook protocol.
-deleting_only=true
-while read -r local_ref local_sha _remote_ref remote_sha; do
-  : "$local_ref" "$local_sha" "$_remote_ref" "$remote_sha"
-  if [[ "$local_sha" != "0000000000000000000000000000000000000000" ]]; then
-    deleting_only=false
-  fi
-done
-if $deleting_only; then
+deletes=0
+others=0
+if [ ! -t 0 ]; then
+  while read -r local_ref local_sha _remote_ref remote_sha; do
+    : "$_remote_ref" "$remote_sha"
+    [ -n "$local_ref" ] || continue
+    if [[ "$local_sha" =~ ^0+$ ]]; then
+      deletes=$((deletes + 1))
+    else
+      others=$((others + 1))
+    fi
+  done
+fi
+if [ "$deletes" -gt 0 ] && [ "$others" -eq 0 ]; then
+  exit 0
+fi
+
+# A real push passes the remote's name and URL. With no ref lines after them,
+# no ref would update, so there is nothing to check.
+if [ "$#" -ge 2 ] && [ $((deletes + others)) -eq 0 ]; then
+  echo "pre-push: nothing to push"
   exit 0
 fi
 
@@ -173,6 +191,15 @@ if command -v shellcheck &>/dev/null; then
   fi
 else
   echo "==> Shellcheck skipped (install via \`brew install shellcheck\` or \`apt install shellcheck\`)"
+fi
+
+if [ -n "$(git ls-files '.github/workflows/*.yml' '.github/workflows/*.yaml')" ]; then
+  if [ -x scripts/check-workflow-concurrency.sh ]; then
+    echo "==> Checking workflow concurrency-group namespacing"
+    scripts/check-workflow-concurrency.sh >/dev/null
+  else
+    echo "==> Concurrency namespacing skipped (scripts/check-workflow-concurrency.sh is not in this checkout)"
+  fi
 fi
 
 echo "==> Running prose-check (Vale + LanguageTool)"

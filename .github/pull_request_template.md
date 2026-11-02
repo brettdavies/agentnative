@@ -1,8 +1,9 @@
+<!-- Canonical version: 2026.10.22 (generic) -->
 ## Summary
 
-<!-- What does this PR change and why?
+<!-- Provide a brief overview of the changes in this PR. What feature/fix/improvement does this introduce?
 
-     SCOPE: Describe the net diff only — what the merged result looks
+     SCOPE: Describe the net diff only, meaning what the merged result looks
      like compared to the base branch. NOT commit history, intermediate
      state, or how the cherry-picks were assembled.
 
@@ -19,11 +20,11 @@
 ## Changelog
 
 <!-- CRITICAL: This section is the source of truth for CHANGELOG.md.
-     The changelog generator (git-cliff) extracts these categorized bullets
-     verbatim into the release changelog. Write carefully — this IS the changelog.
+     generate-changelog.py extracts these categorized bullets verbatim
+     into the release changelog. Write carefully; this IS the changelog.
 
      AUDIENCE: Spec consumers (tool authors, auditors, contributors). Write from
-     their perspective — what changed in the standard, not how you edited it.
+     their perspective: what changed in the standard, not how you edited it.
 
      INCLUDE: new or changed MUST/SHOULD/MAY tiers; new/removed principles;
      applicability-gate changes; governance changes that affect contributors;
@@ -31,14 +32,21 @@
 
      EXCLUDE: prose-only clarifications, typo fixes, example additions that
      don't change requirement semantics, internal reorganization, CI changes.
-     Document those elsewhere in the PR body — NOT here.
+     Document those elsewhere in the PR body, NOT here.
 
      RULES:
-- 1-5 bullets per PR. Fewer is better.
-- Delete empty ### sections entirely — don't leave blank categories.
+- 1-5 bullets per PR. Fewer is better. One-line fixes get one bullet.
+- Delete empty ### sections entirely; don't leave blank categories.
+- Keep the sections in this order, the one generate-changelog.py emits: Breaking changes, Added, Changed, Deprecated,
+  Removed, Fixed, Documentation.
 - Each bullet starts with a verb: Add, Fix, Change, Remove, Deprecate.
-- Prose-only edits leave this section empty or omit it.
--->
+- Don't duplicate the PR title; expand on it or provide context.
+- If the PR has NO user-facing changes (pure refactor, test-only, CI), leave this section empty or omit it. The PR still
+  appears in git history; it just won't clutter the changelog. -->
+
+### Breaking changes
+
+-
 
 ### Added
 
@@ -48,7 +56,7 @@
 
 -
 
-### Fixed
+### Deprecated
 
 -
 
@@ -56,9 +64,65 @@
 
 -
 
-### Security
+### Fixed
 
 -
+
+### Documentation
+
+-
+
+## Type of Change
+
+<!-- Check the type that applies to this PR -->
+
+- [ ] `feat`: New feature (non-breaking change which adds functionality)
+- [ ] `fix`: Bug fix (non-breaking change which fixes an issue)
+- [ ] `refactor`: Code refactoring (no functional changes)
+- [ ] `perf`: Performance improvement
+- [ ] `docs`: Documentation update
+- [ ] `test`: Adding or updating tests
+- [ ] `chore`: Maintenance tasks (dependencies, config, etc.)
+- [ ] `ci`: CI/CD configuration changes
+- [ ] `style`: Code style/formatting changes
+- [ ] `build`: Build system changes
+- [ ] `BREAKING CHANGE`: Breaking API change (requires major version bump)
+
+## Related Issues/Stories
+
+<!-- Link to related issues, stories, or documentation -->
+
+- Story:
+- Issue:
+- Architecture:
+- Related PRs:
+
+## Testing
+
+<!-- Describe the testing approach and results -->
+
+- [ ] Unit tests added/updated
+- [ ] Integration tests added/updated
+- [ ] Manual testing completed
+- [ ] All tests passing
+
+**Test Summary:**
+
+- Unit tests: X passing
+- Integration tests: Y passing
+- Coverage: Z%
+
+## Files Modified
+
+<!-- List the main files modified in this PR -->
+
+**Modified:**
+
+**Created:**
+
+**Renamed:**
+
+**Deleted:**
 
 ## Linked audit review
 
