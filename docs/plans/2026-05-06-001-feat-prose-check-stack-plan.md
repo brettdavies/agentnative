@@ -32,7 +32,7 @@ enforceable voice; BRAND.md and `.impeccable.md` shed their literal phrase lists
 
 > **Site-side scope split:** Site enforcement (the parallel work originally scoped here as U9 + U10) lives in the
 > companion plan
-> [`agentnative-site/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md`](../../../agentnative-site/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md).
+> [`agentnative-site/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md`](https://github.com/brettdavies/agentnative-site/blob/dev/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md).
 > Splitting let the spec stack ship independently on `docs/v0.3.1`; the site plan picks up after.
 
 ---
@@ -958,7 +958,7 @@ contributor-facing docs.
 ### Site-side units (split out)
 
 The site-side parallel work (originally numbered U9 + U10) lives in the companion plan at
-[`agentnative-site/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md`](../../../agentnative-site/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md).
+[`agentnative-site/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md`](https://github.com/brettdavies/agentnative-site/blob/dev/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md).
 That plan covers the brand-pack copy from spec, the fresh Site channel pack authored from
 `agentnative-site/.impeccable.md`, the orchestrator copy, and the pre-push wiring on the site repo's existing hook.
 
@@ -1186,7 +1186,7 @@ AE4, AE6 verified spec-side.
 ### Phase 2 — Site-side enforcement (companion plan)
 
 Tracked in
-[`agentnative-site/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md`](../../../agentnative-site/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md).
+[`agentnative-site/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md`](https://github.com/brettdavies/agentnative-site/blob/dev/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md).
 AE1, AE2, AE3, AE4 verified site-side once that plan ships; AE5 verified at the manual-copy level for v1.
 
 ### Deferred — Consumer sync-spec.sh extension (separate PRs per consumer)
@@ -1230,7 +1230,7 @@ equivalent to U9 and U10 locally.
 
 - **Roll-out cadence:** Spec U1-U8 ships on `agentnative-spec/docs/v0.3.1`. Site-side enforcement is queued in the
   companion plan
-  [`agentnative-site/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md`](../../../agentnative-site/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md);
+  [`agentnative-site/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md`](https://github.com/brettdavies/agentnative-site/blob/dev/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md);
   it lands as a separate PR in the site repo after v0.3.1 cuts over to dev. AE3 verification is a one-paragraph
   PR-description checkbox, not a separate PR.
 - **Rollback posture:** If prose-check creates more friction than value (e.g., LT false-positive rate is unsustainable),
@@ -1252,7 +1252,7 @@ equivalent to U9 and U10 locally.
   [`2026-05-06-002-feat-languagetool-pool-deployment-plan.md`](2026-05-06-002-feat-languagetool-pool-deployment-plan.md)
   — provisions the LanguageTool docker container on `pool`. Lands in parallel; neither plan blocks the other.
 - **Companion plan (site-side enforcement):**
-  [`agentnative-site/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md`](../../../agentnative-site/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md)
+  [`agentnative-site/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md`](https://github.com/brettdavies/agentnative-site/blob/dev/docs/plans/2026-05-07-001-feat-prose-check-site-plan.md)
   — site-repo parallel to this stack (originally U9 + U10 here). Inherits all design decisions captured in this plan
   plus the voice-enforcement architecture doc.
 - **Architecture (shipped):** [`docs/architecture/voice-enforcement.md`](../architecture/voice-enforcement.md) — layered
