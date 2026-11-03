@@ -82,6 +82,7 @@ lockfiles
 longCode
 maintainer
 markdownlint
+metavariable
 meyay
 namelookup
 namespace

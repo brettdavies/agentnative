@@ -1,7 +1,7 @@
 ---
 id: p3
 title: Progressive Help Discovery
-last-revised: 2026-10-06
+last-revised: 2026-11-03
 status: active
 requirements:
   - id: p3-must-subcommand-examples
@@ -83,8 +83,10 @@ trial-and-errors its way into a working call, burning tokens and sometimes landi
 - Entries in the command list SHOULD name the command directly (`status`, `server stop`) rather than repeat the binary
   name on every line (`tool status`, `tool server stop`). A reader or agent scanning the block takes the command token
   straight from the left column instead of reconstructing it from a prefix it already knows from the `Usage:` line. The
-  bare invocation line, which documents what the tool does with no arguments, is the one entry that legitimately carries
-  the binary name alone.
+  bare invocation line, which documents what the tool does when no command is named, is the one entry that legitimately
+  carries the binary name. It MAY add argument placeholders written as `[x]`, `<x>`, or an all-caps metavariable
+  (`opencode [project]`, `tool FILE`), because those name no command. An entry with a command word, such as
+  `opencode run [message..]` or `tool run FILE`, is not that line.
 
 **MAY:**
 
