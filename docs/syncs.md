@@ -13,9 +13,8 @@ mechanisms change.
 **commit-a-copy** sync model (no submodules, no build-time fetches). Each consumer pulls at a pinned spec tag and
 commits the vendored copy into its own tree, so consumer builds are reproducible without network access to this repo.
 
-For the rationale behind commit-a-copy over submodule/build-time fetch, see
-[`solutions/cross-repo-artifact-sync-commit-over-fetch`](solutions/) (search via
-`qmd query "cross-repo artifact sync" --collection solutions`).
+For the rationale behind commit-a-copy over submodule/build-time fetch, see `cross-repo-artifact-sync-commit-over-fetch`
+in the maintainer's solutions corpus (search it with `qmd query "cross-repo artifact sync" --collection solutions`).
 
 ## Upstream — data flowing INTO this repo
 
