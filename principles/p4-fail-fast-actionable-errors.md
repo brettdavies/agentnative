@@ -1,7 +1,7 @@
 ---
 id: p4
 title: Fail Fast with Actionable Errors
-last-revised: 2026-05-07
+last-revised: 2026-11-03
 status: active
 requirements:
   - id: p4-must-try-parse
@@ -28,7 +28,7 @@ requirements:
   - id: p4-should-json-error-output
     level: should
     applicability: universal
-    summary: "Error output respects `--output json`: JSON-formatted errors go to stderr when JSON output is selected."
+    summary: "Error output respects the active JSON output mode, as P2 defines it: JSON-formatted errors go to stderr when JSON output is selected."
   - id: p4-should-enumerate-valid-set
     level: should
     applicability:
@@ -92,7 +92,8 @@ OAuth or asks the user to check their config file. Getting that wrong wastes ent
 - Config and auth validation happen before any network call, failing at the earliest possible point. The structural
   three-tier definition (meta-commands, local-only commands, network commands) lives in P6 (`p6-should-tier-gating`);
   this requirement specifies the network-call ordering consequence.
-- Error output respects `--output json`: JSON-formatted errors go to stderr when JSON output is selected.
+- Error output respects the active JSON output mode, as P2 defines it (`p2-must-output-flag`): JSON-formatted errors go
+  to stderr when JSON output is selected.
 - When the failure is "invalid value for X" against a known closed set (an enum field, a documented allow-list, a typed
   parameter), the error SHOULD include the valid set. An agent reading `error: invalid visibility` guesses and retries;
   an agent reading `error: --visibility must be one of: public, private, unlisted (got "secret")` self-corrects in one
