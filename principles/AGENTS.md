@@ -18,6 +18,8 @@ tooling and do not ship to main.
 
 - One file per principle: `p<n>-<slug>.md`, eight in total.
 - This file (`AGENTS.md`), documenting the per-file shape and pressure-test protocol.
+- Reference documents the principles rely on, which consumers vendor beside them: `scoring.md` (the leaderboard formula)
+  and `flag-names.md` (how requirement text names a flag).
 
 **Does not belong here:** website copy, CLI audit implementations, research extracts, per-tool scorecards, or any
 document that is downstream of a principle rather than being one.

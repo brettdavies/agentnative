@@ -70,12 +70,8 @@ against instead of prose. Each entry has:
   requirement binds.
 - **`summary`**: one sentence, mirrored by the prose bullet.
 
-Requirement text names a flag by its double-dash spelling (`--force`, `--quiet`, `--output`). A tool whose help declares
-no double-dash name follows the Go `flag` convention, where one dash and two name the same flag, and meets the
-requirement with the single-dash spelling: `-force` on `terraform force-unlock` satisfies a requirement that names
-`--force`. In a help that declares any double-dash name, a single-dash word is a name of its own and does not stand in
-for the double-dash spelling. A single letter is a different name in either case and meets only a requirement that names
-that letter, so `-f` meets `--force` only where the requirement also names `-f`.
+[`principles/flag-names.md`](principles/flag-names.md) defines how a flag name in requirement text applies to a tool's
+help, single-dash spellings and single letters included.
 
 [`principles/AGENTS.md`](principles/AGENTS.md) is the full authoring and governance contract: frontmatter fields,
 requirement-ID conventions, the conditional-applicability propagation table, the `last-revised` discipline, the status
@@ -149,6 +145,7 @@ its content propagates downstream.
   conditional applicability, status lifecycle, coupled-release protocol.
 - [`principles/scoring.md`](principles/scoring.md): leaderboard scoring formula, status taxonomy, eligibility floor,
   cohort bands.
+- [`principles/flag-names.md`](principles/flag-names.md): how a flag name in requirement text applies to a tool's help.
 - [`docs/badge.md`](docs/badge.md): badge claim convention: eligibility, embed shapes, version pinning, regression
   behavior.
 - [`docs/decisions/`](docs/decisions/): decision records for non-obvious spec choices.
