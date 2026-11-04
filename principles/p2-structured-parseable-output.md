@@ -1,13 +1,13 @@
 ---
 id: p2
 title: Structured, Parseable Output
-last-revised: 2026-10-06
+last-revised: 2026-11-03
 status: active
 requirements:
   - id: p2-must-output-flag
     level: must
     applicability: universal
-    summary: "`--output` flag selects format with `json` and `jsonl` as canonical machine-readable values; `text` is the default human-facing form."
+    summary: "`--output` flag selects format with `json` and `jsonl` as canonical machine-readable values; `text` is the default human-facing form. An output-format option under another name, such as `--format` or `--output-format`, meets this when its definition names `json`."
   - id: p2-must-stdout-stderr-split
     level: must
     applicability: universal
@@ -19,7 +19,7 @@ requirements:
   - id: p2-must-json-errors
     level: must
     applicability: universal
-    summary: When `--output json` is active, errors are emitted as JSON (to stderr) with at least `error`, `kind`, and `message` fields.
+    summary: When a JSON output mode is active, errors are emitted as JSON (to stderr) with at least `error`, `kind`, and `message` fields.
   - id: p2-must-schema-print
     level: must
     applicability:
@@ -72,8 +72,11 @@ catastrophically later.
 **MUST:**
 
 - Structured-output CLIs MUST offer at least one machine-readable format selectable via `--output`, with `json` and
-  `jsonl` as canonical values; `text` is the default human-facing form. The format selection threads through every
-  output path, so a single invocation never mixes formats.
+  `jsonl` as canonical values; `text` is the default human-facing form. An output-format option under another name, such
+  as `--format` or `--output-format`, meets this requirement when its definition in `--help` names `json`; `--output`
+  stays the canonical spelling. A JSON output mode is active when an invocation selects JSON through `--output json`, a
+  `--json` or `--jsonl` alias, or such an option, whether the top-level command or a subcommand declares the flag. The
+  format selection threads through every output path, so a single invocation never mixes formats.
 - Data goes to stdout. Diagnostics, progress indicators, and warnings go to stderr. The split is decades-old Unix
   practice (POSIX, ESR's Rule of Repair, clig.dev's "Output" rules); for an agent it is load-bearing: a JSON consumer
   reading stdout MUST NOT encounter an interleaved progress line.
@@ -90,8 +93,9 @@ catastrophically later.
   These codes blend the bash 0/1/2 convention with BSD `sysexits.h` 77/78 (`EX_NOPERM`, `EX_CONFIG`); the result is the
   de-facto agent-facing dialect, not strict `sysexits.h` compliance.
 
-- When `--output json` is active, errors MUST be emitted as JSON to stderr with at least `error`, `kind`, and `message`
-  fields. A plain-text error inside a JSON run breaks the consumer's parser on the only shape it was told to expect.
+- When a JSON output mode is active, errors MUST be emitted as JSON to stderr with at least `error`, `kind`, and
+  `message` fields. A plain-text error inside a JSON run breaks the consumer's parser on the only shape it was told to
+  expect.
 - CLIs that emit structured output (`--output json|jsonl`) MUST expose the output schema at runtime. A `schema`
   subcommand (or a `--schema` flag on each data-emitting subcommand) is the recommended surface; an introspection
   command under another name satisfies the requirement when the tool's `--help` documents it as the command that
@@ -120,6 +124,8 @@ catastrophically later.
 ## Evidence
 
 - `OutputFormat` enum with `Text`, `Json`, `Jsonl` variants deriving `ValueEnum`.
+- An output-format option under another name whose `--help` definition lists `json`, such as
+  `--format <FORMAT>  Output format (text, json)`. A `--format` that offers only a template does not name `json`.
 - `OutputConfig` struct with `format`, `use_color`, and `quiet` fields.
 - `serde_json` in `Cargo.toml`.
 - No `println!` in `src/` outside the output module: every print goes through `OutputConfig`.
