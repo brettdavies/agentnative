@@ -1,14 +1,14 @@
 ---
 id: p5
 title: Safe Retries and Explicit Mutation Boundaries
-last-revised: 2026-10-06
+last-revised: 2026-11-04
 status: active
 requirements:
   - id: p5-must-force-yes
     level: must
     applicability:
       if: CLI has destructive operations
-    summary: Destructive operations (delete, overwrite, bulk modify) require an explicit confirmation flag; `--yes` and `--force` are the recommended names, and a documented flag under another name satisfies the requirement.
+    summary: Destructive operations (those that delete or overwrite data the tool cannot regenerate, or modify many records at once) require an explicit confirmation flag; `--yes` and `--force` are the recommended names, and a documented flag under another name satisfies the requirement.
   - id: p5-must-read-write-distinction
     level: must
     applicability:
@@ -35,22 +35,34 @@ MUST make the read-vs-write distinction visible from name and `--help` alone, an
 explicit confirmation. An agent that cannot distinguish a safe read from a dangerous write will either avoid the tool or
 execute mutations blindly: both are failure modes.
 
+An operation is destructive by its effect: it deletes or overwrites data the tool cannot regenerate, or it modifies many
+records at once. Clearing data the tool rebuilds on demand, such as a cache, is not destructive. A name cannot show an
+effect, so a tool's author can declare that a subcommand whose name reads as destructive does not have this effect, and
+a grader that detects destructive operations by name applies that declaration as the author's claim. A false declaration
+is the author's published statement. A declaration cannot cover `delete`, `destroy`, `purge`, or `wipe`: those names
+always read as destructive, so a subcommand with one of them requires the confirmation flag.
+
 ## Why Agents Need It
 
 Agent harnesses commonly retry failed operations. If a write operation is not idempotent, a retry creates duplicates,
 corrupts data, or trips rate limits. When destructive operations require explicit confirmation (`--force`, `--yes`) and
-support preview (`--dry-run`), an agent can safely explore what a command would do before committing to it. Read-only
-tools are inherently safe for retries, but they still benefit from help text that names the mutation contract: "this
-does not modify state" is a better sentence to put in `--help` than to assume.
+support preview (`--dry-run`), an agent can safely explore what a command would do before committing to it. The
+confirmation gate exists so one call cannot lose data an agent needs, and clearing a cache loses none. Read-only tools
+are inherently safe for retries, but they still benefit from help text that names the mutation contract: "this does not
+modify state" is a better sentence to put in `--help` than to assume.
 
 ## Requirements
 
 **MUST:**
 
-- Destructive operations (delete, overwrite, bulk modify) MUST require an explicit confirmation flag. `--yes` and
-  `--force` are the recommended names; a flag under another name satisfies the requirement when the command's `--help`
-  documents it as the flag that confirms the operation without a prompt (`terraform destroy -auto-approve`). Without the
-  flag, the command refuses the operation or enters dry-run mode; it MUST NOT mutate silently.
+- Destructive operations (those that delete or overwrite data the tool cannot regenerate, or modify many records at
+  once) MUST require an explicit confirmation flag. Clearing data the tool rebuilds on demand, such as a cache, is not
+  destructive, and neither is a subcommand whose author declares that its name reads as destructive but it does not have
+  this effect. A subcommand named `delete`, `destroy`, `purge`, or `wipe` MUST require the flag whatever its author
+  declares. `--yes` and `--force` are the recommended names; a flag under another name satisfies the requirement when
+  the command's `--help` documents it as the flag that confirms the operation without a prompt
+  (`terraform destroy -auto-approve`). Without the flag, the command refuses the operation or enters dry-run mode; it
+  MUST NOT mutate silently.
 - The read-vs-write distinction MUST be visible from the command name and `--help` text alone. A reader scanning the
   help output immediately knows whether a command mutates state.
 - Every write command MUST support `--dry-run`: validate inputs and report the intended effect without executing it.
@@ -64,8 +76,8 @@ does not modify state" is a better sentence to put in `--help` than to assume.
 ## Evidence
 
 - `--dry-run` flag on commands that create, update, or delete resources.
-- A confirmation flag on destructive commands: `--yes` or `--force`, or a documented equivalent such as `-auto-approve`
-  on `terraform destroy`.
+- A confirmation flag on each command that deletes or overwrites data the tool cannot regenerate, or modifies many
+  records at once: `--yes` or `--force`, or a documented equivalent such as `-auto-approve` on `terraform destroy`.
 - Command names that signal intent: `add`, `remove`, `delete`, `create` for writes; `list`, `show`, `get`, `search` for
   reads.
 - Dry-run output that shows what *would* change without executing.
@@ -73,12 +85,19 @@ does not modify state" is a better sentence to put in `--help` than to assume.
 ## Anti-Patterns
 
 - A `delete` command that executes immediately without `--force` or confirmation.
+- A declaration that a command is not destructive when its effect is: it clears the grader's check, and the false claim
+  stands as the author's published statement.
+- A declaration for a `delete`, `destroy`, `purge`, or `wipe` subcommand: the grader refuses it and still requires the
+  confirmation flag.
 - Write commands sharing a name pattern with read commands (e.g., a `sync` that silently overwrites local state).
 - No `--dry-run` option on bulk operations, where a preview prevents costly mistakes.
 - Operations that fail on retry because the first attempt partially succeeded: non-idempotent writes without rollback.
 
 Measured by audit IDs `p5-force-yes`, `p5-read-write-distinction`, `p5-dry-run`. Run `anc audit --principle 5 .` against
-the CLI under test to see each.
+the CLI under test to see each. `p5-force-yes` detects destructive subcommands by name and reads an author's declaration
+from `not_destructive` under `[p5]` in `.anc.toml`. It refuses an entry for `delete`, `destroy`, `purge`, or `wipe`, and
+says so in the requirement's scorecard row; the row names each subcommand it applies a declaration to and the file that
+supplied it.
 
 ## Pressure test notes
 
