@@ -19,7 +19,7 @@ requirements:
   - id: p2-must-json-errors
     level: must
     applicability: universal
-    summary: When a JSON output mode is active, errors are emitted as JSON (to stderr) with at least `error`, `kind`, and `message` fields.
+    summary: "When a JSON output mode is active, errors are emitted as JSON (to stderr) with fields that fill three roles: an error class, a machine-matchable code, and a human message. `{error, kind, message}` and `{status, reason, exit_code, message}` are conforming spellings."
   - id: p2-must-schema-print
     level: must
     applicability:
@@ -93,9 +93,10 @@ catastrophically later.
   These codes blend the bash 0/1/2 convention with BSD `sysexits.h` 77/78 (`EX_NOPERM`, `EX_CONFIG`); the result is the
   de-facto agent-facing dialect, not strict `sysexits.h` compliance.
 
-- When a JSON output mode is active, errors MUST be emitted as JSON to stderr with at least `error`, `kind`, and
-  `message` fields. A plain-text error inside a JSON run breaks the consumer's parser on the only shape it was told to
-  expect.
+- When a JSON output mode is active, errors MUST be emitted as JSON to stderr with fields that fill three roles: an
+  error class that marks the object as an error, a machine-matchable code an agent branches on, and a human message. Any
+  field names can carry the roles; `{error, kind, message}` and `{status, reason, exit_code, message}` are conforming
+  spellings. A plain-text error inside a JSON run breaks the consumer's parser on the only shape it was told to expect.
 - CLIs that emit structured output (`--output json|jsonl`) MUST expose the output schema at runtime. A `schema`
   subcommand (or a `--schema` flag on each data-emitting subcommand) is the recommended surface; an introspection
   command under another name satisfies the requirement when the tool's `--help` documents it as the command that
