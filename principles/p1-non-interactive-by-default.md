@@ -70,7 +70,9 @@ agent-tool deadlock.
 
 - When stdin is not a terminal, or when `--no-interactive` is set, every blocking-input surface (prompt libraries,
   read-line calls, TUI session initialization) MUST resolve from defaults, read from stdin, or exit non-zero with an
-  actionable error. The CLI MUST NOT block waiting for input that cannot arrive.
+  actionable error. The CLI MUST NOT block waiting for input that cannot arrive. `--no-interactive` is canonical;
+  `--non-interactive`, `--batch`, `--yes`, `--no-input`, `--print`, and `--assume-yes` are accepted spellings of the
+  same switch.
 - A headless authentication path if the CLI authenticates through a browser-based flow. The canonical flag is
   `--no-browser`, which triggers the OAuth 2.0 Device Authorization Grant
   ([RFC 8628](https://www.rfc-editor.org/rfc/rfc8628)): the CLI prints a URL and a code; the user authorizes on another
@@ -98,11 +100,13 @@ agent-tool deadlock.
 **MAY:**
 
 - Rich interactive experiences (spinners, progress bars, multi-select menus) MAY render when a TTY is detected and
-  `--no-interactive` is not set, provided the non-interactive path remains fully functional.
+  `--no-interactive` is not set, provided the non-interactive path remains fully functional. A flag that selects such an
+  experience is named `--tui`, `--interactive`, or `--ui`.
 
 ## Evidence
 
-- `--no-interactive` flag in the CLI struct with an env-var binding.
+- `--no-interactive` flag, or an accepted spelling (`--non-interactive`, `--batch`, `--yes`, `--no-input`, `--print`,
+  `--assume-yes`), in the CLI struct with an env-var binding.
 - Boolean env vars parsed with a falsey-value parser (not the default string parser).
 - Stdin TTY guard wrapping every `dialoguer`, `inquire`, or equivalent prompt call, through the language's entry point:
   `std::io::IsTerminal` in Rust 1.70+ (`std::io::stdin().is_terminal()`), `process.stdin.isTTY` in Node,
