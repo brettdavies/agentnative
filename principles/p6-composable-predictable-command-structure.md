@@ -1,7 +1,7 @@
 ---
 id: p6
 title: Composable and Predictable Command Structure
-last-revised: 2026-05-07
+last-revised: 2026-11-04
 status: active
 requirements:
   - id: p6-must-sigpipe
@@ -25,7 +25,7 @@ requirements:
     level: must
     applicability:
       if: CLI makes network calls
-    summary: Network CLIs ship a `--timeout` flag with a sensible default (e.g., 30 seconds).
+    summary: Network CLIs ship a `--timeout` flag, or a documented equivalent (`--deadline`, `--max-time`), with a sensible default (e.g., 30 seconds).
   - id: p6-must-no-pager
     level: must
     applicability:
@@ -112,8 +112,8 @@ tool a building block rather than a dead end.
   suppressed automatically.
 - Shell completions available via a `completions` subcommand (clap_complete in Rust; equivalents elsewhere). This is a
   Tier 1 meta-command: it works without config, auth, or network.
-- Network CLIs ship a `--timeout` flag with a sensible default (30 seconds). Agents operating under their own time
-  budgets need to fail fast rather than block on a slow upstream.
+- Network CLIs ship a `--timeout` flag, or a documented equivalent (`--deadline`, `--max-time`), with a sensible default
+  (30 seconds). Agents operating under their own time budgets need to fail fast rather than block on a slow upstream.
 - If the CLI uses a pager (`less`, `more`, `$PAGER`), it supports `--no-pager` or respects `PAGER=""`. Pagers block
   headless execution indefinitely.
 - When the CLI uses subcommands, agentic flags (`--output`, `--quiet`, `--no-interactive`, `--timeout`) propagate to

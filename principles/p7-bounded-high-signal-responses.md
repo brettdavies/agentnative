@@ -1,7 +1,7 @@
 ---
 id: p7
 title: Bounded, High-Signal Responses
-last-revised: 2026-05-07
+last-revised: 2026-11-04
 status: active
 requirements:
   - id: p7-must-quiet
@@ -21,16 +21,17 @@ requirements:
     level: should
     applicability:
       if: CLI has list-style commands
-    summary: A `--limit` or `--max-results` flag lets callers request exactly the number of items they want.
+    summary: A `--limit` flag, `--max-results`, or another option whose definition bounds the number of items returned (such as `--max`, `--top`, or `-n`) lets callers request exactly the number of items they want.
   - id: p7-should-timeout
     level: should
-    applicability: universal
-    summary: A `--timeout` flag bounds execution time so agents are not blocked indefinitely.
+    applicability:
+      if: CLI has commands that can run unbounded (a subcommand named for serving, watching, tailing, following, or streaming, or a tool whose own help describes it as a server or watcher)
+    summary: A `--timeout` flag, or a documented equivalent (`--deadline`, `--max-time`), bounds execution time so agents are not blocked indefinitely.
   - id: p7-may-cursor-pagination
     level: may
     applicability:
       if: CLI returns paginated results
-    summary: Cursor-based pagination flags (`--after`, `--before`) for efficient traversal of large result sets.
+    summary: Cursor-based pagination flags (`--after`, `--before`, `--cursor`) for efficient traversal of large result sets.
   - id: p7-may-auto-verbosity
     level: may
     applicability: universal
@@ -76,21 +77,30 @@ high-signal and inside budget.
 **SHOULD:**
 
 - A `--verbose` flag (or `-v` / `-vv`) escalates diagnostic detail when agents need to debug failures.
-- A `--limit` (or `--max-results`) flag SHOULD let callers request exactly the number of items they want.
-- A `--timeout` flag bounds execution time. An agent waiting indefinitely on a hung network call cannot proceed.
+- A `--limit` flag, `--max-results`, or another option whose definition bounds the number of items returned SHOULD let
+  callers request exactly the number of items they want. `--limit` is the canonical name. `--max`, `--top`, and `-n` are
+  examples of the others, and each one counts by its definition: `-m, --max int  maximum number of releases to fetch`
+  meets this, and `--max <DEPTH>  Maximum directory depth` does not.
+- A `--timeout` flag, or a documented equivalent (`--deadline`, `--max-time`), bounds execution time for commands that
+  can run unbounded: a subcommand named for serving, watching, tailing, following, or streaming, or a tool whose own
+  help describes it as a server or watcher. An agent waiting indefinitely on a command that never returns cannot
+  proceed. Network calls stay with `p6-must-timeout-network`.
 
 **MAY:**
 
-- Cursor-based pagination flags (`--after`, `--before`) MAY be offered for efficient traversal of large result sets.
+- Cursor-based pagination flags (`--after`, `--before`, `--cursor`) MAY be offered for efficient traversal of large
+  result sets. Positional paging (`--page`, `--offset`) does not meet this: its pages drift when results change between
+  calls, which is the failure cursor pagination exists to prevent.
 - Automatic verbosity reduction in non-TTY contexts (the same behavior `--quiet` explicitly requests).
 
 ## Evidence
 
 - `--quiet` flag with a falsey-value parser and env-var binding.
 - A diagnostic macro (or equivalent gate) that short-circuits when `quiet` is true.
-- `--limit` or `--max-results` on every list / search command.
+- `--limit`, `--max-results`, or another option whose definition bounds the number of items returned, on every list /
+  search command.
 - Pagination clamping logic (e.g., `min(requested, MAX_RESULTS)`).
-- `--timeout` flag with a sensible default.
+- `--timeout` flag, or a documented equivalent (`--deadline`, `--max-time`), with a sensible default.
 - `--verbose` flag for diagnostic escalation.
 - A `suppress_diag()` method that returns true when quiet is set or when the output format is JSON / JSONL.
 
@@ -113,13 +123,11 @@ test to see each.
 Adversarial review via `compound-engineering:ce-adversarial-document-reviewer` ahead of the v0.3.0 launch. Findings
 recorded verbatim per `principles/AGENTS.md` § "Pressure-test protocol".
 
-- **[later]** *Internal inconsistency.* "`--timeout` is universal SHOULD in P7 but conditional MUST in P6
+- **[edit]** *Internal inconsistency.* "`--timeout` is universal SHOULD in P7 but conditional MUST in P6
   (`p6-must-timeout-network`). For network CLIs the two compose (MUST wins), but P7's prose ('An agent waiting
   indefinitely on a hung network call cannot proceed') only motivates the network case. The universal scope is
-  unjustified by its own rationale." Deferred: narrowing P7's `applicability` from `universal` to non-network
-  long-running operations only (or to `if: CLI has long-running operations`) fires the coupled-release norm (CLI
-  registry parses `applicability`). Bundled with other applicability cleanups for a future PR with explicit registry
-  coordination.
+  unjustified by its own rationale." Resolved: `p7-should-timeout` applies to commands that can run unbounded, by a
+  subcommand's name or the tool's own help description, and network calls stay with `p6-must-timeout-network`.
 - **[later]** *MUST-vs-SHOULD.* "The list-clamping MUST fires on every CLI with 'list-style commands' regardless of
   natural cardinality. A tool whose list operation returns a bounded small set by construction (e.g.,
   `anc principles list` → exactly 7) gains nothing from a clamp + `\"truncated\": true` contract: the clamp is
