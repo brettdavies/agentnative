@@ -15,7 +15,7 @@ requirements:
   - id: p1-must-no-browser
     level: must
     applicability:
-      if: CLI authenticates against a remote service
+      if: CLI authenticates through a browser-based flow
     summary: Headless authentication path (`--no-browser` / OAuth Device Authorization Grant).
   - id: p1-must-secret-non-leaky-path
     level: must
@@ -71,10 +71,13 @@ agent-tool deadlock.
 - When stdin is not a terminal, or when `--no-interactive` is set, every blocking-input surface (prompt libraries,
   read-line calls, TUI session initialization) MUST resolve from defaults, read from stdin, or exit non-zero with an
   actionable error. The CLI MUST NOT block waiting for input that cannot arrive.
-- A headless authentication path if the CLI authenticates. The canonical flag is `--no-browser`, which triggers the
-  OAuth 2.0 Device Authorization Grant ([RFC 8628](https://www.rfc-editor.org/rfc/rfc8628)): the CLI prints a URL and a
-  code; the user authorizes on another device. Agents cannot open browsers. Non-canonical alternatives (`--device-code`,
-  `--remote`, `--headless`) are acceptable but SHOULD migrate toward `--no-browser`.
+- A headless authentication path if the CLI authenticates through a browser-based flow. The canonical flag is
+  `--no-browser`, which triggers the OAuth 2.0 Device Authorization Grant
+  ([RFC 8628](https://www.rfc-editor.org/rfc/rfc8628)): the CLI prints a URL and a code; the user authorizes on another
+  device. Agents cannot open browsers. Non-canonical alternatives (`--device-code`, `--remote`, `--headless`) are
+  acceptable when they select that headless path, but SHOULD migrate toward `--no-browser`. A tool whose only
+  credentials are static (an API key or token from the environment or a file) has no browser to avoid, so this
+  requirement does not apply to it; `p1-must-secret-non-leaky-path` governs how it reads them.
 - CLIs that accept secret material (tokens, passwords, private keys) MUST provide at least one input path that does not
   leak the value into process listings (`ps`), shell history, or the parent environment. The two leak-resistant paths
   are stdin and a `--*-file` flag pointing to a credential file. Flag-value (`--token <value>`) and environment-variable
@@ -105,7 +108,7 @@ agent-tool deadlock.
   `std::io::IsTerminal` in Rust 1.70+ (`std::io::stdin().is_terminal()`), `process.stdin.isTTY` in Node,
   `sys.stdin.isatty()` in Python. A prompt that renders on stderr also checks stderr (`std::io::stderr().is_terminal()`,
   `process.stderr.isTTY`, `sys.stderr.isatty()`).
-- `--no-browser` flag present on authenticated CLIs.
+- `--no-browser`, or an accepted alternative, defined as a flag on CLIs that open a browser to authenticate.
 - `env = "TOOL_..."` attribute on every flag that takes user input.
 
 ## Anti-Patterns
@@ -138,10 +141,11 @@ recorded verbatim per `principles/AGENTS.md` § "Pressure-test protocol".
   bullet's parenthetical now includes "or any TUI event loop that takes over the terminal." Mirrors the behavioral
   framing in [`docs/decisions/p1-behavioral-must.md`](../docs/decisions/p1-behavioral-must.md). No frontmatter change;
   the summary already says "gates every prompt library call" and stays.
-- **[wontfix]** *Prior art.* "RFC 8628 citation is correct in name but incomplete in framing. The prose says Device
+- **[edit]** *Prior art.* "RFC 8628 citation is correct in name but incomplete in framing. The prose says Device
   Authorization Grant means 'the CLI prints a URL and a code; the user authorizes on another device'. This still
   requires a human on another device, which an unattended agent does not have. An HN commenter will note this is a
   *human-assisted* headless path, not an agent-headless path; true unattended agents need service-account / API-token
-  auth (which the principle doesn't mention)." Rationale: P1 scopes "headless" as "no local browser required," not "no
-  human anywhere." A human-in-the-loop is acceptable here. Service-account auth is orthogonal and would belong to a
-  separate principle if it were added.
+  auth (which the principle doesn't mention)." Resolved: `p1-must-no-browser` applies to tools that authenticate through
+  a browser-based flow, and "headless" there means no local browser required, so a human on another device is
+  acceptable. A tool whose only credentials are static (an API key or token from the environment or a file) has no
+  browser to avoid, and `p1-must-secret-non-leaky-path` governs how it reads them.
