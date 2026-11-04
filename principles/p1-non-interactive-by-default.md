@@ -1,7 +1,7 @@
 ---
 id: p1
 title: Non-Interactive by Default
-last-revised: 2026-05-07
+last-revised: 2026-11-04
 status: active
 requirements:
   - id: p1-must-env-var
@@ -25,7 +25,7 @@ requirements:
   - id: p1-should-tty-detection
     level: should
     applicability: universal
-    summary: Auto-detect non-interactive context via TTY detection; suppress prompts when stderr is not a terminal.
+    summary: Auto-detect non-interactive context via TTY detection on stdin, plus stderr where a prompt renders there; suppress prompts when no terminal is present.
   - id: p1-should-defaults-in-help
     level: should
     applicability: universal
@@ -84,10 +84,11 @@ agent-tool deadlock.
 
 **SHOULD:**
 
-- Auto-detect non-interactive context via TTY detection on stdin (and stderr, where prompts target it) and suppress
-  prompts when no terminal is present, even without an explicit `--no-interactive` flag. Language-specific entry points
-  (`std::io::IsTerminal` in Rust 1.70+, `process.stdin.isTTY` in Node, `sys.stdout.isatty()` in Python) appear in the
-  Evidence section.
+- Auto-detect non-interactive context via TTY detection on stdin, plus stderr where a prompt renders there, and suppress
+  prompts when no terminal is present, even without an explicit `--no-interactive` flag. A check on stdout alone does
+  not count: a prompt reads stdin, so stdout says nothing about whether an answer can arrive. Language-specific entry
+  points (`std::io::IsTerminal` in Rust 1.70+, `process.stdin.isTTY` in Node, `sys.stdin.isatty()` in Python) appear in
+  the Evidence section.
 - Document default values for prompted inputs in `--help` output so agents can pass them explicitly instead of accepting
   whatever default ships.
 
@@ -100,7 +101,10 @@ agent-tool deadlock.
 
 - `--no-interactive` flag in the CLI struct with an env-var binding.
 - Boolean env vars parsed with a falsey-value parser (not the default string parser).
-- TTY guard wrapping every `dialoguer`, `inquire`, or equivalent prompt call.
+- Stdin TTY guard wrapping every `dialoguer`, `inquire`, or equivalent prompt call, through the language's entry point:
+  `std::io::IsTerminal` in Rust 1.70+ (`std::io::stdin().is_terminal()`), `process.stdin.isTTY` in Node,
+  `sys.stdin.isatty()` in Python. A prompt that renders on stderr also checks stderr (`std::io::stderr().is_terminal()`,
+  `process.stderr.isTTY`, `sys.stderr.isatty()`).
 - `--no-browser` flag present on authenticated CLIs.
 - `env = "TOOL_..."` attribute on every flag that takes user input.
 
@@ -116,7 +120,7 @@ agent-tool deadlock.
 - A `--password <value>` flag with no stdin or file alternative: every invocation leaks the secret into `ps` output.
 
 Measured by audit IDs `p1-env-hints`, `p1-env-flags-source`, `p1-non-interactive`, `p1-flag-existence`,
-`p1-non-interactive-source`, `p1-headless-auth`, `p1-secret-non-leaky-path`, `p1-tty-detection-source`,
+`p1-non-interactive-source`, `p1-headless-auth`, `p1-secret-non-leaky-path`, `p1-prompt-tty-source`,
 `p1-defaults-in-help`, `p1-rich-tui`. Run `anc audit --principle 1 .` against the CLI under test to see each.
 
 ## Pressure test notes
