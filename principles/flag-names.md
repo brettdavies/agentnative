@@ -1,6 +1,6 @@
 ---
 title: "Flag names: how requirement text applies to a tool's help"
-last-revised: 2026-11-03
+last-revised: 2026-11-04
 ---
 
 # Flag names: how requirement text applies to a tool's help
@@ -18,15 +18,15 @@ for the double-dash spelling.
 
 ## Single letters
 
-A single letter meets a requirement when its help definition states that requirement's meaning, through a long name the
-requirement accepts on the same line or a description that names the meaning. A letter's definition is the help line
-whose leading names declare it: the flag names the line starts with, before any description. A letter printed after
-another flag's description, as unzip prints `-q` beside `-n`, has no definition.
+A single letter meets a requirement only through its help definition: the definition states that requirement's meaning,
+through a long name the requirement accepts on the same line or a description that names the meaning. A letter's
+definition is the help line whose leading names declare it: the flag names the line starts with, before any description.
+A letter printed after another flag's description, as unzip prints `-q` beside `-n`, has no definition.
 
-The same test applies to a letter the requirement names, because one letter can carry two meanings: the spec names `-v`
-for both verbose (`p7-should-verbose`) and version (`p3-should-version-short`), and only its definition tells them
-apart. It is also the test `p5-must-force-yes` applies to a flag under another name, which the command's `--help`
-documents as the flag that confirms the operation without a prompt.
+A requirement that names a letter does not credit it by name, because one letter can carry two meanings: the spec names
+`-v` for both verbose (`p7-should-verbose`) and version (`p3-should-version-short`), and only its definition tells them
+apart. The same test applies to a flag under another name on `p5-must-force-yes`, which the command's `--help` documents
+as the flag that confirms the operation without a prompt.
 
 | Help line                                                                     | Requirement               | Verdict | Why                                                            |
 | ----------------------------------------------------------------------------- | ------------------------- | ------- | -------------------------------------------------------------- |
@@ -36,6 +36,7 @@ documents as the flag that confirms the operation without a prompt.
 | `-v  Increase verbosity`                                                      | `p3-should-version-short` | not met | The definition means something else.                           |
 | `-v, --version  Print version`                                                | `p3-should-version-short` | meets   | An accepted long name sits on the same line.                   |
 | `-v, --version  Print version`                                                | `p7-should-verbose`       | not met | The definition means something else.                           |
+| `-v, --verbose  show verbose output from scan` (`gitleaks`)                   | `p3-should-version-short` | not met | The definition means something else, even though `-v` exits 0. |
 | `--version (-V)  Print the version`                                           | `p3-should-version-short` | meets   | `-V` is among the leading names, beside an accepted long name. |
 | `-v` with no description                                                      | `p7-should-verbose`       | not met | The line states no meaning.                                    |
 | `-f, --format <F>  Output format.`                                            | `p5-must-force-yes`       | not met | The definition means something else.                           |
